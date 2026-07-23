@@ -18,7 +18,7 @@
      generator still works, just not with the exact typeface.
      ----------------------------------------------------------------------- */
   @font-face{
-    font-family:'Rigid Square';
+    font-family:'RigidSquareWeb';
     font-weight:300; font-style:normal;
     src: url('./fonts/RigidSquare-Light.woff2') format('woff2'),
          url('./fonts/RigidSquare-Light.woff') format('woff');
@@ -26,7 +26,7 @@
     unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
-    font-family:'Rigid Square';
+    font-family:'RigidSquareWeb';
     font-weight:700; font-style:normal;
     src: url('./fonts/RigidSquare-Bold.woff2') format('woff2'),
          url('./fonts/RigidSquare-Bold.woff') format('woff');
@@ -34,7 +34,7 @@
     unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
-    font-family:'Rigid Square';
+    font-family:'RigidSquareWeb';
     font-weight:900; font-style:normal;
     src: url('./fonts/RigidSquare-Bold.woff2') format('woff2'),
          url('./fonts/RigidSquare-Bold.woff') format('woff');
@@ -42,7 +42,7 @@
     unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
-    font-family:'Rigid Square';
+    font-family:'RigidSquareWeb';
     font-weight:300; font-style:italic;
     src: url('./fonts/RigidSquare-Italic.woff2') format('woff2'),
          url('./fonts/RigidSquare-Italic.woff') format('woff');
@@ -50,7 +50,7 @@
     unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
-    font-family:'Rigid Square';
+    font-family:'RigidSquareWeb';
     font-weight:700; font-style:italic;
     src: url('./fonts/RigidSquare-Italic.woff2') format('woff2'),
          url('./fonts/RigidSquare-Italic.woff') format('woff');
@@ -58,7 +58,7 @@
     unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
-    font-family:'Rigid Square';
+    font-family:'RigidSquareWeb';
     font-weight:900; font-style:italic;
     src: url('./fonts/RigidSquare-Italic.woff2') format('woff2'),
          url('./fonts/RigidSquare-Italic.woff') format('woff');
@@ -66,7 +66,7 @@
     unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   :root{
-    --font-display:'Rigid Square','Chakra Petch',sans-serif; /* headline/UI stack, falls back cleanly */
+    --font-display:'RigidSquareWeb','Chakra Petch',sans-serif; /* headline/UI stack, falls back cleanly */
     --bg:#FFFFFF; --panel:#F5F5F5; --border:#E4E4E4; --border-strong:#D0D0D0;
     --ink:#0D0D0D; --muted:#8C8C8C; --blue:#0D8BFF; --blue-wash:#EAF5FF;
   }
@@ -243,15 +243,15 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E31', // sampled from the artwork corner, used for letterbox export
     layers: [
-      { id:'city',     type:'text',   x:0.500,y:0.0516, align:'center', font:'700 38px "Rigid Square", "Chakra Petch", sans-serif', color:'accent' },
-      { id:'date',     type:'text',   x:0.500,y:0.7828, align:'center', font:'700 50px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', maxW:0.86 },
-      { id:'guest',    type:'text',   x:0.500,y:0.8055, align:'center', font:'italic 700 24px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', alpha:0.9 },
-      { id:'location', type:'text',   x:0.500,y:0.8445, align:'center', font:'700 27px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', maxW:0.86 },
-      { id:'schedule', type:'text',   x:0.500,y:0.8735, align:'center', font:'700 19px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', maxW:0.86 },
-      { id:'bullets',  type:'list',   x:0.500,y:0.8930, align:'center', font:'700 18px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', lineHeight:23.5 },
+      { id:'city',     type:'text',   x:0.500,y:0.0516, align:'center', font:'700 38px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent' },
+      { id:'date',     type:'text',   x:0.500,y:0.7828, align:'center', font:'700 50px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.86 },
+      { id:'guest',    type:'text',   x:0.500,y:0.8055, align:'center', font:'italic 700 24px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.9 },
+      { id:'location', type:'text',   x:0.500,y:0.8445, align:'center', font:'700 27px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.86 },
+      { id:'schedule', type:'text',   x:0.500,y:0.8735, align:'center', font:'700 19px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.86 },
+      { id:'bullets',  type:'list',   x:0.500,y:0.8930, align:'center', font:'700 18px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:23.5 },
       { id:'qr',       type:'qr',     x:0.0116,y:0.8936, size:0.1266 },
       { id:'divider',  type:'rule',   x1:0.1488,x2:0.6872, y:0.9500, color:'ink', alpha:0.5 },
-      { id:'footer',   type:'wrap',   x:0.1488,y:0.9660, align:'left', font:'300 15px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', alpha:0.85, maxW:0.75, lineHeight:20 }
+      { id:'footer',   type:'wrap',   x:0.1488,y:0.9660, align:'left', font:'300 15px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.85, maxW:0.75, lineHeight:20 }
     ]
   },
   minimalNavy: {
@@ -263,15 +263,15 @@ const TEMPLATES = {
     qrBg: '#FBF3E7',
     edgeColor: '#0A1526',
     layers: [
-      { id:'city',     type:'text',   x:0.080,y:0.060, align:'left', font:'700 24px "Rigid Square", "Chakra Petch", sans-serif',   color:'accent' },
-      { id:'date',     type:'text',   x:0.080,y:0.130, align:'left', font:'700 44px "Rigid Square", "Chakra Petch", sans-serif',   color:'ink', maxW:0.86 },
-      { id:'guest',    type:'text',   x:0.080,y:0.165, align:'left', font:'italic 700 20px "Rigid Square", "Chakra Petch", sans-serif', color:'ink', alpha:0.85 },
-      { id:'location', type:'text',   x:0.080,y:0.815, align:'left', font:'700 26px "Rigid Square", "Chakra Petch", sans-serif',   color:'ink', maxW:0.86 },
-      { id:'schedule', type:'text',   x:0.080,y:0.850, align:'left', font:'700 17px "Rigid Square", "Chakra Petch", sans-serif',   color:'ink', maxW:0.86 },
-      { id:'bullets',  type:'list',   x:0.080,y:0.878, align:'left', font:'700 17px "Rigid Square", "Chakra Petch", sans-serif',   color:'ink', lineHeight:24 },
+      { id:'city',     type:'text',   x:0.080,y:0.060, align:'left', font:'700 24px "RigidSquareWeb", "Chakra Petch", sans-serif',   color:'accent' },
+      { id:'date',     type:'text',   x:0.080,y:0.130, align:'left', font:'700 44px "RigidSquareWeb", "Chakra Petch", sans-serif',   color:'ink', maxW:0.86 },
+      { id:'guest',    type:'text',   x:0.080,y:0.165, align:'left', font:'italic 700 20px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.85 },
+      { id:'location', type:'text',   x:0.080,y:0.815, align:'left', font:'700 26px "RigidSquareWeb", "Chakra Petch", sans-serif',   color:'ink', maxW:0.86 },
+      { id:'schedule', type:'text',   x:0.080,y:0.850, align:'left', font:'700 17px "RigidSquareWeb", "Chakra Petch", sans-serif',   color:'ink', maxW:0.86 },
+      { id:'bullets',  type:'list',   x:0.080,y:0.878, align:'left', font:'700 17px "RigidSquareWeb", "Chakra Petch", sans-serif',   color:'ink', lineHeight:24 },
       { id:'qr',       type:'qr',     x:0.760,y:0.815, size:0.16 },
       { id:'divider',  type:'rule',   x1:0.080,x2:0.63, y:0.950, color:'ink', alpha:0.4 },
-      { id:'footer',   type:'wrap',   x:0.080,y:0.972, align:'left', font:'300 15px "Rigid Square", "Chakra Petch", sans-serif',   color:'ink', alpha:0.8, maxW:0.62, lineHeight:20 }
+      { id:'footer',   type:'wrap',   x:0.080,y:0.972, align:'left', font:'300 15px "RigidSquareWeb", "Chakra Petch", sans-serif',   color:'ink', alpha:0.8, maxW:0.62, lineHeight:20 }
     ]
   }
 };

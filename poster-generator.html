@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Poster Generator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -71,7 +71,7 @@
   @media (max-width:900px){.grid{grid-template-columns:1fr;}}
   .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:26px;}
   .field{margin-bottom:18px;}
-  .field label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;}
+  .field label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;color:#800000;}
   .field .optional{font-weight:400;color:var(--muted);}
   .field input[type=text], .field textarea, .field select{
     width:100%;background:var(--bg);border:1.5px solid var(--border-strong);border-radius:10px;
@@ -189,7 +189,7 @@ Food truck will be present"></textarea>
 function getCopy(){
   const bulletsRaw = document.getElementById('f-bullets').value.trim();
   const bullets = bulletsRaw ? bulletsRaw.split('\n').map(s=>s.trim()).filter(Boolean) : [];
-  const schedule = [f('f-t1'), f('f-t2'), f('f-t3')].filter(Boolean).join('   /   ');
+  const schedule = [f('f-t1'), f('f-t2'), f('f-t3')].filter(Boolean).join('   \u2215   ');
   return {
     city: f('f-city') || 'Silicon Valley',
     date: f('f-date') || 'Sunday September 27 2026',
@@ -223,15 +223,15 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E31', // sampled from the artwork corner, used for letterbox export
     layers: [
-      { id:'city',     type:'text',   x:0.500,y:0.0516, align:'center', font:'700 38px "Rigid Square", Inter, sans-serif', color:'accent' },
-      { id:'date',     type:'text',   x:0.500,y:0.7828, align:'center', font:'700 50px "Rigid Square", Inter, sans-serif', color:'ink', maxW:0.86 },
-      { id:'guest',    type:'text',   x:0.500,y:0.8055, align:'center', font:'italic 700 24px "Rigid Square", Inter, sans-serif', color:'ink', alpha:0.9 },
-      { id:'location', type:'text',   x:0.500,y:0.8445, align:'center', font:'700 27px "Rigid Square", Inter, sans-serif', color:'ink', maxW:0.86 },
-      { id:'schedule', type:'text',   x:0.500,y:0.8735, align:'center', font:'700 19px "Rigid Square", Inter, sans-serif', color:'ink', maxW:0.86 },
-      { id:'bullets',  type:'list',   x:0.500,y:0.8930, align:'center', font:'700 18px "Rigid Square", Inter, sans-serif', color:'ink', lineHeight:23.5 },
+      { id:'city',     type:'text',   x:0.500,y:0.0516, align:'center', font:'bold 38px "Rigid Square", Inter, sans-serif', color:'accent' },
+      { id:'date',     type:'text',   x:0.500,y:0.7828, align:'center', font:'bold 50px "Rigid Square", Inter, sans-serif', color:'ink', maxW:0.86 },
+      { id:'guest',    type:'text',   x:0.500,y:0.8055, align:'center', font:'italic bold 24px "Rigid Square", Inter, sans-serif', color:'ink', alpha:0.9 },
+      { id:'location', type:'text',   x:0.500,y:0.8445, align:'center', font:'bold 27px "Rigid Square", Inter, sans-serif', color:'ink', maxW:0.86 },
+      { id:'schedule', type:'text',   x:0.500,y:0.8735, align:'center', font:'bold 19px "Rigid Square", Inter, sans-serif', color:'ink', maxW:0.86 },
+      { id:'bullets',  type:'list',   x:0.500,y:0.8930, align:'center', font:'bold 18px "Rigid Square", Inter, sans-serif', color:'ink', lineHeight:23.5 },
       { id:'qr',       type:'qr',     x:0.0116,y:0.8936, size:0.1266 },
-      { id:'divider',  type:'rule',   x1:0.1488,x2:0.6872, y:0.9535, color:'ink', alpha:0.5 },
-      { id:'footer',   type:'wrap',   x:0.1488,y:0.9623, align:'left', font:'300 15px "Rigid Square", Inter, sans-serif', color:'ink', alpha:0.85, maxW:0.75, lineHeight:20 }
+      { id:'divider',  type:'rule',   x1:0.1488,x2:0.6872, y:0.9500, color:'ink', alpha:0.5 },
+      { id:'footer',   type:'wrap',   x:0.1488,y:0.9660, align:'left', font:'300 15px "Rigid Square", Inter, sans-serif', color:'ink', alpha:0.85, maxW:0.75, lineHeight:20 }
     ]
   },
   minimalNavy: {
@@ -243,15 +243,15 @@ const TEMPLATES = {
     qrBg: '#FBF3E7',
     edgeColor: '#0A1526',
     layers: [
-      { id:'city',     type:'text',   x:0.080,y:0.060, align:'left', font:'700 24px "Rigid Square", Inter, sans-serif',   color:'accent' },
-      { id:'date',     type:'text',   x:0.080,y:0.130, align:'left', font:'700 44px "Rigid Square", Inter, sans-serif',   color:'ink', maxW:0.86 },
-      { id:'guest',    type:'text',   x:0.080,y:0.165, align:'left', font:'italic 700 20px "Rigid Square", Inter, sans-serif', color:'ink', alpha:0.85 },
-      { id:'location', type:'text',   x:0.080,y:0.815, align:'left', font:'700 26px "Rigid Square", Inter, sans-serif',   color:'ink', maxW:0.86 },
-      { id:'schedule', type:'text',   x:0.080,y:0.850, align:'left', font:'700 17px "Rigid Square", Inter, sans-serif',   color:'ink', maxW:0.86 },
-      { id:'bullets',  type:'list',   x:0.080,y:0.878, align:'left', font:'700 17px "Rigid Square", Inter, sans-serif',   color:'ink', lineHeight:24 },
+      { id:'city',     type:'text',   x:0.080,y:0.060, align:'left', font:'bold 24px "Rigid Square", Inter, sans-serif',   color:'accent' },
+      { id:'date',     type:'text',   x:0.080,y:0.130, align:'left', font:'bold 44px "Rigid Square", Inter, sans-serif',   color:'ink', maxW:0.86 },
+      { id:'guest',    type:'text',   x:0.080,y:0.165, align:'left', font:'italic bold 20px "Rigid Square", Inter, sans-serif', color:'ink', alpha:0.85 },
+      { id:'location', type:'text',   x:0.080,y:0.815, align:'left', font:'bold 26px "Rigid Square", Inter, sans-serif',   color:'ink', maxW:0.86 },
+      { id:'schedule', type:'text',   x:0.080,y:0.850, align:'left', font:'bold 17px "Rigid Square", Inter, sans-serif',   color:'ink', maxW:0.86 },
+      { id:'bullets',  type:'list',   x:0.080,y:0.878, align:'left', font:'bold 17px "Rigid Square", Inter, sans-serif',   color:'ink', lineHeight:24 },
       { id:'qr',       type:'qr',     x:0.760,y:0.815, size:0.16 },
-      { id:'divider',  type:'rule',   x1:0.080,x2:0.63, y:0.955, color:'ink', alpha:0.4 },
-      { id:'footer',   type:'wrap',   x:0.080,y:0.968, align:'left', font:'300 15px "Rigid Square", Inter, sans-serif',   color:'ink', alpha:0.8, maxW:0.62, lineHeight:20 }
+      { id:'divider',  type:'rule',   x1:0.080,x2:0.63, y:0.950, color:'ink', alpha:0.4 },
+      { id:'footer',   type:'wrap',   x:0.080,y:0.972, align:'left', font:'300 15px "Rigid Square", Inter, sans-serif',   color:'ink', alpha:0.8, maxW:0.62, lineHeight:20 }
     ]
   }
 };
@@ -371,27 +371,16 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   ctx.globalAlpha = 1;
 }
 
-/* real QR code, generated once per render via the qrcodejs library */
+/* real QR code, generated once per render via the qrcode library */
 let qrCache = { text: null, canvas: null };
 function getQrCanvas(text, cb){
   if (qrCache.text === text && qrCache.canvas){ cb(qrCache.canvas); return; }
-  const host = document.getElementById('qrHidden');
-  host.innerHTML = '';
-  new QRCode(host, { text: text, width: 256, height: 256, correctLevel: QRCode.CorrectLevel.M });
-  setTimeout(()=>{
-    const c = host.querySelector('canvas') || host.querySelector('img');
-    if (c && c.tagName === 'CANVAS'){
-      qrCache = { text, canvas: c };
-      cb(c);
-    } else if (c) {
-      const cvs = document.createElement('canvas');
-      cvs.width = 256; cvs.height = 256;
-      const cctx = cvs.getContext('2d');
-      cctx.drawImage(c, 0, 0, 256, 256);
-      qrCache = { text, canvas: cvs };
-      cb(cvs);
-    }
-  }, 30);
+  const cvs = document.createElement('canvas');
+  QRCode.toCanvas(cvs, text, { width: 256, margin: 0, errorCorrectionLevel: 'M' }, (err) => {
+    if (err) console.error('QR code generation failed:', err);
+    qrCache = { text, canvas: cvs };
+    cb(cvs);
+  });
 }
 
 function renderToCanvas(canvasEl, tplKey, wPx, hPx){
@@ -456,11 +445,11 @@ const previewCaption = document.getElementById('previewCaption');
 const EXPORTS = {
   native:      {w:1122, h:1588, label:'Print poster (native)'},
   a4:          {w:2480, h:3508, label:'A4 handout, 300dpi'},
-  '11x17':     {w:3300, h:5100, label:'11\u00d717\u2033 poster, 300dpi'},
-  'ig-portrait':{w:1080, h:1350, label:'Instagram portrait'},
-  'ig-square': {w:1080, h:1080, label:'Instagram square'},
-  'ig-story':  {w:1080, h:1920, label:'Instagram story'},
-  'fb-post':   {w:1200, h:628,  label:'Facebook post'}
+  '11x17':     {w:3300, h:5100, label:'11×17″ poster, 300dpi'},
+  'ig-portrait':{w:1080, h:1350, label:'Instagram portrait', cropFocus: {x: 0.5, y: 0.3}},
+  'ig-square': {w:1080, h:1080, label:'Instagram square', cropFocus: {x: 0.5, y: 0.3}},
+  'ig-story':  {w:1080, h:1920, label:'Instagram story', cropFocus: {x: 0.5, y: 0.3}},
+  'fb-post':   {w:1200, h:628,  label:'Facebook post', cropFocus: {x: 0.5, y: 0.3}}
 };
 document.getElementById('f-size').addEventListener('change', ()=>{
   previewCaption.textContent = 'Downloads as: ' + EXPORTS[document.getElementById('f-size').value].label;
@@ -478,9 +467,20 @@ document.getElementById('downloadBtn').addEventListener('click', ()=>{
   const master = document.createElement('canvas');
   renderToCanvas(master, currentTpl, 1600, Math.round(1600*H/W));
   setTimeout(()=>{ // let the async QR draw settle before compositing
-    const scale = Math.min(size.w / master.width, size.h / master.height);
-    const dw = master.width*scale, dh = master.height*scale;
-    const dx = (size.w-dw)/2, dy = (size.h-dh)/2;
+    let scale, dx, dy, dw, dh;
+    if (size.cropFocus) {
+      // Cover logic
+      scale = Math.max(size.w / master.width, size.h / master.height);
+      dw = master.width * scale; dh = master.height * scale;
+      dx = (size.w - dw) * size.cropFocus.x;
+      dy = (size.h - dh) * size.cropFocus.y;
+    } else {
+      // Letterbox (contain) logic
+      scale = Math.min(size.w / master.width, size.h / master.height);
+      dw = master.width * scale; dh = master.height * scale;
+      dx = (size.w - dw) / 2;
+      dy = (size.h - dh) / 2;
+    }
     octx.drawImage(master, dx, dy, dw, dh);
     const link = document.createElement('a');
     link.download = 'terry-fox-poster.png';

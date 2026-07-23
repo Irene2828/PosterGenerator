@@ -80,9 +80,24 @@
   h2.section-title{font-size:15px;font-weight:600;margin:0 0 14px;}
   .step-tag{display:inline-block;background:#E01A2B;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.5px;}
   .templates{display:flex;flex-direction:column;gap:16px;}
-  .tpl-card{flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid var(--border);background:var(--panel);}
-  .tpl-card:hover{border-color:var(--border-strong);}
-  .tpl-card.active{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-wash);}
+  .tpl-card{
+    flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
+    border:2px solid var(--border);background:var(--panel);
+    opacity:0.5;
+    filter:grayscale(100%);
+    transition:opacity 0.2s, filter 0.2s, border-color 0.2s;
+  }
+  .tpl-card:hover{
+    opacity:0.8;
+    filter:grayscale(30%);
+    border-color:var(--border-strong);
+  }
+  .tpl-card.active{
+    opacity:1;
+    filter:none;
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px var(--blue-wash);
+  }
   .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
   .tpl-name{font-size:13px;text-align:center;padding:8px 6px;font-weight:500;}
   .grid{display:grid;grid-template-columns:160px 380px 1fr;gap:32px;align-items:start;}

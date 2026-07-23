@@ -318,14 +318,15 @@ const TEMPLATES = {
   }
 };
 
-let currentTpl = 'classicRed';
+let currentTpl = 'socialTerryRun';
 const bgImages = {};
 
 /* preload raster backgrounds */
 Object.entries(TEMPLATES).forEach(([key,t])=>{
+  t._key = key;
   if (t.kind === 'image'){
     const img = new Image();
-    img.onload = () => { render(); if(document.getElementById('templatePicker').children.length) drawThumb(key); };
+    img.onload = () => { render(); drawThumb(key); };
     img.src = t.src;
     bgImages[key] = img;
   }
@@ -356,9 +357,9 @@ function wrapLines(ctx, text, maxWidth, font){
 
 function drawBackground(ctx, t, w, h){
   if (t.kind === 'image'){
-    const img = bgImages[currentTpl];
-    if (img && img.complete) ctx.drawImage(img, 0, 0, w, h);
-    else { ctx.fillStyle = t.edgeColor; ctx.fillRect(0,0,w,h); }
+    const img = bgImages[t._key];
+    if (img && img.complete && img.naturalWidth > 0) ctx.drawImage(img, 0, 0, w, h);
+    else { ctx.fillStyle = t.edgeColor || '#16223F'; ctx.fillRect(0,0,w,h); }
   } else {
     const grad = ctx.createLinearGradient(0,0,0,h);
     grad.addColorStop(0, t.bg1); grad.addColorStop(1, t.bg2);
@@ -532,10 +533,19 @@ Object.entries(TEMPLATES).forEach(([key,t])=>{
 });
 function refreshActive(){ [...picker.children].forEach(c=>c.classList.toggle('active', c.dataset.key===currentTpl)); }
 function drawThumb(key){
-  const c = picker.querySelector(`[data-key="${key}"] canvas`);
-  if (c) renderToCanvas(c, key, c.width, c.height);
+  const card = picker.querySelector(`[data-key="${key}"]`);
+  if (!card) return;
+  const c = card.querySelector('canvas');
+  if (c) {
+    const t = TEMPLATES[key];
+    const tw = t.w || 1122;
+    const th = t.h || 1588;
+    c.width = 220;
+    c.height = Math.round(220 * th / tw);
+    renderToCanvas(c, key, c.width, c.height);
+  }
 }
-Object.keys(TEMPLATES).forEach(k=>{ if (TEMPLATES[k].kind==='drawn') drawThumb(k); });
+Object.keys(TEMPLATES).forEach(k => drawThumb(k));
 
 /* =========================================================================
    FORM WIRING

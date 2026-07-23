@@ -307,7 +307,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.type === 'text'){
     const value = (copy[layer.id] || '').toString();
     if (!value) { ctx.globalAlpha = 1; return; }
-    const px = parseInt(layer.font.match(/(\d+)px/)[1],10) * s;
+    const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
     ctx.font = font;
     ctx.fillStyle = resolveColor(t, layer.color);
@@ -327,7 +327,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.type === 'wrap'){
     const value = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id]||'');
     if (!value) { ctx.globalAlpha = 1; return; }
-    const px = parseInt(layer.font.match(/(\d+)px/)[1],10) * s;
+    const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
     ctx.font = font;
     ctx.fillStyle = resolveColor(t, layer.color);
@@ -340,7 +340,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
 
   if (layer.type === 'list'){
     const items = copy.bullets || [];
-    const px = parseInt(layer.font.match(/(\d+)px/)[1],10) * s;
+    const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
     ctx.font = font;
     ctx.fillStyle = resolveColor(t, layer.color);

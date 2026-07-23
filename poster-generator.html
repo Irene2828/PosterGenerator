@@ -516,16 +516,25 @@ function getQrCanvas(text, cb){
   });
 }
 
-function renderToCanvas(canvasEl, tplKey, wPx, hPx){
+function renderToCanvas(canvasEl, tplKey, wPx, hPx, cb){
   const t = TEMPLATES[tplKey];
   const ctx = canvasEl.getContext('2d');
   canvasEl.width = wPx; canvasEl.height = hPx;
+  
+  if (t.draw) {
+    const copy = getCopy();
+    t.draw(ctx, wPx, hPx, copy);
+    if (cb) cb();
+    return;
+  }
+
   drawBackground(ctx, t, wPx, hPx);
   const copy = getCopy();
-  const qrLayer = t.layers.find(l=>l.type==='qr');
+  const qrLayer = (t.layers || []).find(l=>l.type==='qr');
   const drawTextLayers = (qrCanvas) => {
-    t.layers.forEach(layer => { if (layer.type !== 'qr') drawLayer(ctx, t, layer, copy, wPx, hPx, null); });
+    (t.layers || []).forEach(layer => { if (layer.type !== 'qr') drawLayer(ctx, t, layer, copy, wPx, hPx, null); });
     if (qrLayer && qrCanvas) drawLayer(ctx, t, qrLayer, copy, wPx, hPx, qrCanvas);
+    if (cb) cb();
   };
   if (qrLayer){
     getQrCanvas('https://' + copy.url.replace(/^https?:\/\//,''), (qrCanvas)=> drawTextLayers(qrCanvas));
@@ -553,13 +562,35 @@ function initBgImages(){
 function render(){
   if (typeof syncCustomLayers === 'function') syncCustomLayers();
   const t = TEMPLATES[currentTpl];
-  const targetW = t.w || 1122;
-  const targetH = t.h || 1588;
-  if (canvas.width !== targetW || canvas.height !== targetH){
-    canvas.width = targetW;
-    canvas.height = targetH;
-  }
-  renderToCanvas(canvas, currentTpl, canvas.width, canvas.height);
+  const sizeKey = document.getElementById('f-size').value;
+  const size = EXPORTS[sizeKey];
+  
+  canvas.width = size.w;
+  canvas.height = size.h;
+  
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = t.edgeColor || '#FFFFFF';
+  ctx.fillRect(0,0,size.w,size.h);
+
+  const designW = t.w || 1122;
+  const designH = t.h || 1588;
+  
+  const master = document.createElement('canvas');
+  renderToCanvas(master, currentTpl, designW, designH, () => {
+    let scale, dx, dy, dw, dh;
+    if (size.cropFocus) {
+      scale = Math.max(size.w / master.width, size.h / master.height);
+      dw = master.width * scale; dh = master.height * scale;
+      dx = (size.w - dw) * size.cropFocus.x;
+      dy = (size.h - dh) * size.cropFocus.y;
+    } else {
+      scale = Math.min(size.w / master.width, size.h / master.height);
+      dw = master.width * scale; dh = master.height * scale;
+      dx = (size.w - dw) / 2;
+      dy = (size.h - dh) / 2;
+    }
+    ctx.drawImage(master, dx, dy, dw, dh);
+  });
 }
 
 const canvas = document.getElementById('posterCanvas');
@@ -766,6 +797,7 @@ function exportTemplateJSON() {
    ========================================================================= */
 ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-footintro']
   .forEach(id => document.getElementById(id).addEventListener('input', render));
+document.getElementById('f-size').addEventListener('change', render);
 
 
 

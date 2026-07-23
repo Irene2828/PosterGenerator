@@ -329,8 +329,7 @@ function resolveColor(t, name){ return name === 'accent' ? t.accent : t.ink; }
 
 function wrapLines(ctx, text, maxWidth, font){
   ctx.font = font;
-  const rawLines = text.split('
-');
+  const rawLines = text.split('\n');
   const lines = [];
   rawLines.forEach(raw => {
     const words = raw.split(' ');

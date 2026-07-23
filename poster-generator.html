@@ -216,13 +216,16 @@ Food truck will be present"></textarea>
 function getCopy(){
   const bulletsRaw = document.getElementById('f-bullets').value.trim();
   const bullets = bulletsRaw ? bulletsRaw.split('\n').map(s=>s.trim()).filter(Boolean) : [];
-  const schedule = [f('f-t1'), f('f-t2'), f('f-t3')].filter(Boolean).join('   \u2215   ');
+  const t1 = f('f-t1') || 'Registration opens: 8:30';
+  const t2 = f('f-t2') || 'Opening ceremony: 09:40';
+  const t3 = f('f-t3') || 'Fun run/walk starts: 10:00';
+  const schedule = [t1, t2, t3].filter(Boolean).join('   \u2215   ');
   return {
     city: f('f-city') || 'Silicon Valley',
     date: f('f-date') || 'Sunday September 27 2026',
     guest: f('f-guest'),
     location: f('f-location') || 'Bedwell Bayfront Park, City of Menlo Park',
-    schedule: schedule || 'Registration opens: 8:30   \u2215   Opening ceremony: 09:40   \u2215   Fun run/walk starts: 10:00',
+    schedule: schedule,
     bullets: bullets.length ? bullets : ['5 km, 10 km options', 'Food truck will be present'],
     url: f('f-url') || 'mskcc.convio.net/goto/terry-fox-run-2026',
     footIntro: f('f-footintro') || 'To register please stop by your property\'s People & Culture office, scan the QR code, or visit:'

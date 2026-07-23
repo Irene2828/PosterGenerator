@@ -178,26 +178,27 @@ Food truck will be present"></textarea>
           <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office, scan the QR code, or visit:">
         </div>
 
-        <div class="field">
-          <label>Export size</label>
-          <select id="f-size">
-            <option value="native">Print poster (native, 1122&times;1588)</option>
-            <option value="a4">A4 handout (2480&times;3508)</option>
-            <option value="11x17">Poster 11&times;17&Prime; (3300&times;5100)</option>
-            <option value="ig-portrait">Instagram portrait (1080&times;1350)</option>
-            <option value="ig-square">Instagram square (1080&times;1080)</option>
-            <option value="ig-story">Instagram story (1080&times;1920)</option>
-            <option value="fb-post">Facebook post (1200&times;628)</option>
-          </select>
-        </div>
-
-        <button class="btn btn-primary" id="downloadBtn">Download poster</button>
       </div>
 
       <div class="preview-col">
         <div class="canvas-shell">
+          <div class="field" style="width:100%; margin-bottom:18px;">
+            <label>Export size</label>
+            <select id="f-size">
+              <option value="native">Print poster (native, 1122&times;1588)</option>
+              <option value="a4">A4 handout (2480&times;3508)</option>
+              <option value="11x17">Poster 11&times;17&Prime; (3300&times;5100)</option>
+              <option value="ig-portrait">Instagram portrait (1080&times;1350)</option>
+              <option value="ig-square">Instagram square (1080&times;1080)</option>
+              <option value="ig-story">Instagram story (1080&times;1920)</option>
+              <option value="fb-post">Facebook post (1200&times;628)</option>
+            </select>
+          </div>
+
           <canvas id="posterCanvas" width="1122" height="1588"></canvas>
-          <div class="preview-caption" id="previewCaption">This is what downloads at "Print poster" size</div>
+
+          <div style="height:18px;"></div>
+          <button class="btn btn-primary" id="downloadBtn">Download poster</button>
         </div>
       </div>
     </div>
@@ -487,7 +488,6 @@ function render(){
 }
 
 const canvas = document.getElementById('posterCanvas');
-const previewCaption = document.getElementById('previewCaption');
 
 /* =========================================================================
    TEMPLATE PICKER
@@ -545,10 +545,7 @@ const EXPORTS = {
   'ig-story':  {w:1080, h:1920, label:'Instagram story', cropFocus: {x: 0.5, y: 0.3}},
   'fb-post':   {w:1200, h:628,  label:'Facebook post', cropFocus: {x: 0.5, y: 0.3}}
 };
-document.getElementById('f-size').addEventListener('change', ()=>{
-  previewCaption.textContent = 'Downloads as: ' + EXPORTS[document.getElementById('f-size').value].label;
-});
-previewCaption.textContent = 'Downloads as: ' + EXPORTS.native.label;
+
 
 document.getElementById('downloadBtn').addEventListener('click', ()=>{
   const size = EXPORTS[document.getElementById('f-size').value];

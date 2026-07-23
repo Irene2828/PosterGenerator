@@ -100,7 +100,7 @@
   }
   .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
   .tpl-name{font-size:13px;text-align:center;padding:8px 6px;font-weight:500;}
-  .grid{display:grid;grid-template-columns:160px 440px 1fr;gap:32px;align-items:start;}
+  .grid{display:grid;grid-template-columns:160px 1fr 440px;gap:32px;align-items:start;}
   .templates-col{padding-top:26px;}
   @media (max-width:900px){
     .grid{grid-template-columns:1fr;}
@@ -141,6 +141,29 @@
         <div class="step-tag">Templates</div>
         <h2 class="section-title">Pick an<br>approved design</h2>
         <div class="templates" id="templatePicker"></div>
+      </div>
+
+      <div class="preview-col">
+        <div class="canvas-shell">
+          <canvas id="posterCanvas" width="1122" height="1588"></canvas>
+
+          <div style="height:24px;"></div>
+
+          <div class="field" style="width:320px; max-width:100%; margin-bottom:14px; text-align:center;">
+            <label>Export size</label>
+            <select id="f-size" style="text-align:center; text-align-last:center;">
+              <option value="native">Print poster (native, 1122&times;1588)</option>
+              <option value="a4">A4 handout (2480&times;3508)</option>
+              <option value="11x17">Poster 11&times;17&Prime; (3300&times;5100)</option>
+              <option value="ig-portrait">Instagram portrait (1080&times;1350)</option>
+              <option value="ig-square">Instagram square (1080&times;1080)</option>
+              <option value="ig-story">Instagram story (1080&times;1920)</option>
+              <option value="fb-post">Facebook post (1200&times;628)</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary" id="downloadBtn" style="width:320px; max-width:100%;">Download poster</button>
+        </div>
       </div>
 
       <div class="panel">
@@ -193,29 +216,6 @@ Food truck will be present"></textarea>
           <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office, scan the QR code, or visit:">
         </div>
 
-      </div>
-
-      <div class="preview-col">
-        <div class="canvas-shell">
-          <canvas id="posterCanvas" width="1122" height="1588"></canvas>
-
-          <div style="height:24px;"></div>
-
-          <div class="field" style="width:320px; max-width:100%; margin-bottom:14px; text-align:center;">
-            <label>Export size</label>
-            <select id="f-size" style="text-align:center; text-align-last:center;">
-              <option value="native">Print poster (native, 1122&times;1588)</option>
-              <option value="a4">A4 handout (2480&times;3508)</option>
-              <option value="11x17">Poster 11&times;17&Prime; (3300&times;5100)</option>
-              <option value="ig-portrait">Instagram portrait (1080&times;1350)</option>
-              <option value="ig-square">Instagram square (1080&times;1080)</option>
-              <option value="ig-story">Instagram story (1080&times;1920)</option>
-              <option value="fb-post">Facebook post (1200&times;628)</option>
-            </select>
-          </div>
-
-          <button class="btn btn-primary" id="downloadBtn" style="width:320px; max-width:100%;">Download poster</button>
-        </div>
       </div>
     </div>
   </div>

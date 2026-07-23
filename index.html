@@ -201,6 +201,7 @@ Food truck will be present"></textarea>
 <div id="qrHidden"></div>
 
 <script>
+
 /* =========================================================================
    DATA MODEL
    One shared "copy" object drives every template. Add a new template by
@@ -318,19 +319,8 @@ const TEMPLATES = {
   }
 };
 
-let currentTpl = 'socialTerryRun';
 const bgImages = {};
-
-/* preload raster backgrounds */
-Object.entries(TEMPLATES).forEach(([key,t])=>{
-  t._key = key;
-  if (t.kind === 'image'){
-    const img = new Image();
-    img.onload = () => { render(); drawThumb(key); };
-    img.src = t.src;
-    bgImages[key] = img;
-  }
-});
+let currentTpl = 'socialTerryRun';
 
 /* =========================================================================
    RENDERING
@@ -503,6 +493,22 @@ function renderToCanvas(canvasEl, tplKey, wPx, hPx){
   }
 }
 
+
+function initBgImages(){
+  Object.entries(TEMPLATES).forEach(([key,t])=>{
+    t._key = key;
+    if (t.kind === 'image'){
+      const img = new Image();
+      img.onload = () => {
+        if (key === currentTpl) render();
+        drawThumb(key);
+      };
+      img.src = t.src;
+      bgImages[key] = img;
+    }
+  });
+}
+
 function render(){
   const t = TEMPLATES[currentTpl];
   const targetW = t.w || 1122;
@@ -513,6 +519,9 @@ function render(){
   }
   renderToCanvas(canvas, currentTpl, canvas.width, canvas.height);
 }
+
+const canvas = document.getElementById('posterCanvas');
+const previewCaption = document.getElementById('previewCaption');
 
 /* =========================================================================
    TEMPLATE PICKER
@@ -553,8 +562,7 @@ Object.keys(TEMPLATES).forEach(k => drawThumb(k));
 ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-footintro']
   .forEach(id => document.getElementById(id).addEventListener('input', render));
 
-const canvas = document.getElementById('posterCanvas');
-const previewCaption = document.getElementById('previewCaption');
+
 
 /* =========================================================================
    EXPORT
@@ -611,6 +619,7 @@ document.getElementById('downloadBtn').addEventListener('click', ()=>{
   }, 120);
 });
 
+initBgImages();
 render();
 
 /* Canvas doesn't auto-redraw when a @font-face finishes loading, so once

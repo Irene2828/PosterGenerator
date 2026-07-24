@@ -575,9 +575,14 @@ const TEMPLATES = {
       { id:'date',      type:'wrap',   x:0.6300,y:0.3320, align:'left',   font:'600 56px "Chakra Petch", sans-serif', color:'ink', maxW:0.3200, lineHeight:56, shadow:greyTextShadow },
       { id:'location',  type:'wrap',   x:0.6300,y:0.4580, align:'left',   font:'600 28px "Chakra Petch", sans-serif', color:'ink', maxW:0.3200, lineHeight:32, shadow:greyTextShadow },
       { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px "Chakra Petch", sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow },
+      { id:'t1',        type:'edit_row', x:0.6300,y:0.5850, align:'left', field:'f-t1', maxW:0.3200, lineHeight:32 },
+      { id:'t2',        type:'edit_row', x:0.6300,y:0.6087, align:'left', field:'f-t2', maxW:0.3200, lineHeight:32 },
       { id:'bullets',   type:'list',   x:0.6300,y:0.6850, align:'left',   font:'500 24px "Chakra Petch", sans-serif', color:'ink', maxW:0.3200, lineHeight:32, maxItems:2, shadow:greyTextShadow },
+      { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6850, align:'left', field:'f-bullets', row:0, maxW:0.3200, lineHeight:32 },
+      { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7560, align:'left', field:'f-bullets', row:1, maxW:0.3200, lineHeight:32 },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'footer',    type:'social_footer', x:0.2537,y:0.9820, align:'left', font:'400 20px "Chakra Petch", sans-serif', boldFont:'700 20px "Chakra Petch", sans-serif', color:'ink', maxW:0.4685, lineHeight:18 }
+      { id:'footer',    type:'social_footer', x:0.2537,y:0.9820, align:'left', font:'400 20px "Chakra Petch", sans-serif', boldFont:'700 20px "Chakra Petch", sans-serif', color:'ink', maxW:0.4685, lineHeight:18 },
+      { id:'url',       type:'edit_row', x:0.2537,y:0.9820, align:'left', field:'f-url', prefix:'visit: ', maxW:0.4685, lineHeight:18 }
     ],
     socialLayers: [
       { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 44px "Chakra Petch", sans-serif', color:'ink', maxW:0.1870 },
@@ -1059,7 +1064,7 @@ Object.keys(TEMPLATES).forEach(applyLayerOverrides);
 function editableLayersForTemplate(t){
   const hasRowEditors = (t.layers || []).some(layer => layer.type === 'edit_row');
   return (t.layers || []).filter(layer => {
-    if (hasRowEditors && ['schedule_list','qr_caption'].includes(layer.type)) return false;
+    if (hasRowEditors && ['schedule_list','qr_caption','list','social_footer'].includes(layer.type)) return false;
     return ['text','wrap','list','schedule_list','qr_caption','social_footer','static','edit_row'].includes(layer.type)
       && (!layer.hidden || isAdminMode);
   });

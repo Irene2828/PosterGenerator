@@ -174,6 +174,10 @@
     overflow:hidden;
   }
   .preview-caption{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
+  .preview-actions{margin-top:10px;display:flex;justify-content:center;gap:8px;}
+  .subtle-undo{border:1px solid var(--border);background:#fff;color:var(--muted);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;opacity:.78;}
+  .subtle-undo:hover,.subtle-undo:focus{opacity:1;color:var(--ink);border-color:var(--border-strong);outline:none;}
+  .subtle-undo:disabled{opacity:.35;cursor:not-allowed;}
   
   .adv-ctrls {
     margin-top: 8px;
@@ -256,6 +260,9 @@
 	        <div class="admin-guide h"></div>
 	        <div class="admin-guide selected-v" id="selectedGuideV"></div>
 	        <div class="admin-guide selected-h" id="selectedGuideH"></div>
+	      </div>
+	      <div class="preview-actions">
+	        <button type="button" class="subtle-undo" id="userUndoBtn">Undo last edit</button>
 	      </div>
 	    </div>
 	  </div>
@@ -1160,6 +1167,7 @@ const stage = document.getElementById('posterStage');
 let selectedAdminLayer = null;
 let lastQrStatusText = '';
 let adminUndoStack = [];
+let isRestoringUndo = false;
 
 function getLayerOverrideSnapshot(tplKey = currentTpl){
   try { return JSON.parse(localStorage.getItem(overrideStorageKey(tplKey)) || '{}'); }
@@ -1167,14 +1175,26 @@ function getLayerOverrideSnapshot(tplKey = currentTpl){
 }
 
 function pushUndoSnapshot(){
+  if (isRestoringUndo) return;
   const copy = {};
   COPY_FIELD_IDS.forEach(id => { copy[id] = document.getElementById(id).value; });
+  pushUndoSnapshotFrom(copy, getLayerOverrideSnapshot(currentTpl));
+}
+
+function pushUndoSnapshotFrom(copy, overrides){
+  if (isRestoringUndo) return;
   adminUndoStack.push({
     tpl: currentTpl,
     copy,
-    overrides: getLayerOverrideSnapshot(currentTpl)
+    overrides: overrides || getLayerOverrideSnapshot(currentTpl)
   });
   if (adminUndoStack.length > 60) adminUndoStack.shift();
+  updateUserUndoButton();
+}
+
+function updateUserUndoButton(){
+  const btn = document.getElementById('userUndoBtn');
+  if (btn) btn.textContent = adminUndoStack.length ? 'Undo last edit' : 'Restore template text';
 }
 
 function overrideStorageKey(tplKey){
@@ -1304,6 +1324,33 @@ function commitLayerEdit(layer, value, trackUndo = true){
   render();
 }
 
+function undoLastUserEdit(){
+  const snapshot = adminUndoStack.pop();
+  isRestoringUndo = true;
+  if (snapshot){
+    currentTpl = snapshot.tpl;
+    COPY_FIELD_IDS.forEach(id => {
+      const field = document.getElementById(id);
+      if (field && snapshot.copy[id] !== undefined) field.value = snapshot.copy[id];
+    });
+    localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
+    applyLayerOverrides(currentTpl);
+  } else {
+    const defaults = getTemplateDefaults(currentTpl);
+    COPY_FIELD_IDS.forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.value = defaults[id] || '';
+    });
+  }
+  selectedAdminLayer = null;
+  saveCopyDraft(currentTpl);
+  refreshActive();
+  updateAdminGuides();
+  render();
+  isRestoringUndo = false;
+  updateUserUndoButton();
+}
+
 function openVisualEditor(layer, rect){
   selectAdminLayer(layer);
   const existing = editOverlay.querySelector('.visual-editor');
@@ -1322,13 +1369,13 @@ function openVisualEditor(layer, rect){
   editor.style.left = rect.left + 'px';
   editor.style.top = rect.top + 'px';
   editor.style.width = Math.max(160, rect.width) + 'px';
-  editor.style.minHeight = Math.max(36, rect.height) + 'px';
+  editor.style.minHeight = Math.max(18, rect.height) + 'px';
   editor.style.font = posterFont;
   editor.style.color = resolveColor(t, source.color || layer.color);
   editor.style.textAlign = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'left');
   editor.style.letterSpacing = ((layer.letterSpacing || 0) * displayScale) + 'px';
   if (layer.lineHeight || source.lineHeight) editor.style.lineHeight = Math.max(1, Math.round((layer.lineHeight || source.lineHeight) * displayScale)) + 'px';
-  if (useTextarea) editor.style.height = Math.max(52, rect.height + 14) + 'px';
+  if (useTextarea) editor.style.height = Math.max(24, rect.height + 2) + 'px';
   editOverlay.appendChild(editor);
   editor.focus();
   editor.select();
@@ -1422,19 +1469,7 @@ function deleteSelectedLayer(){
 }
 
 function undoAdminChange(){
-  const snapshot = adminUndoStack.pop();
-  if (!snapshot) return;
-  currentTpl = snapshot.tpl;
-  COPY_FIELD_IDS.forEach(id => {
-    if (snapshot.copy[id] !== undefined) document.getElementById(id).value = snapshot.copy[id];
-  });
-  localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
-  applyLayerOverrides(currentTpl);
-  selectedAdminLayer = null;
-  saveCopyDraft(currentTpl);
-  refreshActive();
-  updateAdminGuides();
-  render();
+  undoLastUserEdit();
 }
 
 function updateAdminGuides(){
@@ -1487,13 +1522,15 @@ function updateEditOverlay(){
     const top = (dy + layer.y * designH * fit) * scaleY;
     const width = Math.max(80, (layer.maxW ? layer.maxW * designW * fit * scaleX : fontPx * 8));
     const lineCount = layer.type === 'edit_row'
-      ? estimatedOverlayLineCount(layer, width, fontPx)
+      ? 1
       : layer.type === 'schedule_list' ? (layer.maxItems || 2)
       : layer.type === 'qr_caption' ? 3
       : layer.type === 'list' ? (layer.maxItems || 2)
       : layer.type === 'wrap' ? estimatedOverlayLineCount(layer, width, fontPx)
       : 1;
-    const height = Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
+    const height = layer.type === 'edit_row'
+      ? Math.max(14, fontPx * 1.25)
+      : Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
     const hot = document.createElement('button');
     hot.type = 'button';
     hot.className = 'edit-hotspot align-' + (layer.align || 'center') + (isAdminMode ? ' admin-draggable' : '');
@@ -1796,8 +1833,27 @@ function exportTemplateJSON() {
    FORM WIRING
    ========================================================================= */
 COPY_FIELD_IDS
-  .forEach(id => document.getElementById(id).addEventListener('input', () => { saveCopyDraft(); render(); }));
+  .forEach(id => {
+    const field = document.getElementById(id);
+    field.addEventListener('focus', () => {
+      const copy = {};
+      COPY_FIELD_IDS.forEach(fieldId => { copy[fieldId] = document.getElementById(fieldId).value; });
+      field.dataset.undoSnapshot = JSON.stringify(copy);
+      field.dataset.undoPushed = 'false';
+    });
+    field.addEventListener('input', () => {
+      if (!isRestoringUndo && field.dataset.undoPushed !== 'true'){
+        try { pushUndoSnapshotFrom(JSON.parse(field.dataset.undoSnapshot || '{}')); }
+        catch (e) { pushUndoSnapshot(); }
+        field.dataset.undoPushed = 'true';
+      }
+      saveCopyDraft();
+      render();
+    });
+  });
 document.getElementById('f-format').addEventListener('change', render);
+document.getElementById('userUndoBtn').addEventListener('click', undoLastUserEdit);
+updateUserUndoButton();
 
 
 

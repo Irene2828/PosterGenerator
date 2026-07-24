@@ -510,9 +510,15 @@ const TEMPLATES = {
       { id:'date',     type:'text',   x:0.5000,y:0.7574, align:'center', font:'600 175px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.7109 },
       { id:'location', type:'text',   x:0.5000,y:0.7958, align:'center', font:'600 117px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.5808 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8268, align:'group-center-left', font:'500 67px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:75, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:75 },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8415, align:'center', field:'f-bullets', row:0, maxW:0.32, lineHeight:75 },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.8562, align:'center', field:'f-bullets', row:1, maxW:0.32, lineHeight:75 },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9191, size:0.1005 },
       { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4 },
-      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75 }
+      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75 },
+      { id:'footIntro', type:'edit_row', x:0.1313,y:0.9540, align:'left', field:'f-footintro', maxW:0.5417, lineHeight:75 },
+      { id:'url',       type:'edit_row', x:0.1313,y:0.9687, align:'left', field:'f-url', maxW:0.5417, lineHeight:75 },
+      { id:'email',     type:'edit_row', x:0.1313,y:0.9834, align:'left', field:'f-email', prefix:'e-mail: ', maxW:0.5417, lineHeight:75 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent' },
@@ -537,9 +543,15 @@ const TEMPLATES = {
       { id:'location', type:'text',   x:0.5000,y:0.8170, align:'center', font:'600 72px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.4800 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:56, bullet:false, maxItems:1 },
       { id:'bullets',  type:'list',   x:0.5000,y:0.8810, align:'group-center-left', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.2300, lineHeight:54, maxItems:2 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8560, align:'center', field:'f-t1', maxW:0.32, lineHeight:56 },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8810, align:'center', field:'f-bullets', row:0, maxW:0.32, lineHeight:54 },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.8980, align:'center', field:'f-bullets', row:1, maxW:0.32, lineHeight:54 },
       { id:'qr',       type:'qr',     x:0.0147,y:0.9154, size:0.0868 },
       { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9331, color:'ink', alpha:0.95, lineWidth:4 },
-      { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:42 }
+      { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:42 },
+      { id:'footIntro', type:'edit_row', x:0.1144,y:0.9533, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:42 },
+      { id:'url',       type:'edit_row', x:0.1144,y:0.9666, align:'left', field:'f-url', maxW:0.6060, lineHeight:42 },
+      { id:'email',     type:'edit_row', x:0.1144,y:0.9799, align:'left', field:'f-email', prefix:'e-mail: ', maxW:0.6060, lineHeight:42 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent' }
@@ -647,6 +659,7 @@ function drawBackground(ctx, t, w, h){
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.hidden) return;
+  if (layer.type === 'edit_row') return;
   const designW = t.w || 1122;
   const s = w / designW; // uniform scale factor from design space to actual canvas size
   ctx.textBaseline = 'alphabetic';
@@ -1044,14 +1057,25 @@ function applyLayerOverrides(tplKey){
 Object.keys(TEMPLATES).forEach(applyLayerOverrides);
 
 function editableLayersForTemplate(t){
-  return (t.layers || []).filter(layer => (
-    ['text','wrap','list','schedule_list','qr_caption','social_footer','static'].includes(layer.type)
-    && (!layer.hidden || isAdminMode)
-  ));
+  const hasRowEditors = (t.layers || []).some(layer => layer.type === 'edit_row');
+  return (t.layers || []).filter(layer => {
+    if (hasRowEditors && ['schedule_list','qr_caption'].includes(layer.type)) return false;
+    return ['text','wrap','list','schedule_list','qr_caption','social_footer','static','edit_row'].includes(layer.type)
+      && (!layer.hidden || isAdminMode);
+  });
 }
 
 function getLayerEditValue(layer){
   const copy = getCopy();
+  if (layer.type === 'edit_row'){
+    const field = document.getElementById(layer.field);
+    if (!field) return '';
+    if (layer.row !== undefined){
+      return (field.value || '').split('\n')[layer.row] || '';
+    }
+    const value = field.value || '';
+    return layer.prefix && value ? layer.prefix + value : value;
+  }
   if (layer.id === 'schedule') {
     const scheduleLines = (copy.schedule || '').split('   \u2215   ').map(v => v.trim()).filter(Boolean);
     return (layer.includeBullets ? scheduleLines.concat(copy.bullets || []) : scheduleLines).slice(0, layer.maxItems || 4).join('\n');
@@ -1073,7 +1097,19 @@ function getLayerEditValue(layer){
 function commitLayerEdit(layer, value){
   const lines = value.split('\n').map(v => v.trim());
   const nonEmptyLines = lines.filter(Boolean);
-  if (layer.id === 'schedule'){
+  if (layer.type === 'edit_row'){
+    const field = document.getElementById(layer.field);
+    if (field){
+      if (layer.row !== undefined){
+        const rows = (field.value || '').split('\n');
+        while (rows.length <= layer.row) rows.push('');
+        rows[layer.row] = value.trim();
+        field.value = rows.join('\n').replace(/\n+$/,'');
+      } else {
+        field.value = value.replace(layer.prefix || '', '').trim();
+      }
+    }
+  } else if (layer.id === 'schedule'){
     if (layer.includeBullets){
       document.getElementById('f-t1').value = nonEmptyLines[0] || '';
       document.getElementById('f-t2').value = '';
@@ -1112,7 +1148,7 @@ function openVisualEditor(layer, rect){
   selectAdminLayer(layer);
   const existing = editOverlay.querySelector('.visual-editor');
   if (existing) existing.remove();
-  const editor = document.createElement(layer.id === 'date' || layer.type === 'text' ? 'input' : 'textarea');
+  const editor = document.createElement(layer.id === 'date' || layer.type === 'text' || layer.type === 'edit_row' ? 'input' : 'textarea');
   editor.className = 'visual-editor';
   editor.value = getLayerEditValue(layer);
   editor.style.left = rect.left + 'px';
@@ -1206,7 +1242,7 @@ function updateEditOverlay(){
   const dx = (canvas.width - designW * fit) / 2;
   const dy = (canvas.height - designH * fit) / 2;
   editableLayersForTemplate(t).forEach(layer => {
-    const fontPx = parseInt(layer.font.match(/(\d+)px/)[1], 10) * fit * scaleX;
+    const fontPx = (layer.font ? parseInt(layer.font.match(/(\d+)px/)[1], 10) : 28) * fit * scaleX;
     const lineCount = layer.type === 'schedule_list' ? (layer.maxItems || 2) : layer.type === 'qr_caption' ? 3 : layer.type === 'list' ? (layer.maxItems || 2) : layer.type === 'wrap' ? 2 : 1;
     const left = (dx + layer.x * designW * fit) * scaleX;
     const top = (dy + layer.y * designH * fit) * scaleY;
@@ -1216,6 +1252,7 @@ function updateEditOverlay(){
     hot.type = 'button';
     hot.className = 'edit-hotspot align-' + (layer.align || 'center') + (isAdminMode ? ' admin-draggable' : '');
     hot.title = 'Edit ' + layer.id;
+    if (layer.type === 'edit_row') hot.style.zIndex = '4';
     hot.style.left = left + 'px';
     hot.style.top = top + 'px';
     hot.style.width = width + 'px';
@@ -1319,26 +1356,27 @@ Object.entries(TEMPLATES).forEach(([key,t])=>{
   picker.appendChild(card);
 });
 function refreshActive(){ [...picker.children].forEach(c=>c.classList.toggle('active', c.dataset.key===currentTpl)); }
-function resetCopyFields(){
-  ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-}
 function drawThumb(key){
   if (key === 'custom' && typeof syncCustomLayers === 'function') syncCustomLayers();
   const card = picker.querySelector(`[data-key="${key}"]`);
   if (!card) return;
   const c = card.querySelector('canvas');
   if (c) {
+    const activeDraft = {};
+    COPY_FIELD_IDS.forEach(id => { activeDraft[id] = document.getElementById(id).value; });
     const t = TEMPLATES[key];
     const tw = t.w || 1122;
     const th = t.h || 1588;
     c.width = 220;
     c.height = Math.round(220 * th / tw);
-    renderToCanvas(c, key, c.width, c.height);
+    loadCopyDraft(key);
+    renderToCanvas(c, key, c.width, c.height, () => {
+      COPY_FIELD_IDS.forEach(id => { document.getElementById(id).value = activeDraft[id] || ''; });
+    });
   }
 }
-Object.keys(TEMPLATES).forEach(k => drawThumb(k));
 loadCopyDraft(currentTpl);
+Object.keys(TEMPLATES).forEach(k => drawThumb(k));
 
 /* =========================================================================
    SECRET ADMIN BUILDER

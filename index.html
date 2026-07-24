@@ -137,7 +137,12 @@
   .qr-status.qr-active{border:1px solid #BFE6CC;background:#EFFAF2;border-radius:8px;padding:8px 10px;color:#315D3A;}
   .qr-badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:#177245;color:#fff;font-size:10px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;opacity:0;transition:opacity .2s;}
   .qr-status.qr-active .qr-badge{opacity:1;}
-  .qr-processed{background:#F7FBF8!important;border-color:#BFE6CC!important;color:#315D3A;}
+  .field input#f-url{background:#F5F6F8;color:#374151;padding-right:42px;}
+  .qr-input-wrap{position:relative;}
+  .qr-input-wrap::after{content:'\2713';position:absolute;right:15px;top:50%;transform:translateY(-50%) scale(.85);color:#4B5563;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;opacity:0;transition:opacity .18s,transform .18s;pointer-events:none;}
+  .qr-input-wrap.ready::after{opacity:1;transform:translateY(-50%) scale(1);}
+  .qr-processed{background:#FBFDFC!important;border-color:#BFE6CC!important;color:#315D3A;}
+  .qr-caption{margin-top:7px;font-size:12px;line-height:1.35;color:var(--muted);}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:'Inter';font-weight:700;font-size:15px;cursor:pointer;}
   .btn-primary{background:#E01A2B;color:#fff;}
@@ -149,7 +154,7 @@
   canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 12px 32px rgba(0,0,0,.14);display:block;}
   .edit-overlay{position:absolute;inset:0;border-radius:0;pointer-events:none;}
   .edit-hotspot{position:absolute;transform:translate(-50%,-76%);min-width:34px;min-height:18px;border:1px solid transparent;border-radius:3px;pointer-events:auto;cursor:text;background:transparent;padding:0;appearance:none;}
-  .edit-hotspot.admin-draggable{cursor:move;border-color:transparent;background:transparent;}
+  .edit-hotspot.admin-draggable{cursor:move;border-color:rgba(13,139,255,.45);background:rgba(13,139,255,.035);}
   .edit-hotspot.admin-draggable:hover,
   .edit-hotspot.admin-draggable.selected{border-color:rgba(13,139,255,.95);background:rgba(13,139,255,.08);}
   .admin-guide{display:none;position:absolute;pointer-events:none;background:rgba(13,139,255,.72);z-index:3;}
@@ -162,10 +167,11 @@
   .edit-hotspot.align-right{transform:translate(-100%,-76%);}
   .edit-hotspot:hover{border-color:rgba(13,139,255,.9);background:rgba(13,139,255,.08);}
   .visual-editor{
-    position:absolute;z-index:5;border:2px solid var(--blue);border-radius:6px;
-    background:rgba(255,255,255,.96);color:#111;padding:6px 8px;
-    font-family:'Inter',sans-serif;font-size:15px;line-height:1.3;resize:none;
-    box-shadow:0 8px 24px rgba(0,0,0,.18);outline:none;pointer-events:auto;
+    position:absolute;z-index:5;border:1.5px solid rgba(13,139,255,.9);border-radius:3px;
+    background:rgba(13,139,255,.06);color:inherit;padding:0 2px;
+    font-family:inherit;font-size:inherit;line-height:inherit;resize:none;
+    box-shadow:0 0 0 2px rgba(255,255,255,.16);outline:none;pointer-events:auto;
+    overflow:hidden;
   }
   .preview-caption{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
   
@@ -193,8 +199,11 @@
   #adminPanel {
     display: none;
     position: fixed;
-    bottom: 20px;
+    top: 96px;
     right: 20px;
+    bottom: auto;
+    max-height: calc(100vh - 120px);
+    overflow: auto;
     background: #F4F6F9;
     color: var(--ink);
     padding: 16px;
@@ -219,6 +228,7 @@
   }
   .admin-tool-row{display:flex;gap:5px;margin-bottom:8px;}
   .admin-tool-row button{flex:1;}
+  .admin-danger{color:#9B0000!important;}
   #qrHidden{position:absolute;left:-9999px;top:-9999px;}
 </style>
 </head>
@@ -255,9 +265,10 @@
 
 	    <div class="field">
 	      <label>QR code destination</label>
-	      <input type="text" id="f-url" placeholder="mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026">
-	      <button class="btn" id="useTemplateQrBtn" style="margin-top:8px;padding:9px 10px;font-size:12px;background:#fff;border:1px solid var(--border-strong);color:var(--ink);">Use template link</button>
-	      <div class="qr-status" id="qrStatus"><strong>QR ready.</strong><span class="qr-badge" id="qrBadge">&#10003; Updated</span> Scan with phone before downloading.</div>
+	      <div class="qr-input-wrap" id="qrInputWrap">
+	        <input type="text" id="f-url" placeholder="mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026">
+	      </div>
+	      <div class="qr-caption">Scan QR code before downloading your poster.</div>
 	    </div>
 
 	    <div class="field">
@@ -339,12 +350,12 @@ Food truck will be present"></textarea>
   <div class="admin-layer-tools" id="adminLayerTools">
     <div class="admin-layer-name" id="adminLayerName">No layer selected</div>
     <div class="admin-tool-grid">
-      <button onclick="nudgeSelectedLayer(0,-1)">Up</button>
-      <button onclick="nudgeSelectedLayer(-1,0)">Left</button>
-      <button onclick="nudgeSelectedLayer(1,0)">Right</button>
-      <button onclick="nudgeSelectedLayer(0,1)">Down</button>
-      <button onclick="nudgeSelectedLayer(0,-10)">Up 10</button>
-      <button onclick="nudgeSelectedLayer(0,10)">Down 10</button>
+      <button onclick="nudgeSelectedLayer(0,-5)">Up</button>
+      <button onclick="nudgeSelectedLayer(-5,0)">Left</button>
+      <button onclick="nudgeSelectedLayer(5,0)">Right</button>
+      <button onclick="nudgeSelectedLayer(0,5)">Down</button>
+      <button onclick="nudgeSelectedLayer(-25,0)">Left 25</button>
+      <button onclick="nudgeSelectedLayer(25,0)">Right 25</button>
     </div>
     <div class="admin-tool-row">
       <button onclick="alignSelectedLayer('left')">Left</button>
@@ -354,7 +365,11 @@ Food truck will be present"></textarea>
     <div class="admin-tool-row">
       <button onclick="spaceSelectedLayer(-1)">A-</button>
       <button onclick="spaceSelectedLayer(1)">A+</button>
+      <button onclick="undoAdminChange()">Undo</button>
+    </div>
+    <div class="admin-tool-row">
       <button onclick="toggleSelectedLayer()">Hide/show</button>
+      <button class="admin-danger" onclick="deleteSelectedLayer()">Delete</button>
     </div>
   </div>
   <br>
@@ -644,6 +659,85 @@ function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}) {
   ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dW, dH);
 }
 
+function hasEditRowsFor(t, fields){
+  return (t.layers || []).some(layer => layer.type === 'edit_row' && fields.includes(layer.field));
+}
+
+function styleSourceForEditRow(t, layer){
+  const byId = id => (t.layers || []).find(item => item.id === id);
+  if (['f-footintro','f-url','f-email'].includes(layer.field)) return byId('footer') || layer;
+  if (layer.field === 'f-t1' || layer.field === 'f-t2' || layer.field === 'f-t3') return byId('schedule') || layer;
+  if (layer.field === 'f-bullets') return byId('bullets') || byId('schedule') || layer;
+  return byId((layer.field || '').replace(/^f-/, '')) || layer;
+}
+
+function drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, boldPattern){
+  let cursor = x;
+  text.split(/(\s+)/).filter(Boolean).forEach(part => {
+    ctx.font = boldPattern.test(part) ? boldFont : regularFont;
+    ctx.fillStyle = color;
+    ctx.fillText(part, cursor, y);
+    cursor += ctx.measureText(part).width;
+  });
+}
+
+function drawEditRow(ctx, t, layer, copy, w, h, scale){
+  const source = styleSourceForEditRow(t, layer);
+  const rawText = getLayerEditValue(layer).trim();
+  if (!rawText) return;
+  if (['f-footintro','f-url','f-email'].includes(layer.field) && !copy.url) return;
+  const sourceFont = source.font || '500 24px sans-serif';
+  const px = Math.round(parseInt(sourceFont.match(/(\d+)px/)[1],10) * scale);
+  const regularFont = sourceFont.replace(/\d+px/, px+'px');
+  const boldFont = (source.boldFont || sourceFont).replace(/\d+px/, px+'px');
+  const lineHeight = (layer.lineHeight || source.lineHeight || px * 1.2) * scale;
+  const maxWidth = (layer.maxW || source.maxW || 0.5) * w;
+  const color = resolveColor(t, source.color || layer.color);
+  const x = layer.x * w;
+  let y = layer.y * h;
+  ctx.textAlign = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'left');
+  ctx.fillStyle = color;
+
+  if (layer.field === 'f-footintro'){
+    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /visit:|e-mail:|QR code|property's|People|Culture/i);
+    return;
+  }
+  if (layer.field === 'f-email'){
+    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /^e-mail:/i);
+    return;
+  }
+  if (layer.field === 'f-url'){
+    if (source.type === 'social_footer'){
+      drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /^visit:$/i);
+      const urlText = rawText.replace(/^visit:\s*/i, '');
+      const prefixWidth = /^visit:\s*/i.test(rawText) ? (() => {
+        ctx.font = boldFont;
+        return ctx.measureText(rawText.match(/^visit:\s*/i)[0]).width;
+      })() : 0;
+      ctx.font = regularFont;
+      const width = ctx.measureText(urlText).width;
+      ctx.beginPath();
+      ctx.lineWidth = Math.max(1, 1 * scale);
+      ctx.strokeStyle = color;
+      ctx.moveTo(x + prefixWidth, y + 3 * scale);
+      ctx.lineTo(x + prefixWidth + width, y + 3 * scale);
+      ctx.stroke();
+      return;
+    }
+    const text = rawText.replace(/^visit:\s*/i, '');
+    ctx.font = regularFont;
+    drawTextLine(ctx, text, x, y, layer);
+    return;
+  }
+
+  const prefix = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false) ? '\u2022  ' : '';
+  ctx.font = regularFont;
+  wrapLines(ctx, prefix + rawText, maxWidth, regularFont).forEach(line => {
+    drawTextLine(ctx, line, x, y, layer);
+    y += lineHeight;
+  });
+}
+
 function chooseStrategy(t, targetW, targetH) {
   const nativeRatio = (t.w || W) / (t.h || H);
   const targetRatio = targetW / targetH;
@@ -666,12 +760,42 @@ function drawBackground(ctx, t, w, h){
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.hidden) return;
-  if (layer.type === 'edit_row') return;
   const designW = t.w || 1122;
   const s = w / designW; // uniform scale factor from design space to actual canvas size
   ctx.textBaseline = 'alphabetic';
   ctx.globalAlpha = layer.alpha ?? 1;
   applyTextShadow(ctx, layer, s);
+
+  if (layer.type === 'edit_row'){
+    drawEditRow(ctx, t, layer, copy, w, h, s);
+    ctx.globalAlpha = 1;
+    clearTextShadow(ctx);
+    return;
+  }
+
+  if (layer.type === 'qr_caption' && hasEditRowsFor(t, ['f-footintro','f-url','f-email'])){
+    ctx.globalAlpha = 1;
+    clearTextShadow(ctx);
+    return;
+  }
+
+  if (layer.type === 'social_footer' && hasEditRowsFor(t, ['f-url','f-email','f-footintro'])){
+    ctx.globalAlpha = 1;
+    clearTextShadow(ctx);
+    return;
+  }
+
+  if (layer.type === 'schedule_list' && hasEditRowsFor(t, ['f-t1','f-t2','f-t3','f-bullets'])){
+    ctx.globalAlpha = 1;
+    clearTextShadow(ctx);
+    return;
+  }
+
+  if (layer.type === 'list' && hasEditRowsFor(t, ['f-bullets'])){
+    ctx.globalAlpha = 1;
+    clearTextShadow(ctx);
+    return;
+  }
 
   if (layer.type === 'static'){
     const value = layer.text || '';
@@ -751,6 +875,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'qr_caption'){
+    if (!copy.url) { ctx.globalAlpha = 1; return; }
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const regularFont = layer.font.replace(/\d+px/, px+'px');
     const boldFont = (layer.boldFont || layer.font).replace(/\d+px/, px+'px');
@@ -787,6 +912,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'social_footer'){
+    if (!copy.url) { ctx.globalAlpha = 1; return; }
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const regularFont = layer.font.replace(/\d+px/, px+'px');
     const boldFont = (layer.boldFont || layer.font).replace(/\d+px/, px+'px');
@@ -926,8 +1052,9 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
     if (qrLayer && qrCanvas) drawLayer(ctx, t, qrLayer, copy, wPx, hPx, qrCanvas);
     if (cb) cb();
   };
-  if (qrLayer){
-    getQrCanvas(qrUrlForTemplate(), (qrCanvas) => drawTextLayers(qrCanvas));
+  const qrUrl = qrUrlForTemplate();
+  if (qrLayer && qrUrl){
+    getQrCanvas(qrUrl, (qrCanvas) => drawTextLayers(qrCanvas));
   } else {
     drawTextLayers(null);
   }
@@ -977,10 +1104,21 @@ function normalizedQrUrl(value){
   return withScheme.replace(/^https:\/\/mskcc\.convio\.net/i, 'http://mskcc.convio.net');
 }
 
+function isValidQrInput(value){
+  const raw = (value || '').trim();
+  if (!raw || /\s/.test(raw)) return false;
+  try {
+    const candidate = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+    const url = new URL(candidate);
+    return !!url.hostname && url.hostname.includes('.') && !url.hostname.startsWith('.') && !url.hostname.endsWith('.');
+  } catch (e) {
+    return false;
+  }
+}
+
 function qrUrlForTemplate(){
-  const current = normalizedQrUrl(document.getElementById('f-url').value);
-  const defaultUrl = normalizedQrUrl((TEMPLATE_COPY[currentTpl] || {}).url || '');
-  return current || defaultUrl;
+  const value = document.getElementById('f-url').value;
+  return isValidQrInput(value) ? normalizedQrUrl(value) : '';
 }
 
 function extractUrlFromText(value){
@@ -990,40 +1128,29 @@ function extractUrlFromText(value){
 
 function updateQrStatus(){
   const t = TEMPLATES[currentTpl];
-  const qrStatus = document.getElementById('qrStatus');
   const urlInput = document.getElementById('f-url');
-  if (!qrStatus || !urlInput) return;
+  const qrInputWrap = document.getElementById('qrInputWrap');
+  if (!urlInput) return;
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   const copy = getCopy();
   const defaultUrl = (TEMPLATE_COPY[currentTpl] || {}).url || '';
   urlInput.placeholder = defaultUrl || copy.url || '';
   if (!hasQrLayer){
-    qrStatus.classList.remove('qr-active');
     urlInput.classList.remove('qr-processed');
-    qrStatus.innerHTML = 'This template has no replaceable QR layer yet.';
+    if (qrInputWrap) qrInputWrap.classList.remove('ready');
     return;
   }
   const encoded = qrUrlForTemplate();
-  const hasPath = /^https?:\/\/[^/]+\/.+/i.test(encoded);
-  const inputUrl = normalizedQrUrl(urlInput.value);
-  const usingTemplateLink = !inputUrl && !!encoded;
-  qrStatus.classList.add('qr-active');
   urlInput.classList.toggle('qr-processed', !!encoded);
-  if (!encoded){
-    qrStatus.innerHTML = '<strong>Enter a QR destination.</strong>';
-  } else if (usingTemplateLink){
-    qrStatus.innerHTML = '<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>Using template link. Scan with phone before downloading.';
-  } else if (!hasPath){
-    qrStatus.innerHTML = '<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>Domain-only link. Scan with phone before downloading.';
-  } else {
-    qrStatus.innerHTML = '<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>Scan with phone before downloading.';
-  }
+  if (qrInputWrap) qrInputWrap.classList.toggle('ready', !!encoded);
   if (lastQrStatusText !== encoded){
-    qrStatus.animate([
-      { transform:'scale(1)', boxShadow:'0 0 0 rgba(23,114,69,0)' },
-      { transform:'scale(1.015)', boxShadow:'0 0 0 4px rgba(23,114,69,.18)' },
-      { transform:'scale(1)', boxShadow:'0 0 0 rgba(23,114,69,0)' }
-    ], { duration: 520, easing:'ease-out' });
+    if (qrInputWrap) {
+      qrInputWrap.animate([
+        { transform:'scale(1)' },
+        { transform:'scale(1.01)' },
+        { transform:'scale(1)' }
+      ], { duration: 420, easing:'ease-out' });
+    }
     lastQrStatusText = encoded;
   }
 }
@@ -1032,6 +1159,23 @@ const editOverlay = document.getElementById('editOverlay');
 const stage = document.getElementById('posterStage');
 let selectedAdminLayer = null;
 let lastQrStatusText = '';
+let adminUndoStack = [];
+
+function getLayerOverrideSnapshot(tplKey = currentTpl){
+  try { return JSON.parse(localStorage.getItem(overrideStorageKey(tplKey)) || '{}'); }
+  catch (e) { return {}; }
+}
+
+function pushUndoSnapshot(){
+  const copy = {};
+  COPY_FIELD_IDS.forEach(id => { copy[id] = document.getElementById(id).value; });
+  adminUndoStack.push({
+    tpl: currentTpl,
+    copy,
+    overrides: getLayerOverrideSnapshot(currentTpl)
+  });
+  if (adminUndoStack.length > 60) adminUndoStack.shift();
+}
 
 function overrideStorageKey(tplKey){
   return 'posterLayerOverrides:' + tplKey;
@@ -1109,7 +1253,8 @@ function getLayerEditValue(layer){
   return field ? field.value || copy[layer.id] || '' : '';
 }
 
-function commitLayerEdit(layer, value){
+function commitLayerEdit(layer, value, trackUndo = true){
+  if (trackUndo) pushUndoSnapshot();
   const lines = value.split('\n').map(v => v.trim());
   const nonEmptyLines = lines.filter(Boolean);
   if (layer.type === 'edit_row'){
@@ -1166,12 +1311,23 @@ function openVisualEditor(layer, rect){
   const currentValue = getLayerEditValue(layer);
   const useTextarea = layer.type !== 'text' && layer.id !== 'date' || currentValue.length > 34;
   const editor = document.createElement(useTextarea ? 'textarea' : 'input');
+  const t = TEMPLATES[currentTpl];
+  const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+  const designW = t.w || W;
+  const displayScale = canvas.clientWidth / designW;
+  const layerFont = source.font || layer.font || '500 28px "RigidSquareWeb", "Chakra Petch", sans-serif';
+  const posterFont = layerFont.replace(/(\d+)px/, (_, px) => Math.max(8, Math.round(Number(px) * displayScale)) + 'px');
   editor.className = 'visual-editor';
   editor.value = currentValue;
   editor.style.left = rect.left + 'px';
   editor.style.top = rect.top + 'px';
   editor.style.width = Math.max(160, rect.width) + 'px';
   editor.style.minHeight = Math.max(36, rect.height) + 'px';
+  editor.style.font = posterFont;
+  editor.style.color = resolveColor(t, source.color || layer.color);
+  editor.style.textAlign = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'left');
+  editor.style.letterSpacing = ((layer.letterSpacing || 0) * displayScale) + 'px';
+  if (layer.lineHeight || source.lineHeight) editor.style.lineHeight = Math.max(1, Math.round((layer.lineHeight || source.lineHeight) * displayScale)) + 'px';
   if (useTextarea) editor.style.height = Math.max(52, rect.height + 14) + 'px';
   editOverlay.appendChild(editor);
   editor.focus();
@@ -1198,24 +1354,48 @@ function selectAdminLayer(layer){
   updateAdminGuides();
 }
 
+function refreshAdminPanel(){
+  const panel = document.getElementById('adminPanel');
+  const tools = document.getElementById('adminLayerTools');
+  const name = document.getElementById('adminLayerName');
+  if (panel) panel.style.display = isAdminMode ? 'block' : 'none';
+  if (tools) tools.style.display = isAdminMode ? 'block' : 'none';
+  if (name && !selectedAdminLayer) name.textContent = 'Select a text row on the poster';
+}
+
+function layersMovedWith(layer){
+  return [layer];
+}
+
+function moveLayerGroup(layer, dx, dy){
+  layersMovedWith(layer).forEach(item => {
+    item.x += dx;
+    item.y += dy;
+  });
+}
+
 function nudgeSelectedLayer(dx, dy){
   if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
   const t = TEMPLATES[currentTpl];
-  selectedAdminLayer.x += dx / (t.w || W);
-  selectedAdminLayer.y += dy / (t.h || H);
+  moveLayerGroup(selectedAdminLayer, dx / (t.w || W), dy / (t.h || H));
   saveLayerOverrides();
   render();
 }
 
 function alignSelectedLayer(align){
   if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
   selectedAdminLayer.align = align;
+  if (align === 'left') selectedAdminLayer.x -= 0.005;
+  if (align === 'right') selectedAdminLayer.x += 0.005;
   saveLayerOverrides();
   render();
 }
 
 function spaceSelectedLayer(delta){
   if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
   selectedAdminLayer.letterSpacing = Math.max(-20, Math.min(80, (selectedAdminLayer.letterSpacing || 0) + delta));
   saveLayerOverrides();
   render();
@@ -1223,8 +1403,37 @@ function spaceSelectedLayer(delta){
 
 function toggleSelectedLayer(){
   if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
   selectedAdminLayer.hidden = !selectedAdminLayer.hidden;
   saveLayerOverrides();
+  render();
+}
+
+function deleteSelectedLayer(){
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  if (selectedAdminLayer.type === 'edit_row'){
+    commitLayerEdit(selectedAdminLayer, '', false);
+  } else {
+    selectedAdminLayer.hidden = true;
+    saveLayerOverrides();
+    render();
+  }
+}
+
+function undoAdminChange(){
+  const snapshot = adminUndoStack.pop();
+  if (!snapshot) return;
+  currentTpl = snapshot.tpl;
+  COPY_FIELD_IDS.forEach(id => {
+    if (snapshot.copy[id] !== undefined) document.getElementById(id).value = snapshot.copy[id];
+  });
+  localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
+  applyLayerOverrides(currentTpl);
+  selectedAdminLayer = null;
+  saveCopyDraft(currentTpl);
+  refreshActive();
+  updateAdminGuides();
   render();
 }
 
@@ -1271,7 +1480,9 @@ function updateEditOverlay(){
   const dx = (canvas.width - designW * fit) / 2;
   const dy = (canvas.height - designH * fit) / 2;
   editableLayersForTemplate(t).forEach(layer => {
-    const fontPx = (layer.font ? parseInt(layer.font.match(/(\d+)px/)[1], 10) : 28) * fit * scaleX;
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const sourceFont = source.font || layer.font || '500 28px "RigidSquareWeb", "Chakra Petch", sans-serif';
+    const fontPx = parseInt(sourceFont.match(/(\d+)px/)[1], 10) * fit * scaleX;
     const left = (dx + layer.x * designW * fit) * scaleX;
     const top = (dy + layer.y * designH * fit) * scaleY;
     const width = Math.max(80, (layer.maxW ? layer.maxW * designW * fit * scaleX : fontPx * 8));
@@ -1282,7 +1493,7 @@ function updateEditOverlay(){
       : layer.type === 'list' ? (layer.maxItems || 2)
       : layer.type === 'wrap' ? estimatedOverlayLineCount(layer, width, fontPx)
       : 1;
-    const height = Math.max(24, (layer.lineHeight ? layer.lineHeight * fit * scaleY * lineCount : fontPx * 1.4));
+    const height = Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
     const hot = document.createElement('button');
     hot.type = 'button';
     hot.className = 'edit-hotspot align-' + (layer.align || 'center') + (isAdminMode ? ' admin-draggable' : '');
@@ -1316,11 +1527,12 @@ function updateEditOverlay(){
 function startLayerDrag(e, layer){
   e.preventDefault();
   selectAdminLayer(layer);
+  pushUndoSnapshot();
   const t = TEMPLATES[currentTpl];
   const startX = e.clientX;
   const startY = e.clientY;
-  const layerStartX = layer.x;
-  const layerStartY = layer.y;
+  const linkedLayers = layersMovedWith(layer);
+  const layerStarts = linkedLayers.map(item => ({ item, x: item.x, y: item.y }));
   const displayW = canvas.clientWidth;
   const displayH = canvas.clientHeight;
   const designW = t.w || W;
@@ -1332,8 +1544,10 @@ function startLayerDrag(e, layer){
     const dx = moveEvent.clientX - startX;
     const dy = moveEvent.clientY - startY;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
-    layer.x = layerStartX + (dx / pixelsPerDesignX) / designW;
-    layer.y = layerStartY + (dy / pixelsPerDesignY) / designH;
+    layerStarts.forEach(start => {
+      start.item.x = start.x + (dx / pixelsPerDesignX) / designW;
+      start.item.y = start.y + (dy / pixelsPerDesignY) / designH;
+    });
     updateAdminGuides();
     render();
   };
@@ -1435,7 +1649,7 @@ document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.shiftKey && e.code === 'KeyA') {
     e.preventDefault();
     isAdminMode = !isAdminMode;
-    document.getElementById('adminPanel').style.display = isAdminMode ? 'block' : 'none';
+    refreshAdminPanel();
     updateAdminGuides();
     document.querySelectorAll('.adv-ctrls').forEach(el => {
       el.style.display = isAdminMode ? 'flex' : 'none';
@@ -1583,13 +1797,6 @@ function exportTemplateJSON() {
    ========================================================================= */
 COPY_FIELD_IDS
   .forEach(id => document.getElementById(id).addEventListener('input', () => { saveCopyDraft(); render(); }));
-document.getElementById('f-url').addEventListener('focus', e => e.currentTarget.classList.remove('qr-processed'));
-document.getElementById('useTemplateQrBtn').addEventListener('click', () => {
-  const defaultUrl = (TEMPLATE_COPY[currentTpl] || {}).url || '';
-  document.getElementById('f-url').value = defaultUrl;
-  saveCopyDraft();
-  render();
-});
 document.getElementById('f-format').addEventListener('change', render);
 
 

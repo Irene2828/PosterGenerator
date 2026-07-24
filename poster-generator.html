@@ -971,7 +971,10 @@ function render(){
 function normalizedQrUrl(value){
   const raw = (value || '').trim();
   if (!raw) return '';
-  return /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+  const withScheme = /^https?:\/\//i.test(raw)
+    ? raw
+    : /^mskcc\.convio\.net\//i.test(raw) ? 'http://' + raw : 'https://' + raw;
+  return withScheme.replace(/^https:\/\/mskcc\.convio\.net/i, 'http://mskcc.convio.net');
 }
 
 function qrUrlForTemplate(){

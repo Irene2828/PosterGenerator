@@ -134,6 +134,9 @@
   .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-wash);}
   .qr-status{margin-top:7px;font-size:12px;line-height:1.35;color:var(--muted);}
   .qr-status strong{color:#177245;font-weight:700;}
+  .qr-status.qr-active{border:1px solid #BFE6CC;background:#EFFAF2;border-radius:8px;padding:8px 10px;color:#315D3A;}
+  .qr-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:#177245;color:#fff;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;opacity:0;transition:opacity .2s;}
+  .qr-status.qr-active .qr-badge{opacity:1;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:'Inter';font-weight:700;font-size:15px;cursor:pointer;}
   .btn-primary{background:#E01A2B;color:#fff;}
@@ -145,6 +148,13 @@
   canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 12px 32px rgba(0,0,0,.14);display:block;}
   .edit-overlay{position:absolute;inset:0;border-radius:0;pointer-events:none;}
   .edit-hotspot{position:absolute;transform:translate(-50%,-76%);min-width:34px;min-height:18px;border:1px solid transparent;border-radius:3px;pointer-events:auto;cursor:text;background:transparent;padding:0;appearance:none;}
+  .edit-hotspot.admin-draggable{cursor:move;border-color:rgba(13,139,255,.38);background:rgba(13,139,255,.05);}
+  .admin-guide{display:none;position:absolute;pointer-events:none;background:rgba(13,139,255,.72);z-index:3;}
+  .admin-guide.v{top:0;bottom:0;width:1px;left:50%;}
+  .admin-guide.h{left:0;right:0;height:1px;top:50%;}
+  .admin-guide.selected-v{top:0;bottom:0;width:1px;background:rgba(224,26,43,.72);}
+  .admin-guide.selected-h{left:0;right:0;height:1px;background:rgba(224,26,43,.72);}
+  .poster-stage.admin-guides .admin-guide{display:block;}
   .edit-hotspot.align-left{transform:translate(0,-76%);}
   .edit-hotspot.align-right{transform:translate(-100%,-76%);}
   .edit-hotspot:hover{border-color:rgba(13,139,255,.9);background:rgba(13,139,255,.08);}
@@ -197,6 +207,15 @@
     font-family: monospace;
     font-size: 11px;
   }
+  .admin-layer-tools{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:10px;}
+  .admin-layer-name{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--ink);}
+  .admin-tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px;}
+  .admin-tool-grid button,.admin-tool-row button{
+    border:1px solid var(--border-strong);background:#fff;border-radius:6px;padding:6px 4px;
+    font-size:12px;font-weight:700;cursor:pointer;color:var(--ink);
+  }
+  .admin-tool-row{display:flex;gap:5px;margin-bottom:8px;}
+  .admin-tool-row button{flex:1;}
   #qrHidden{position:absolute;left:-9999px;top:-9999px;}
 </style>
 </head>
@@ -220,6 +239,10 @@
 	      <div class="poster-stage" id="posterStage">
 	        <canvas id="posterCanvas" width="792" height="1224"></canvas>
 	        <div class="edit-overlay" id="editOverlay"></div>
+	        <div class="admin-guide v"></div>
+	        <div class="admin-guide h"></div>
+	        <div class="admin-guide selected-v" id="selectedGuideV"></div>
+	        <div class="admin-guide selected-h" id="selectedGuideH"></div>
 	      </div>
 	    </div>
 	  </div>
@@ -230,15 +253,15 @@
 	    <div class="field">
 	      <label>QR code destination</label>
 	      <input type="text" id="f-url" placeholder="mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026">
-	      <div class="qr-status" id="qrStatus"><strong>QR ready.</strong> Scan the poster preview with a phone before downloading.</div>
+	      <div class="qr-status" id="qrStatus"><strong>QR ready.</strong><span class="qr-badge" id="qrBadge">Updated</span> Scan the poster preview with a phone before downloading.</div>
 	    </div>
 
 	    <div class="field">
 	      <label>Save format</label>
 	      <select id="f-format">
-	        <option value="png">PNG - print-ready 300 DPI</option>
-	        <option value="jpeg">JPEG - print-ready 300 DPI</option>
-	        <option value="pdf">PDF - print-ready 300 DPI</option>
+	        <option value="png">PNG</option>
+	        <option value="pdf">PDF</option>
+	        <option value="jpeg">JPEG</option>
 	      </select>
 	      <div class="qr-status">Downloads are tagged at 300 DPI for print production.</div>
 	    </div>
@@ -307,6 +330,27 @@ Food truck will be present"></textarea>
   <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
   <br>
   <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; background:var(--ink);" onclick="exportTemplateJSON()">Export Template JSON</button>
+  <div class="admin-layer-tools" id="adminLayerTools">
+    <div class="admin-layer-name" id="adminLayerName">No layer selected</div>
+    <div class="admin-tool-grid">
+      <button onclick="nudgeSelectedLayer(0,-1)">Up</button>
+      <button onclick="nudgeSelectedLayer(-1,0)">Left</button>
+      <button onclick="nudgeSelectedLayer(1,0)">Right</button>
+      <button onclick="nudgeSelectedLayer(0,1)">Down</button>
+      <button onclick="nudgeSelectedLayer(0,-10)">Up 10</button>
+      <button onclick="nudgeSelectedLayer(0,10)">Down 10</button>
+    </div>
+    <div class="admin-tool-row">
+      <button onclick="alignSelectedLayer('left')">Left</button>
+      <button onclick="alignSelectedLayer('center')">Center</button>
+      <button onclick="alignSelectedLayer('right')">Right</button>
+    </div>
+    <div class="admin-tool-row">
+      <button onclick="spaceSelectedLayer(-1)">A-</button>
+      <button onclick="spaceSelectedLayer(1)">A+</button>
+      <button onclick="toggleSelectedLayer()">Hide/show</button>
+    </div>
+  </div>
   <br>
   <textarea id="adminExportOutput" style="display:none;" readonly></textarea>
 </div>
@@ -398,7 +442,7 @@ const greyTextShadow = { x:0, y:4, blur:4, color:'rgba(255,255,255,0.2)' };
 
 const TEMPLATES = {
   communityRunRed: {
-    name: 'Facebook Poster',
+    name: 'poster 11 x 17',
     kind: 'image',
     focal: { x: 0.5, y: 0.42 },
     w: 3300,
@@ -435,7 +479,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0340, align:'center', font:'700 112px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent', maxW:0.2500 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0550, align:'center', font:'700 112px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent', maxW:0.2500 },
       { id:'date',     type:'text',   x:0.5000,y:0.7750, align:'center', font:'600 128px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.6880 },
       { id:'location', type:'text',   x:0.5000,y:0.8170, align:'center', font:'600 72px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.4800 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:56, bullet:false, maxItems:1 },
@@ -450,7 +494,7 @@ const TEMPLATES = {
   },
 
   socialTerryRun: {
-    name: 'poster 11 x 17',
+    name: 'Facebook Poster',
     kind: 'image',
     w: 1080,
     h: 1350,
@@ -549,6 +593,7 @@ function drawBackground(ctx, t, w, h){
 }
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
+  if (layer.hidden) return;
   const designW = t.w || 1122;
   const s = w / designW; // uniform scale factor from design space to actual canvas size
   ctx.textBaseline = 'alphabetic';
@@ -572,7 +617,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
         size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
       }
     }
-    ctx.fillText(value, x, y);
+    drawTextLine(ctx, value, x, y, layer);
   }
 
   if (layer.type === 'schedule_list'){
@@ -595,7 +640,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
       ? (layer.x * w) - (widest / 2)
       : layer.x * w;
     let y = layer.y * h;
-    textItems.forEach(item => { ctx.fillText(item, x, y); y += layer.lineHeight * s; });
+    textItems.forEach(item => { drawTextLine(ctx, item, x, y, layer); y += layer.lineHeight * s; });
   }
 
   if (layer.type === 'text'){
@@ -615,7 +660,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
         size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
       }
     }
-    ctx.fillText(value, x, y);
+    drawTextLine(ctx, value, x, y, layer);
   }
 
   if (layer.type === 'wrap'){
@@ -629,7 +674,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
     const x = layer.x * w;
     let y = layer.y * h;
     const lines = wrapLines(ctx, value, layer.maxW * w, font);
-    lines.slice(0,3).forEach(l=>{ ctx.fillText(l, x, y); y += layer.lineHeight * s; });
+    lines.slice(0,3).forEach(l=>{ drawTextLine(ctx, l, x, y, layer); y += layer.lineHeight * s; });
   }
 
   if (layer.type === 'qr_caption'){
@@ -708,9 +753,9 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
     renderedItems.forEach(bulletText=>{
       if (layer.maxW){
         const subLines = wrapLines(ctx, bulletText, layer.maxW * w, font);
-        subLines.forEach(l=>{ ctx.fillText(l, x, y); y += layer.lineHeight * s; });
+        subLines.forEach(l=>{ drawTextLine(ctx, l, x, y, layer); y += layer.lineHeight * s; });
       } else {
-        ctx.fillText(bulletText, x, y);
+        drawTextLine(ctx, bulletText, x, y, layer);
         y += layer.lineHeight * s;
       }
     });
@@ -735,6 +780,27 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
 
   ctx.globalAlpha = 1;
   clearTextShadow(ctx);
+}
+
+function drawTextLine(ctx, text, x, y, layer){
+  const spacing = layer.letterSpacing || 0;
+  if (!spacing){
+    ctx.fillText(text, x, y);
+    return;
+  }
+  const chars = Array.from(text);
+  const totalWidth = chars.reduce((sum, char, index) => sum + ctx.measureText(char).width + (index ? spacing : 0), 0);
+  let cursor = x;
+  if (ctx.textAlign === 'center') cursor -= totalWidth / 2;
+  if (ctx.textAlign === 'right') cursor -= totalWidth;
+  const previousAlign = ctx.textAlign;
+  ctx.textAlign = 'left';
+  chars.forEach((char, index) => {
+    if (index) cursor += spacing;
+    ctx.fillText(char, cursor, y);
+    cursor += ctx.measureText(char).width;
+  });
+  ctx.textAlign = previousAlign;
 }
 
 function applyTextShadow(ctx, layer, scale){
@@ -840,14 +906,64 @@ function updateQrStatus(){
   const copy = getCopy();
   urlInput.placeholder = copy.url || (TEMPLATE_COPY[currentTpl] || {}).url || '';
   if (!hasQrLayer){
+    qrStatus.classList.remove('qr-active');
     qrStatus.innerHTML = 'This template has no replaceable QR layer yet.';
     return;
   }
-  qrStatus.innerHTML = `<strong>QR regenerated.</strong> Encodes ${normalizedQrUrl(copy.url)}. Scan the poster preview with a phone before downloading.`;
+  const encoded = normalizedQrUrl(copy.url);
+  qrStatus.classList.add('qr-active');
+  qrStatus.innerHTML = `<strong>QR regenerated.</strong><span class="qr-badge">Updated</span> Encodes ${encoded}. Scan with phone before downloading.`;
+  if (lastQrStatusText !== encoded){
+    qrStatus.animate([
+      { transform:'scale(1)', boxShadow:'0 0 0 rgba(23,114,69,0)' },
+      { transform:'scale(1.015)', boxShadow:'0 0 0 4px rgba(23,114,69,.18)' },
+      { transform:'scale(1)', boxShadow:'0 0 0 rgba(23,114,69,0)' }
+    ], { duration: 520, easing:'ease-out' });
+    lastQrStatusText = encoded;
+  }
 }
 
 const editOverlay = document.getElementById('editOverlay');
 const stage = document.getElementById('posterStage');
+let selectedAdminLayer = null;
+let lastQrStatusText = '';
+
+function overrideStorageKey(tplKey){
+  return 'posterLayerOverrides:' + tplKey;
+}
+
+function saveLayerOverrides(){
+  const t = TEMPLATES[currentTpl];
+  if (!t) return;
+  const overrides = {};
+  (t.layers || []).forEach(layer => {
+    overrides[layer.id + ':' + layer.type] = {
+      x: layer.x,
+      y: layer.y,
+      align: layer.align,
+      hidden: !!layer.hidden,
+      letterSpacing: layer.letterSpacing || 0
+    };
+  });
+  localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
+}
+
+function applyLayerOverrides(tplKey){
+  const t = TEMPLATES[tplKey];
+  if (!t) return;
+  let overrides = {};
+  try { overrides = JSON.parse(localStorage.getItem(overrideStorageKey(tplKey)) || '{}'); }
+  catch (e) { overrides = {}; }
+  (t.layers || []).forEach(layer => {
+    const saved = overrides[layer.id + ':' + layer.type];
+    if (!saved) return;
+    ['x','y','align','hidden','letterSpacing'].forEach(key => {
+      if (saved[key] !== undefined) layer[key] = saved[key];
+    });
+  });
+}
+
+Object.keys(TEMPLATES).forEach(applyLayerOverrides);
 
 function editableLayersForTemplate(t){
   return (t.layers || []).filter(layer => (
@@ -887,6 +1003,7 @@ function commitLayerEdit(layer, value){
 }
 
 function openVisualEditor(layer, rect){
+  selectAdminLayer(layer);
   const existing = editOverlay.querySelector('.visual-editor');
   if (existing) existing.remove();
   const editor = document.createElement(layer.id === 'date' || layer.type === 'text' ? 'input' : 'textarea');
@@ -909,6 +1026,63 @@ function openVisualEditor(layer, rect){
       editor.blur();
     }
   });
+}
+
+function selectAdminLayer(layer){
+  if (!isAdminMode) return;
+  selectedAdminLayer = layer;
+  const tools = document.getElementById('adminLayerTools');
+  const name = document.getElementById('adminLayerName');
+  if (tools) tools.style.display = 'block';
+  if (name) name.textContent = `Layer: ${layer.id} (${layer.type})`;
+  updateAdminGuides();
+}
+
+function nudgeSelectedLayer(dx, dy){
+  if (!selectedAdminLayer) return;
+  const t = TEMPLATES[currentTpl];
+  selectedAdminLayer.x += dx / (t.w || W);
+  selectedAdminLayer.y += dy / (t.h || H);
+  saveLayerOverrides();
+  render();
+}
+
+function alignSelectedLayer(align){
+  if (!selectedAdminLayer) return;
+  selectedAdminLayer.align = align;
+  saveLayerOverrides();
+  render();
+}
+
+function spaceSelectedLayer(delta){
+  if (!selectedAdminLayer) return;
+  selectedAdminLayer.letterSpacing = Math.max(-20, Math.min(80, (selectedAdminLayer.letterSpacing || 0) + delta));
+  saveLayerOverrides();
+  render();
+}
+
+function toggleSelectedLayer(){
+  if (!selectedAdminLayer) return;
+  selectedAdminLayer.hidden = !selectedAdminLayer.hidden;
+  saveLayerOverrides();
+  render();
+}
+
+function updateAdminGuides(){
+  if (!stage) return;
+  stage.classList.toggle('admin-guides', isAdminMode);
+  const guideV = document.getElementById('selectedGuideV');
+  const guideH = document.getElementById('selectedGuideH');
+  if (!guideV || !guideH) return;
+  if (!isAdminMode || !selectedAdminLayer){
+    guideV.style.display = 'none';
+    guideH.style.display = 'none';
+    return;
+  }
+  guideV.style.display = 'block';
+  guideH.style.display = 'block';
+  guideV.style.left = (selectedAdminLayer.x * 100) + '%';
+  guideH.style.top = (selectedAdminLayer.y * 100) + '%';
 }
 
 function updateEditOverlay(){
@@ -934,20 +1108,66 @@ function updateEditOverlay(){
     const height = Math.max(24, (layer.lineHeight ? layer.lineHeight * fit * scaleY * lineCount : fontPx * 1.4));
     const hot = document.createElement('button');
     hot.type = 'button';
-    hot.className = 'edit-hotspot align-' + (layer.align || 'center');
+    hot.className = 'edit-hotspot align-' + (layer.align || 'center') + (isAdminMode ? ' admin-draggable' : '');
     hot.title = 'Edit ' + layer.id;
     hot.style.left = left + 'px';
     hot.style.top = top + 'px';
     hot.style.width = width + 'px';
     hot.style.height = height + 'px';
-    hot.addEventListener('click', () => openVisualEditor(layer, {
+    hot.addEventListener('pointerdown', e => {
+      if (!isAdminMode) return;
+      startLayerDrag(e, layer);
+    });
+    hot.addEventListener('click', e => {
+      if (hot.dataset.dragged === 'true'){
+        hot.dataset.dragged = 'false';
+        return;
+      }
+      openVisualEditor(layer, {
       left: layer.align === 'center' ? left - width / 2 : layer.align === 'right' ? left - width : left,
       top: top - height * 0.76,
       width,
       height
-    }));
+      });
+    });
     editOverlay.appendChild(hot);
   });
+}
+
+function startLayerDrag(e, layer){
+  e.preventDefault();
+  selectAdminLayer(layer);
+  const t = TEMPLATES[currentTpl];
+  const startX = e.clientX;
+  const startY = e.clientY;
+  const layerStartX = layer.x;
+  const layerStartY = layer.y;
+  const displayW = canvas.clientWidth;
+  const displayH = canvas.clientHeight;
+  const designW = t.w || W;
+  const designH = t.h || H;
+  const pixelsPerDesignX = displayW / designW;
+  const pixelsPerDesignY = displayH / designH;
+  let moved = false;
+  const onMove = moveEvent => {
+    const dx = moveEvent.clientX - startX;
+    const dy = moveEvent.clientY - startY;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    layer.x = layerStartX + (dx / pixelsPerDesignX) / designW;
+    layer.y = layerStartY + (dy / pixelsPerDesignY) / designH;
+    updateAdminGuides();
+    render();
+  };
+  const onUp = () => {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    if (moved) {
+      e.currentTarget.dataset.dragged = 'true';
+      saveLayerOverrides();
+    }
+  };
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp, { once:true });
 }
 
 function initBgImages(){
@@ -1027,6 +1247,7 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     isAdminMode = !isAdminMode;
     document.getElementById('adminPanel').style.display = isAdminMode ? 'block' : 'none';
+    updateAdminGuides();
     document.querySelectorAll('.adv-ctrls').forEach(el => {
       el.style.display = isAdminMode ? 'flex' : 'none';
     });

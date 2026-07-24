@@ -135,8 +135,9 @@
   .qr-status{margin-top:7px;font-size:12px;line-height:1.35;color:var(--muted);}
   .qr-status strong{color:#177245;font-weight:700;}
   .qr-status.qr-active{border:1px solid #BFE6CC;background:#EFFAF2;border-radius:8px;padding:8px 10px;color:#315D3A;}
-  .qr-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:#177245;color:#fff;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;opacity:0;transition:opacity .2s;}
+  .qr-badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:#177245;color:#fff;font-size:10px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;opacity:0;transition:opacity .2s;}
   .qr-status.qr-active .qr-badge{opacity:1;}
+  .qr-processed{background:#F7FBF8!important;border-color:#BFE6CC!important;color:#315D3A;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:'Inter';font-weight:700;font-size:15px;cursor:pointer;}
   .btn-primary{background:#E01A2B;color:#fff;}
@@ -253,7 +254,7 @@
 	    <div class="field">
 	      <label>QR code destination</label>
 	      <input type="text" id="f-url" placeholder="mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026">
-	      <div class="qr-status" id="qrStatus"><strong>QR ready.</strong><span class="qr-badge" id="qrBadge">Updated</span> Scan the poster preview with a phone before downloading.</div>
+	      <div class="qr-status" id="qrStatus"><strong>QR ready.</strong><span class="qr-badge" id="qrBadge">&#10003; Updated</span> Scan with phone before downloading.</div>
 	    </div>
 
 	    <div class="field">
@@ -733,7 +734,10 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const regularFont = layer.font.replace(/\d+px/, px+'px');
     const boldFont = (layer.boldFont || layer.font).replace(/\d+px/, px+'px');
-    const value = layer.referenceStyle ? `To register please visit:\n${copy.url}\ne-mail: ${copy.email}` : (copy.footIntro + '  ' + copy.url);
+    const captionLines = layer.referenceStyle
+      ? [copy.footIntro || 'To register please visit:', copy.url, copy.email ? `e-mail: ${copy.email}` : '']
+      : [copy.footIntro + '  ' + copy.url];
+    const value = captionLines.filter(Boolean).join('\n');
     if (!value.trim()) { ctx.globalAlpha = 1; return; }
     const maxWidth = layer.maxW * w;
     const lines = [];
@@ -966,14 +970,16 @@ function updateQrStatus(){
   urlInput.placeholder = defaultUrl || copy.url || '';
   if (!hasQrLayer){
     qrStatus.classList.remove('qr-active');
+    urlInput.classList.remove('qr-processed');
     qrStatus.innerHTML = 'This template has no replaceable QR layer yet.';
     return;
   }
   const encoded = normalizedQrUrl(copy.url);
   const hasPath = /^https?:\/\/[^/]+\/.+/i.test(encoded);
   qrStatus.classList.add('qr-active');
+  urlInput.classList.toggle('qr-processed', hasPath);
   qrStatus.innerHTML = hasPath
-    ? `<strong>QR regenerated.</strong><span class="qr-badge">Updated</span> Encodes ${encoded}. Scan with phone before downloading.`
+    ? `<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span> Scan with phone before downloading.`
     : `<strong>Check QR link.</strong><span class="qr-badge">Review</span> This only goes to ${encoded}. Add the full /goto/... path if needed.`;
   if (lastQrStatusText !== encoded){
     qrStatus.animate([
@@ -1037,19 +1043,35 @@ function editableLayersForTemplate(t){
 
 function getLayerEditValue(layer){
   const copy = getCopy();
-  if (layer.id === 'schedule') return [document.getElementById('f-t1').value || copy.schedule.split('   \u2215   ')[0] || '', document.getElementById('f-t3').value || copy.schedule.split('   \u2215   ')[2] || ''].filter(Boolean).join('\n');
+  if (layer.id === 'schedule') {
+    const scheduleLines = (copy.schedule || '').split('   \u2215   ').map(v => v.trim()).filter(Boolean);
+    return (layer.includeBullets ? scheduleLines.concat(copy.bullets || []) : scheduleLines).slice(0, layer.maxItems || 4).join('\n');
+  }
   if (layer.id === 'bullets') return (document.getElementById('f-bullets').value || copy.bullets.join('\n')).trim();
-  if (layer.id === 'footer') return [document.getElementById('f-url').value || copy.url, document.getElementById('f-email').value || copy.email].join('\n');
+  if (layer.id === 'footer') return [
+    copy.footIntro || 'To register please visit:',
+    document.getElementById('f-url').value || copy.url,
+    document.getElementById('f-email').value || copy.email ? 'e-mail: ' + (document.getElementById('f-email').value || copy.email) : ''
+  ].filter(Boolean).join('\n');
   if (layer.type === 'static') return layer.text || '';
   const field = document.getElementById('f-' + layer.id);
   return field ? field.value || copy[layer.id] || '' : '';
 }
 
 function commitLayerEdit(layer, value){
-  const lines = value.split('\n').map(v => v.trim()).filter(Boolean);
+  const lines = value.split('\n').map(v => v.trim());
+  const nonEmptyLines = lines.filter(Boolean);
   if (layer.id === 'schedule'){
-    if (lines[0] !== undefined) document.getElementById('f-t1').value = lines[0];
-    if (lines[1] !== undefined) document.getElementById('f-t3').value = lines[1];
+    if (layer.includeBullets){
+      document.getElementById('f-t1').value = nonEmptyLines[0] || '';
+      document.getElementById('f-t2').value = '';
+      document.getElementById('f-t3').value = '';
+      document.getElementById('f-bullets').value = nonEmptyLines.slice(1).join('\n');
+    } else {
+      document.getElementById('f-t1').value = nonEmptyLines[0] || '';
+      document.getElementById('f-t2').value = nonEmptyLines[1] || '';
+      document.getElementById('f-t3').value = nonEmptyLines[2] || '';
+    }
   } else if (layer.id === 'bullets'){
     document.getElementById('f-bullets').value = value.trim();
   } else if (layer.id === 'footer'){
@@ -1057,9 +1079,11 @@ function commitLayerEdit(layer, value){
       document.getElementById('f-url').value = extractUrlFromText(value) || value.replace(/^visit:\s*/i,'').trim();
     } else {
       const nextUrl = extractUrlFromText(value);
-      if (nextUrl) document.getElementById('f-url').value = nextUrl;
+      document.getElementById('f-url').value = nextUrl || '';
       const emailMatch = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-      if (emailMatch) document.getElementById('f-email').value = emailMatch[0];
+      document.getElementById('f-email').value = emailMatch ? emailMatch[0] : '';
+      const introLine = nonEmptyLines.find(line => !extractUrlFromText(line) && !/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(line));
+      if (introLine) document.getElementById('f-footintro').value = introLine.replace(/\s+$/,'');
     }
   } else if (layer.type === 'static'){
     layer.text = value.replace(/\n+/g, ' ').trim();
@@ -1473,6 +1497,7 @@ function exportTemplateJSON() {
    ========================================================================= */
 COPY_FIELD_IDS
   .forEach(id => document.getElementById(id).addEventListener('input', () => { saveCopyDraft(); render(); }));
+document.getElementById('f-url').addEventListener('focus', e => e.currentTarget.classList.remove('qr-processed'));
 document.getElementById('f-format').addEventListener('change', render);
 
 

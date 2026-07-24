@@ -767,6 +767,7 @@ function drawBackground(ctx, t, w, h){
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.hidden) return;
+  if (layer === activeEditingLayer) return;
   const designW = t.w || 1122;
   const s = w / designW; // uniform scale factor from design space to actual canvas size
   ctx.textBaseline = 'alphabetic';
@@ -1095,11 +1096,14 @@ function renderToCanvas(canvasEl, tplKey, wPx, hPx, cb){
   }
 }
 
-function render(){
+function render(afterOverlay){
   if (typeof syncCustomLayers === 'function') syncCustomLayers();
   const size = getExportSize(TEMPLATES[currentTpl]);
   updateQrStatus();
-  renderToCanvas(canvas, currentTpl, size.w, size.h, updateEditOverlay);
+  renderToCanvas(canvas, currentTpl, size.w, size.h, () => {
+    updateEditOverlay();
+    if (afterOverlay) afterOverlay();
+  });
 }
 
 function normalizedQrUrl(value){
@@ -1168,6 +1172,7 @@ let selectedAdminLayer = null;
 let lastQrStatusText = '';
 let adminUndoStack = [];
 let isRestoringUndo = false;
+let activeEditingLayer = null;
 
 function getLayerOverrideSnapshot(tplKey = currentTpl){
   try { return JSON.parse(localStorage.getItem(overrideStorageKey(tplKey)) || '{}'); }
@@ -1355,6 +1360,11 @@ function openVisualEditor(layer, rect){
   selectAdminLayer(layer);
   const existing = editOverlay.querySelector('.visual-editor');
   if (existing) existing.remove();
+  activeEditingLayer = layer;
+  render(() => mountVisualEditor(layer, rect));
+}
+
+function mountVisualEditor(layer, rect){
   const currentValue = getLayerEditValue(layer);
   const useTextarea = layer.type !== 'text' && layer.id !== 'date' || currentValue.length > 34;
   const editor = document.createElement(useTextarea ? 'textarea' : 'input');
@@ -1380,10 +1390,20 @@ function openVisualEditor(layer, rect){
   editor.focus();
   editor.select();
   let cancelled = false;
-  const finish = () => { if (!cancelled) commitLayerEdit(layer, editor.value); };
+  const finish = () => {
+    if (cancelled) return;
+    activeEditingLayer = null;
+    commitLayerEdit(layer, editor.value);
+  };
   editor.addEventListener('blur', finish, { once:true });
   editor.addEventListener('keydown', e => {
-    if (e.key === 'Escape'){ cancelled = true; editor.remove(); return; }
+    if (e.key === 'Escape'){
+      cancelled = true;
+      activeEditingLayer = null;
+      editor.remove();
+      render();
+      return;
+    }
     if (e.key === 'Enter' && (editor.tagName === 'INPUT' || e.metaKey || e.ctrlKey)){
       e.preventDefault();
       editor.blur();

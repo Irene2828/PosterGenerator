@@ -149,7 +149,9 @@
   canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 12px 32px rgba(0,0,0,.14);display:block;}
   .edit-overlay{position:absolute;inset:0;border-radius:0;pointer-events:none;}
   .edit-hotspot{position:absolute;transform:translate(-50%,-76%);min-width:34px;min-height:18px;border:1px solid transparent;border-radius:3px;pointer-events:auto;cursor:text;background:transparent;padding:0;appearance:none;}
-  .edit-hotspot.admin-draggable{cursor:move;border-color:rgba(13,139,255,.38);background:rgba(13,139,255,.05);}
+  .edit-hotspot.admin-draggable{cursor:move;border-color:transparent;background:transparent;}
+  .edit-hotspot.admin-draggable:hover,
+  .edit-hotspot.admin-draggable.selected{border-color:rgba(13,139,255,.95);background:rgba(13,139,255,.08);}
   .admin-guide{display:none;position:absolute;pointer-events:none;background:rgba(13,139,255,.72);z-index:3;}
   .admin-guide.v{top:0;bottom:0;width:1px;left:50%;}
   .admin-guide.h{left:0;right:0;height:1px;top:50%;}
@@ -975,8 +977,7 @@ function normalizedQrUrl(value){
 function qrUrlForTemplate(){
   const current = normalizedQrUrl(document.getElementById('f-url').value);
   const defaultUrl = normalizedQrUrl((TEMPLATE_COPY[currentTpl] || {}).url || '');
-  const currentHasPath = /^https?:\/\/[^/]+\/.+/i.test(current);
-  return currentHasPath ? current : defaultUrl || current;
+  return current || defaultUrl;
 }
 
 function extractUrlFromText(value){
@@ -1002,12 +1003,18 @@ function updateQrStatus(){
   const encoded = qrUrlForTemplate();
   const hasPath = /^https?:\/\/[^/]+\/.+/i.test(encoded);
   const inputUrl = normalizedQrUrl(urlInput.value);
-  const usedTemplateLink = inputUrl && inputUrl !== encoded;
+  const usingTemplateLink = !inputUrl && !!encoded;
   qrStatus.classList.add('qr-active');
-  urlInput.classList.toggle('qr-processed', hasPath);
-  qrStatus.innerHTML = hasPath
-    ? `<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>${usedTemplateLink ? ' Used template link. ' : ' '}Scan with phone before downloading.`
-    : `<strong>Check QR link.</strong><span class="qr-badge">Review</span> This only goes to ${encoded}. Add the full /goto/... path if needed.`;
+  urlInput.classList.toggle('qr-processed', !!encoded);
+  if (!encoded){
+    qrStatus.innerHTML = '<strong>Enter a QR destination.</strong>';
+  } else if (usingTemplateLink){
+    qrStatus.innerHTML = '<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>Using template link. Scan with phone before downloading.';
+  } else if (!hasPath){
+    qrStatus.innerHTML = '<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>Domain-only link. Scan with phone before downloading.';
+  } else {
+    qrStatus.innerHTML = '<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>Scan with phone before downloading.';
+  }
   if (lastQrStatusText !== encoded){
     qrStatus.animate([
       { transform:'scale(1)', boxShadow:'0 0 0 rgba(23,114,69,0)' },
@@ -1153,13 +1160,16 @@ function openVisualEditor(layer, rect){
   selectAdminLayer(layer);
   const existing = editOverlay.querySelector('.visual-editor');
   if (existing) existing.remove();
-  const editor = document.createElement(layer.id === 'date' || layer.type === 'text' || layer.type === 'edit_row' ? 'input' : 'textarea');
+  const currentValue = getLayerEditValue(layer);
+  const useTextarea = layer.type !== 'text' && layer.id !== 'date' || currentValue.length > 34;
+  const editor = document.createElement(useTextarea ? 'textarea' : 'input');
   editor.className = 'visual-editor';
-  editor.value = getLayerEditValue(layer);
+  editor.value = currentValue;
   editor.style.left = rect.left + 'px';
   editor.style.top = rect.top + 'px';
   editor.style.width = Math.max(160, rect.width) + 'px';
   editor.style.minHeight = Math.max(36, rect.height) + 'px';
+  if (useTextarea) editor.style.height = Math.max(52, rect.height + 14) + 'px';
   editOverlay.appendChild(editor);
   editor.focus();
   editor.select();
@@ -1232,6 +1242,17 @@ function updateAdminGuides(){
   guideH.style.top = (selectedAdminLayer.y * 100) + '%';
 }
 
+function estimatedOverlayLineCount(layer, width, fontPx){
+  const value = getLayerEditValue(layer);
+  const explicitLines = Math.max(1, (value || '').split('\n').length);
+  if (!value || !width || !fontPx) return explicitLines;
+  const avgCharWidth = fontPx * 0.58;
+  const wrappedLines = (value || '').split('\n').reduce((sum, line) => {
+    return sum + Math.max(1, Math.ceil((line.length * avgCharWidth) / width));
+  }, 0);
+  return Math.max(explicitLines, wrappedLines);
+}
+
 function updateEditOverlay(){
   if (!editOverlay) return;
   editOverlay.innerHTML = '';
@@ -1248,14 +1269,21 @@ function updateEditOverlay(){
   const dy = (canvas.height - designH * fit) / 2;
   editableLayersForTemplate(t).forEach(layer => {
     const fontPx = (layer.font ? parseInt(layer.font.match(/(\d+)px/)[1], 10) : 28) * fit * scaleX;
-    const lineCount = layer.type === 'schedule_list' ? (layer.maxItems || 2) : layer.type === 'qr_caption' ? 3 : layer.type === 'list' ? (layer.maxItems || 2) : layer.type === 'wrap' ? 2 : 1;
     const left = (dx + layer.x * designW * fit) * scaleX;
     const top = (dy + layer.y * designH * fit) * scaleY;
     const width = Math.max(80, (layer.maxW ? layer.maxW * designW * fit * scaleX : fontPx * 8));
+    const lineCount = layer.type === 'edit_row'
+      ? estimatedOverlayLineCount(layer, width, fontPx)
+      : layer.type === 'schedule_list' ? (layer.maxItems || 2)
+      : layer.type === 'qr_caption' ? 3
+      : layer.type === 'list' ? (layer.maxItems || 2)
+      : layer.type === 'wrap' ? estimatedOverlayLineCount(layer, width, fontPx)
+      : 1;
     const height = Math.max(24, (layer.lineHeight ? layer.lineHeight * fit * scaleY * lineCount : fontPx * 1.4));
     const hot = document.createElement('button');
     hot.type = 'button';
     hot.className = 'edit-hotspot align-' + (layer.align || 'center') + (isAdminMode ? ' admin-draggable' : '');
+    hot.classList.toggle('selected', selectedAdminLayer === layer);
     hot.title = 'Edit ' + layer.id;
     if (layer.type === 'edit_row') hot.style.zIndex = '4';
     hot.style.left = left + 'px';

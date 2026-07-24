@@ -329,6 +329,8 @@ Food truck will be present"></textarea>
   <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; margin-bottom:8px; background:var(--blue);" onclick="document.getElementById('customBgUpload').click()">Upload Custom BG</button>
   <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
   <br>
+  <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; margin-bottom:8px; background:#177245;" onclick="saveCurrentTemplate()">Save current template</button>
+  <div id="adminSaveStatus" style="font-size:11px;color:var(--muted);margin-bottom:8px;"></div>
   <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; background:var(--ink);" onclick="exportTemplateJSON()">Export Template JSON</button>
   <div class="admin-layer-tools" id="adminLayerTools">
     <div class="admin-layer-name" id="adminLayerName">No layer selected</div>
@@ -384,6 +386,56 @@ function getCopy(){
     footIntro: f('f-footintro') || defaults.footIntro
   };
   function f(id){ return document.getElementById(id).value.trim(); }
+}
+
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro'];
+
+function draftStorageKey(tplKey){
+  return 'posterCopyDraft:' + tplKey;
+}
+
+function getTemplateDefaults(tplKey){
+  const defaults = TEMPLATE_COPY[tplKey] || TEMPLATE_COPY.communityRunRed;
+  return {
+    'f-city': defaults.city || '',
+    'f-date': defaults.date || '',
+    'f-guest': defaults.guest || '',
+    'f-location': defaults.location || '',
+    'f-t1': defaults.t1 || '',
+    'f-t2': defaults.t2 || '',
+    'f-t3': defaults.t3 || '',
+    'f-bullets': (defaults.bullets || []).join('\n'),
+    'f-url': defaults.url || '',
+    'f-email': defaults.email || '',
+    'f-footintro': defaults.footIntro || ''
+  };
+}
+
+function saveCopyDraft(tplKey = currentTpl){
+  const draft = {};
+  COPY_FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) draft[id] = el.value;
+  });
+  localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
+}
+
+function loadCopyDraft(tplKey){
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(tplKey)) || 'null'); }
+  catch (e) { saved = null; }
+  const values = saved || getTemplateDefaults(tplKey);
+  COPY_FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = values[id] || '';
+  });
+}
+
+function saveCurrentTemplate(){
+  saveCopyDraft();
+  saveLayerOverrides();
+  const status = document.getElementById('adminSaveStatus');
+  if (status) status.textContent = 'Saved for this browser/template.';
 }
 
 /* =========================================================================
@@ -952,7 +1004,8 @@ function saveLayerOverrides(){
       y: layer.y,
       align: layer.align,
       hidden: !!layer.hidden,
-      letterSpacing: layer.letterSpacing || 0
+      letterSpacing: layer.letterSpacing || 0,
+      text: layer.text
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -967,7 +1020,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = overrides[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
@@ -977,8 +1030,8 @@ Object.keys(TEMPLATES).forEach(applyLayerOverrides);
 
 function editableLayersForTemplate(t){
   return (t.layers || []).filter(layer => (
-    ['text','wrap','list','schedule_list','qr_caption','social_footer'].includes(layer.type) &&
-    !['staticSub'].includes(layer.id)
+    ['text','wrap','list','schedule_list','qr_caption','social_footer','static'].includes(layer.type)
+    && (!layer.hidden || isAdminMode)
   ));
 }
 
@@ -987,6 +1040,7 @@ function getLayerEditValue(layer){
   if (layer.id === 'schedule') return [document.getElementById('f-t1').value || copy.schedule.split('   \u2215   ')[0] || '', document.getElementById('f-t3').value || copy.schedule.split('   \u2215   ')[2] || ''].filter(Boolean).join('\n');
   if (layer.id === 'bullets') return (document.getElementById('f-bullets').value || copy.bullets.join('\n')).trim();
   if (layer.id === 'footer') return [document.getElementById('f-url').value || copy.url, document.getElementById('f-email').value || copy.email].join('\n');
+  if (layer.type === 'static') return layer.text || '';
   const field = document.getElementById('f-' + layer.id);
   return field ? field.value || copy[layer.id] || '' : '';
 }
@@ -1007,10 +1061,14 @@ function commitLayerEdit(layer, value){
       const emailMatch = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
       if (emailMatch) document.getElementById('f-email').value = emailMatch[0];
     }
+  } else if (layer.type === 'static'){
+    layer.text = value.replace(/\n+/g, ' ').trim();
+    saveLayerOverrides();
   } else {
     const field = document.getElementById('f-' + layer.id);
     if (field) field.value = value.replace(/\n+/g, ' ').trim();
   }
+  saveCopyDraft();
   render();
 }
 
@@ -1113,7 +1171,7 @@ function updateEditOverlay(){
   const dy = (canvas.height - designH * fit) / 2;
   editableLayersForTemplate(t).forEach(layer => {
     const fontPx = parseInt(layer.font.match(/(\d+)px/)[1], 10) * fit * scaleX;
-    const lineCount = layer.type === 'schedule_list' ? 2 : layer.type === 'qr_caption' ? 3 : layer.type === 'list' ? 2 : layer.type === 'wrap' ? 2 : 1;
+    const lineCount = layer.type === 'schedule_list' ? (layer.maxItems || 2) : layer.type === 'qr_caption' ? 3 : layer.type === 'list' ? (layer.maxItems || 2) : layer.type === 'wrap' ? 2 : 1;
     const left = (dx + layer.x * designW * fit) * scaleX;
     const top = (dy + layer.y * designH * fit) * scaleY;
     const width = Math.max(80, (layer.maxW ? layer.maxW * designW * fit * scaleX : fontPx * 8));
@@ -1213,7 +1271,15 @@ Object.entries(TEMPLATES).forEach(([key,t])=>{
   const label = document.createElement('div');
   label.className = 'tpl-name'; label.textContent = t.name;
   card.appendChild(label);
-  card.addEventListener('click', ()=>{ currentTpl = key; resetCopyFields(); refreshActive(); render(); });
+  card.addEventListener('click', ()=>{
+    saveCopyDraft(currentTpl);
+    currentTpl = key;
+    selectedAdminLayer = null;
+    loadCopyDraft(currentTpl);
+    refreshActive();
+    updateAdminGuides();
+    render();
+  });
   picker.appendChild(card);
 });
 function refreshActive(){ [...picker.children].forEach(c=>c.classList.toggle('active', c.dataset.key===currentTpl)); }
@@ -1236,6 +1302,7 @@ function drawThumb(key){
   }
 }
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));
+loadCopyDraft(currentTpl);
 
 /* =========================================================================
    SECRET ADMIN BUILDER
@@ -1404,8 +1471,8 @@ function exportTemplateJSON() {
 /* =========================================================================
    FORM WIRING
    ========================================================================= */
-['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro']
-  .forEach(id => document.getElementById(id).addEventListener('input', render));
+COPY_FIELD_IDS
+  .forEach(id => document.getElementById(id).addEventListener('input', () => { saveCopyDraft(); render(); }));
 document.getElementById('f-format').addEventListener('change', render);
 
 

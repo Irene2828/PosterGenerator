@@ -254,6 +254,7 @@
 	    <div class="field">
 	      <label>QR code destination</label>
 	      <input type="text" id="f-url" placeholder="mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026">
+	      <button class="btn" id="useTemplateQrBtn" style="margin-top:8px;padding:9px 10px;font-size:12px;background:#fff;border:1px solid var(--border-strong);color:var(--ink);">Use template link</button>
 	      <div class="qr-status" id="qrStatus"><strong>QR ready.</strong><span class="qr-badge" id="qrBadge">&#10003; Updated</span> Scan with phone before downloading.</div>
 	    </div>
 
@@ -368,23 +369,22 @@ Food truck will be present"></textarea>
    describing where its layers sit -- the form and data never change.
    ========================================================================= */
 function getCopy(){
-  const defaults = TEMPLATE_COPY[currentTpl] || TEMPLATE_COPY.communityRunRed;
   const bulletsRaw = document.getElementById('f-bullets').value.trim();
-  const bullets = bulletsRaw ? bulletsRaw.split('\n').map(s=>s.trim()).filter(Boolean) : defaults.bullets;
-  const t1 = f('f-t1') || defaults.t1;
-  const t2 = f('f-t2') || defaults.t2;
-  const t3 = f('f-t3') || defaults.t3;
+  const bullets = bulletsRaw ? bulletsRaw.split('\n').map(s=>s.trim()).filter(Boolean) : [];
+  const t1 = f('f-t1');
+  const t2 = f('f-t2');
+  const t3 = f('f-t3');
   const schedule = [t1, t2, t3].filter(Boolean).join('   \u2215   ');
   return {
-    city: f('f-city') || defaults.city,
-    date: f('f-date') || defaults.date,
-    guest: f('f-guest') || defaults.guest,
-    location: f('f-location') || defaults.location,
+    city: f('f-city'),
+    date: f('f-date'),
+    guest: f('f-guest'),
+    location: f('f-location'),
     schedule: schedule,
     bullets: bullets,
-    url: f('f-url') || defaults.url,
-    email: f('f-email') || defaults.email,
-    footIntro: f('f-footintro') || defaults.footIntro
+    url: f('f-url'),
+    email: f('f-email'),
+    footIntro: f('f-footintro')
   };
   function f(id){ return document.getElementById(id).value.trim(); }
 }
@@ -829,8 +829,9 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.type === 'qr' && qrCanvas){
     const size = layer.size * w;
     const x = layer.x * w, y = layer.y * h;
+    const pad = (layer.pad ?? 18) * s;
     ctx.fillStyle = t.qrBg;
-    ctx.fillRect(x-6*s, y-6*s, size+12*s, size+12*s);
+    ctx.fillRect(x-pad, y-pad, size+pad*2, size+pad*2);
     ctx.drawImage(qrCanvas, x, y, size, size);
   }
 
@@ -906,7 +907,7 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
     if (cb) cb();
   };
   if (qrLayer){
-    getQrCanvas(normalizedQrUrl(copy.url), (qrCanvas) => drawTextLayers(qrCanvas));
+    getQrCanvas(qrUrlForTemplate(), (qrCanvas) => drawTextLayers(qrCanvas));
   } else {
     drawTextLayers(null);
   }
@@ -953,6 +954,13 @@ function normalizedQrUrl(value){
   return /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
 }
 
+function qrUrlForTemplate(){
+  const current = normalizedQrUrl(document.getElementById('f-url').value);
+  const defaultUrl = normalizedQrUrl((TEMPLATE_COPY[currentTpl] || {}).url || '');
+  const currentHasPath = /^https?:\/\/[^/]+\/.+/i.test(current);
+  return currentHasPath ? current : defaultUrl || current;
+}
+
 function extractUrlFromText(value){
   const match = (value || '').match(/(?:https?:\/\/)?[a-z0-9.-]+\.[a-z]{2,}(?:\/[^\s]*)?/i);
   return match ? match[0].replace(/[),.;]+$/,'') : '';
@@ -966,7 +974,6 @@ function updateQrStatus(){
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   const copy = getCopy();
   const defaultUrl = (TEMPLATE_COPY[currentTpl] || {}).url || '';
-  if (!urlInput.value.trim() && defaultUrl) urlInput.value = defaultUrl;
   urlInput.placeholder = defaultUrl || copy.url || '';
   if (!hasQrLayer){
     qrStatus.classList.remove('qr-active');
@@ -974,12 +981,14 @@ function updateQrStatus(){
     qrStatus.innerHTML = 'This template has no replaceable QR layer yet.';
     return;
   }
-  const encoded = normalizedQrUrl(copy.url);
+  const encoded = qrUrlForTemplate();
   const hasPath = /^https?:\/\/[^/]+\/.+/i.test(encoded);
+  const inputUrl = normalizedQrUrl(urlInput.value);
+  const usedTemplateLink = inputUrl && inputUrl !== encoded;
   qrStatus.classList.add('qr-active');
   urlInput.classList.toggle('qr-processed', hasPath);
   qrStatus.innerHTML = hasPath
-    ? `<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span> Scan with phone before downloading.`
+    ? `<strong>QR ready.</strong><span class="qr-badge">&#10003; Updated</span>${usedTemplateLink ? ' Used template link. ' : ' '}Scan with phone before downloading.`
     : `<strong>Check QR link.</strong><span class="qr-badge">Review</span> This only goes to ${encoded}. Add the full /goto/... path if needed.`;
   if (lastQrStatusText !== encoded){
     qrStatus.animate([
@@ -1048,11 +1057,14 @@ function getLayerEditValue(layer){
     return (layer.includeBullets ? scheduleLines.concat(copy.bullets || []) : scheduleLines).slice(0, layer.maxItems || 4).join('\n');
   }
   if (layer.id === 'bullets') return (document.getElementById('f-bullets').value || copy.bullets.join('\n')).trim();
-  if (layer.id === 'footer') return [
-    copy.footIntro || 'To register please visit:',
-    document.getElementById('f-url').value || copy.url,
-    document.getElementById('f-email').value || copy.email ? 'e-mail: ' + (document.getElementById('f-email').value || copy.email) : ''
-  ].filter(Boolean).join('\n');
+  if (layer.id === 'footer') {
+    const email = document.getElementById('f-email').value.trim();
+    return [
+      copy.footIntro,
+      document.getElementById('f-url').value.trim(),
+      email ? 'e-mail: ' + email : ''
+    ].filter(Boolean).join('\n');
+  }
   if (layer.type === 'static') return layer.text || '';
   const field = document.getElementById('f-' + layer.id);
   return field ? field.value || copy[layer.id] || '' : '';
@@ -1498,6 +1510,12 @@ function exportTemplateJSON() {
 COPY_FIELD_IDS
   .forEach(id => document.getElementById(id).addEventListener('input', () => { saveCopyDraft(); render(); }));
 document.getElementById('f-url').addEventListener('focus', e => e.currentTarget.classList.remove('qr-processed'));
+document.getElementById('useTemplateQrBtn').addEventListener('click', () => {
+  const defaultUrl = (TEMPLATE_COPY[currentTpl] || {}).url || '';
+  document.getElementById('f-url').value = defaultUrl;
+  saveCopyDraft();
+  render();
+});
 document.getElementById('f-format').addEventListener('change', render);
 
 

@@ -178,6 +178,14 @@
   .subtle-undo{border:1px solid var(--border);background:#fff;color:var(--muted);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;opacity:.78;}
   .subtle-undo:hover,.subtle-undo:focus{opacity:1;color:var(--ink);border-color:var(--border-strong);outline:none;}
   .subtle-undo:disabled{opacity:.35;cursor:not-allowed;}
+  .scratchpad{margin-top:24px;border:1.5px solid #B8B8B8;background:#EDEDED;color:#111;box-shadow:0 10px 26px rgba(0,0,0,.12);}
+  .scratchpad-head{display:flex;align-items:center;justify-content:space-between;background:#D8D8D8;border-bottom:1px solid #B8B8B8;padding:8px 10px;font-size:13px;font-weight:700;}
+  .scratchpad-toggle{width:22px;height:22px;border:1px solid #9E9E9E;background:#EFEFEF;color:#444;border-radius:2px;font-size:16px;line-height:16px;cursor:pointer;}
+  .scratchpad-body{padding:10px;}
+  .scratchpad textarea{width:100%;min-height:210px;border:0;background:#EDEDED;color:#111;font-family:'Inter',sans-serif;font-size:14px;line-height:1.3;resize:vertical;outline:none;}
+  .scratchpad.collapsed .scratchpad-body{display:none;}
+  .scratchpad.collapsed .scratchpad-toggle::before{content:'+';}
+  .scratchpad:not(.collapsed) .scratchpad-toggle::before{content:'-';}
   
   .adv-ctrls {
     margin-top: 8px;
@@ -289,6 +297,16 @@
 	    </div>
 
 	    <button class="btn btn-primary" id="downloadBtn">Download poster</button>
+
+	    <div class="scratchpad" id="scratchpad">
+	      <div class="scratchpad-head">
+	        <span>Helpful sticky note</span>
+	        <button type="button" class="scratchpad-toggle" id="scratchpadToggle" aria-label="Collapse sticky note"></button>
+	      </div>
+	      <div class="scratchpad-body">
+	        <textarea id="scratchpadText" placeholder="Paste your notes here if needed. This will not appear on the poster."></textarea>
+	      </div>
+	    </div>
 
 	    <div class="copy-fields-hidden" aria-hidden="true">
 	    <input type="text" id="f-email" placeholder="TwinCitiesTerryFoxRun@outlook.com">
@@ -1980,6 +1998,26 @@ function exportTemplateJSON() {
   output.value = code;
   output.select();
 }
+
+function initScratchpad() {
+  const pad = document.getElementById('scratchpad');
+  const toggle = document.getElementById('scratchpadToggle');
+  const text = document.getElementById('scratchpadText');
+  if (!pad || !toggle || !text) return;
+  text.value = localStorage.getItem('posterScratchpadText') || '';
+  if (localStorage.getItem('posterScratchpadCollapsed') === '1') {
+    pad.classList.add('collapsed');
+  }
+  text.addEventListener('input', () => {
+    localStorage.setItem('posterScratchpadText', text.value);
+  });
+  toggle.addEventListener('click', () => {
+    pad.classList.toggle('collapsed');
+    localStorage.setItem('posterScratchpadCollapsed', pad.classList.contains('collapsed') ? '1' : '0');
+    toggle.setAttribute('aria-label', pad.classList.contains('collapsed') ? 'Expand sticky note' : 'Collapse sticky note');
+  });
+}
+initScratchpad();
 
 /* =========================================================================
    FORM WIRING

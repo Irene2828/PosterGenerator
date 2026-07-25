@@ -375,6 +375,10 @@ Food truck will be present"></textarea>
       <button onclick="undoAdminChange()">Undo</button>
     </div>
     <div class="admin-tool-row">
+      <button onclick="resizeSelectedLayer(-1)">Smaller</button>
+      <button onclick="resizeSelectedLayer(1)">Bigger</button>
+    </div>
+    <div class="admin-tool-row">
       <button onclick="toggleSelectedLayer()">Hide/show</button>
       <button class="admin-danger" onclick="deleteSelectedLayer()">Delete</button>
     </div>
@@ -1217,7 +1221,12 @@ function saveLayerOverrides(){
       align: layer.align,
       hidden: !!layer.hidden,
       letterSpacing: layer.letterSpacing || 0,
-      text: layer.text
+      text: layer.text,
+      font: layer.font,
+      size: layer.size,
+      lineWidth: layer.lineWidth,
+      x1: layer.x1,
+      x2: layer.x2
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -1232,7 +1241,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = overrides[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
@@ -1243,6 +1252,7 @@ Object.keys(TEMPLATES).forEach(applyLayerOverrides);
 function editableLayersForTemplate(t){
   const hasRowEditors = (t.layers || []).some(layer => layer.type === 'edit_row');
   return (t.layers || []).filter(layer => {
+    if (isAdminMode && ['qr','rule'].includes(layer.type)) return !layer.hidden;
     if (hasRowEditors && ['schedule_list','qr_caption','list','social_footer'].includes(layer.type)) return false;
     return ['text','wrap','list','schedule_list','qr_caption','social_footer','static','edit_row'].includes(layer.type)
       && (!layer.hidden || isAdminMode);
@@ -1436,8 +1446,14 @@ function layersMovedWith(layer){
 
 function moveLayerGroup(layer, dx, dy){
   layersMovedWith(layer).forEach(item => {
-    item.x += dx;
-    item.y += dy;
+    if (item.type === 'rule'){
+      item.x1 += dx;
+      item.x2 += dx;
+      item.y += dy;
+    } else {
+      item.x += dx;
+      item.y += dy;
+    }
   });
 }
 
@@ -1464,6 +1480,30 @@ function spaceSelectedLayer(delta){
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   selectedAdminLayer.letterSpacing = Math.max(-20, Math.min(80, (selectedAdminLayer.letterSpacing || 0) + delta));
+  saveLayerOverrides();
+  render();
+}
+
+function resizeFontString(font, delta){
+  if (!font) return font;
+  return font.replace(/(\d+)px/, (_, px) => Math.max(6, Number(px) + delta) + 'px');
+}
+
+function resizeSelectedLayer(direction){
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  if (selectedAdminLayer.type === 'qr'){
+    selectedAdminLayer.size = Math.max(0.025, Math.min(0.22, (selectedAdminLayer.size || 0.08) + direction * 0.005));
+  } else if (selectedAdminLayer.type === 'rule'){
+    selectedAdminLayer.lineWidth = Math.max(1, (selectedAdminLayer.lineWidth || 2) + direction);
+    selectedAdminLayer.x2 = Math.max(selectedAdminLayer.x1 + 0.04, selectedAdminLayer.x2 + direction * 0.01);
+  } else if (selectedAdminLayer.font){
+    selectedAdminLayer.font = resizeFontString(selectedAdminLayer.font, direction * 2);
+    if (selectedAdminLayer.boldFont) selectedAdminLayer.boldFont = resizeFontString(selectedAdminLayer.boldFont, direction * 2);
+  } else {
+    spaceSelectedLayer(direction);
+    return;
+  }
   saveLayerOverrides();
   render();
 }
@@ -1505,8 +1545,31 @@ function updateAdminGuides(){
   }
   guideV.style.display = 'block';
   guideH.style.display = 'block';
-  guideV.style.left = (selectedAdminLayer.x * 100) + '%';
-  guideH.style.top = (selectedAdminLayer.y * 100) + '%';
+  const guideX = selectedAdminLayer.type === 'rule'
+    ? ((selectedAdminLayer.x1 + selectedAdminLayer.x2) / 2)
+    : selectedAdminLayer.x;
+  guideV.style.left = ((guideX || 0) * 100) + '%';
+  guideH.style.top = ((selectedAdminLayer.y || 0) * 100) + '%';
+}
+
+function overlayGeometryForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx){
+  if (layer.type === 'rule'){
+    const left = (dx + layer.x1 * designW * fit) * scaleX;
+    const top = (dy + layer.y * designH * fit) * scaleY;
+    const width = Math.max(36, (layer.x2 - layer.x1) * designW * fit * scaleX);
+    const height = Math.max(12, (layer.lineWidth || 2) * fit * scaleY + 10);
+    return { left, top, width, height, align: 'left' };
+  }
+  if (layer.type === 'qr'){
+    const left = (dx + layer.x * designW * fit) * scaleX;
+    const top = (dy + layer.y * designH * fit) * scaleY;
+    const width = Math.max(24, layer.size * designW * fit * scaleX);
+    return { left, top, width, height: width, align: 'left' };
+  }
+  const left = (dx + layer.x * designW * fit) * scaleX;
+  const top = (dy + layer.y * designH * fit) * scaleY;
+  const width = Math.max(80, (layer.maxW ? layer.maxW * designW * fit * scaleX : fontPx * 8));
+  return { left, top, width, align: layer.align || 'center' };
 }
 
 function estimatedOverlayLineCount(layer, width, fontPx){
@@ -1538,9 +1601,10 @@ function updateEditOverlay(){
     const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
     const sourceFont = source.font || layer.font || '500 28px "RigidSquareWeb", "Chakra Petch", sans-serif';
     const fontPx = parseInt(sourceFont.match(/(\d+)px/)[1], 10) * fit * scaleX;
-    const left = (dx + layer.x * designW * fit) * scaleX;
-    const top = (dy + layer.y * designH * fit) * scaleY;
-    const width = Math.max(80, (layer.maxW ? layer.maxW * designW * fit * scaleX : fontPx * 8));
+    const geometry = overlayGeometryForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx);
+    const left = geometry.left;
+    const top = geometry.top;
+    const width = geometry.width;
     const lineCount = layer.type === 'edit_row'
       ? 1
       : layer.type === 'schedule_list' ? (layer.maxItems || 2)
@@ -1550,10 +1614,11 @@ function updateEditOverlay(){
       : 1;
     const height = layer.type === 'edit_row'
       ? Math.max(14, fontPx * 1.25)
-      : Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
+      : geometry.height || Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
     const hot = document.createElement('button');
     hot.type = 'button';
-    hot.className = 'edit-hotspot align-' + (layer.align || 'center') + (isAdminMode ? ' admin-draggable' : '');
+    const overlayAlign = geometry.align || layer.align || 'center';
+    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode ? ' admin-draggable' : '');
     hot.classList.toggle('selected', selectedAdminLayer === layer);
     hot.title = 'Edit ' + layer.id;
     if (layer.type === 'edit_row') hot.style.zIndex = '4';
@@ -1570,11 +1635,18 @@ function updateEditOverlay(){
         hot.dataset.dragged = 'false';
         return;
       }
+      if (['qr','rule'].includes(layer.type) && !isAdminMode){
+        return;
+      }
+      if (['qr','rule'].includes(layer.type)){
+        selectAdminLayer(layer);
+        return;
+      }
       openVisualEditor(layer, {
-      left: layer.align === 'center' ? left - width / 2 : layer.align === 'right' ? left - width : left,
-      top: top - height * 0.76,
-      width,
-      height
+        left: overlayAlign === 'center' ? left - width / 2 : overlayAlign === 'right' ? left - width : left,
+        top: top - height * 0.76,
+        width,
+        height
       });
     });
     editOverlay.appendChild(hot);
@@ -1589,7 +1661,13 @@ function startLayerDrag(e, layer){
   const startX = e.clientX;
   const startY = e.clientY;
   const linkedLayers = layersMovedWith(layer);
-  const layerStarts = linkedLayers.map(item => ({ item, x: item.x, y: item.y }));
+  const layerStarts = linkedLayers.map(item => ({
+    item,
+    x: item.x,
+    y: item.y,
+    x1: item.x1,
+    x2: item.x2
+  }));
   const displayW = canvas.clientWidth;
   const displayH = canvas.clientHeight;
   const designW = t.w || W;
@@ -1602,8 +1680,16 @@ function startLayerDrag(e, layer){
     const dy = moveEvent.clientY - startY;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
     layerStarts.forEach(start => {
-      start.item.x = start.x + (dx / pixelsPerDesignX) / designW;
-      start.item.y = start.y + (dy / pixelsPerDesignY) / designH;
+      const normalizedDx = (dx / pixelsPerDesignX) / designW;
+      const normalizedDy = (dy / pixelsPerDesignY) / designH;
+      if (start.item.type === 'rule'){
+        start.item.x1 = start.x1 + normalizedDx;
+        start.item.x2 = start.x2 + normalizedDx;
+        start.item.y = start.y + normalizedDy;
+      } else {
+        start.item.x = start.x + normalizedDx;
+        start.item.y = start.y + normalizedDy;
+      }
     });
     updateAdminGuides();
     render();

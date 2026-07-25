@@ -464,7 +464,8 @@ function saveCurrentTemplate(){
   saveCopyDraft();
   saveLayerOverrides();
   const status = document.getElementById('adminSaveStatus');
-  if (status) status.textContent = 'Saved for this browser/template.';
+  if (status) status.textContent = 'Saved for this browser/template. Export below captures current template JSON.';
+  exportCurrentTemplateJSON();
 }
 
 /* =========================================================================
@@ -1911,8 +1912,53 @@ function initAdvancedControls() {
 }
 initAdvancedControls();
 
+function layerForExport(layer) {
+  const copy = {};
+  Object.entries(layer).forEach(([key, value]) => {
+    if (key.startsWith('_')) return;
+    if (typeof value === 'function') return;
+    copy[key] = value;
+  });
+  return copy;
+}
+
+function currentTemplateExportCode() {
+  const t = TEMPLATES[currentTpl];
+  if (!t) return '';
+  const exportTemplate = {};
+  Object.entries(t).forEach(([key, value]) => {
+    if (key.startsWith('_')) return;
+    if (key === 'layers') exportTemplate.layers = value.map(layerForExport);
+    else if (key === 'socialLayers') exportTemplate.socialLayers = value.map(layerForExport);
+    else if (typeof value !== 'function') exportTemplate[key] = value;
+  });
+  return `${currentTpl}: ${JSON.stringify(exportTemplate, null, 2)}`;
+}
+
+window.getCurrentTemplateSnapshot = function getCurrentTemplateSnapshot() {
+  saveCopyDraft();
+  saveLayerOverrides();
+  return {
+    templateKey: currentTpl,
+    copyDraft: JSON.parse(localStorage.getItem(draftStorageKey(currentTpl)) || '{}'),
+    layerOverrides: getLayerOverrideSnapshot(currentTpl),
+    templateCode: currentTemplateExportCode()
+  };
+};
+
+function exportCurrentTemplateJSON() {
+  const output = document.getElementById('adminExportOutput');
+  output.style.display = 'block';
+  output.value = currentTemplateExportCode();
+  output.select();
+}
+
 function exportTemplateJSON() {
   syncCustomLayers();
+  if (currentTpl !== 'custom') {
+    exportCurrentTemplateJSON();
+    return;
+  }
   if (!TEMPLATES.custom) {
     alert("Please upload a custom background first.");
     return;

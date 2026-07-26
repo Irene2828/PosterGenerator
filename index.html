@@ -1464,13 +1464,24 @@ function renderToCanvas(canvasEl, tplKey, wPx, hPx, cb){
   }
 }
 
+let renderPending = false;
+let renderCallbacks = [];
+
 function render(afterOverlay){
-  if (typeof syncCustomLayers === 'function') syncCustomLayers();
-  const size = getExportSize(TEMPLATES[currentTpl]);
-  updateQrStatus();
-  renderToCanvas(canvas, currentTpl, size.w, size.h, () => {
-    updateEditOverlay();
-    if (afterOverlay) afterOverlay();
+  if (afterOverlay) renderCallbacks.push(afterOverlay);
+  if (renderPending) return;
+  renderPending = true;
+  requestAnimationFrame(() => {
+    if (typeof syncCustomLayers === 'function') syncCustomLayers();
+    const size = getExportSize(TEMPLATES[currentTpl]);
+    updateQrStatus();
+    renderToCanvas(canvas, currentTpl, size.w, size.h, () => {
+      updateEditOverlay();
+      const cbs = renderCallbacks;
+      renderCallbacks = [];
+      renderPending = false;
+      cbs.forEach(cb => cb());
+    });
   });
 }
 

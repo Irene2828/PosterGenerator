@@ -1852,8 +1852,9 @@ function selectAdminLayer(layer){
   if (layer.font || layer.type === 'edit_row' || layer.type === 'text') {
     typoGroup.style.display = 'block';
     
-    // Parse font (e.g. "bold 32px RigidSquareWeb")
-    const fontStr = layer.font || '';
+    const t = TEMPLATES[currentTpl];
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const fontStr = layer.font || source.font || '';
     
     // Set font weight
     const weightSelect = document.getElementById('prop-font-weight');
@@ -1901,6 +1902,15 @@ function updateSelectedLayerProp(key, value) {
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   selectedAdminLayer[key] = value;
+  
+  const editor = document.querySelector('.visual-editor');
+  if (editor) {
+    const t = TEMPLATES[currentTpl];
+    const displayScale = canvas.clientWidth / (t.w || 3300);
+    if (key === 'letterSpacing') editor.style.letterSpacing = ((value || 0) * displayScale) + 'px';
+    if (key === 'align') editor.style.textAlign = value === 'group-center-left' ? 'left' : value;
+  }
+  
   saveLayerOverrides();
   render();
 }
@@ -1930,6 +1940,13 @@ function updateSelectedLayerTypography() {
   
   if (selectedAdminLayer.boldFont) {
     selectedAdminLayer.boldFont = `bold ${size}px ${familyPart}`;
+  }
+  
+  const editor = document.querySelector('.visual-editor');
+  if (editor) {
+    const t = TEMPLATES[currentTpl];
+    const displayScale = canvas.clientWidth / (t.w || 3300);
+    editor.style.font = selectedAdminLayer.font.replace(/(\d+)px/, (_, px) => Math.max(8, Math.round(Number(px) * displayScale)) + 'px');
   }
   
   saveLayerOverrides();

@@ -625,11 +625,11 @@ Food truck will be present"></textarea>
       <div class="group-title">Typography</div>
       <div class="figma-row">
         <div class="figma-col full-width">
-          <label>Font Family</label>
-          <select id="prop-font-family" onchange="updateSelectedLayerTypography()">
-            <option value="RigidSquareWeb">Rigid Square</option>
-            <option value="Inter">Inter</option>
-            <option value="Chakra Petch">Chakra Petch</option>
+          <label>Font Weight / Style</label>
+          <select id="prop-font-weight" onchange="updateSelectedLayerTypography()">
+            <option value="400">Regular</option>
+            <option value="700">Bold</option>
+            <option value="italic">Italic</option>
           </select>
         </div>
       </div>
@@ -1062,7 +1062,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   const rawText = getLayerEditValue(layer).trim();
   if (!rawText) return;
   if (['f-footintro','f-url','f-email'].includes(layer.field) && !copy.url) return;
-  const sourceFont = source.font || '500 24px sans-serif';
+  const sourceFont = layer.font || source.font || '500 24px sans-serif';
   const px = Math.round(parseInt(sourceFont.match(/(\d+)px/)[1],10) * scale);
   const regularFont = sourceFont.replace(/\d+px/, px+'px');
   const boldFont = (source.boldFont || sourceFont).replace(/\d+px/, px+'px');
@@ -1855,11 +1855,13 @@ function selectAdminLayer(layer){
     // Parse font (e.g. "bold 32px RigidSquareWeb")
     const fontStr = layer.font || '';
     
-    // Set font family
-    const familySelect = document.getElementById('prop-font-family');
-    if (fontStr.includes('RigidSquareWeb')) familySelect.value = 'RigidSquareWeb';
-    else if (fontStr.includes('Inter')) familySelect.value = 'Inter';
-    else if (fontStr.includes('Chakra Petch')) familySelect.value = 'Chakra Petch';
+    // Set font weight
+    const weightSelect = document.getElementById('prop-font-weight');
+    if (weightSelect) {
+      if (fontStr.toLowerCase().includes('italic')) weightSelect.value = 'italic';
+      else if (fontStr.toLowerCase().includes('bold') || fontStr.includes('700') || fontStr.includes('600')) weightSelect.value = '700';
+      else weightSelect.value = '400';
+    }
     
     // Set font size
     const sizeMatch = fontStr.match(/(\d+)px/);
@@ -1907,15 +1909,27 @@ function updateSelectedLayerTypography() {
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   
-  const family = document.getElementById('prop-font-family').value;
+  const weightSelect = document.getElementById('prop-font-weight');
+  const weightVal = weightSelect ? weightSelect.value : '400';
   const size = document.getElementById('prop-font-size').value;
   
-  const isBold = parseInt(size) >= 16;
-  const fontStyle = isBold ? 'bold' : '500';
-  selectedAdminLayer.font = `${fontStyle} ${size}px "${family}", sans-serif`;
+  const oldFontStr = selectedAdminLayer.font || '500 28px "RigidSquareWeb", sans-serif';
+  const sizeMatch = oldFontStr.match(/(\d+)px\s*(.*)$/);
+  const familyPart = sizeMatch ? sizeMatch[2] : '"RigidSquareWeb", sans-serif';
+  
+  let fontStyle = '';
+  let fontWeight = '';
+  if (weightVal === 'italic') {
+    fontStyle = 'italic ';
+    fontWeight = '400 ';
+  } else {
+    fontWeight = weightVal + ' ';
+  }
+  
+  selectedAdminLayer.font = `${fontStyle}${fontWeight}${size}px ${familyPart}`;
   
   if (selectedAdminLayer.boldFont) {
-    selectedAdminLayer.boldFont = `bold ${size}px "${family}", sans-serif`;
+    selectedAdminLayer.boldFont = `bold ${size}px ${familyPart}`;
   }
   
   saveLayerOverrides();

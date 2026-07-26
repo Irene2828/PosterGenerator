@@ -211,39 +211,234 @@
   }
   .adv-ctrls button:hover { opacity: 0.8; }
   
-  #adminPanel {
-    display: none;
-    position: fixed;
-    top: 96px;
-    right: 20px;
-    bottom: auto;
-    max-height: calc(100vh - 120px);
-    overflow: auto;
-    background: #F4F6F9;
-    color: var(--ink);
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    z-index: 1000;
-    border: 2px solid var(--blue);
+  /* Figma-Style Sidebar */
+  body.admin-active {
+    padding-right: 300px;
+    transition: padding 0.2s ease;
   }
-  #adminPanel textarea {
+  .figma-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
     width: 300px;
-    height: 150px;
-    margin-top: 8px;
-    font-family: monospace;
+    height: 100vh;
+    background: #2C2C2C;
+    color: #E3E3E3;
+    border-left: 1px solid #444;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    z-index: 10000;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #444;
+  }
+  .sidebar-title {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #F5F5F5;
+  }
+  .sidebar-close-btn {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .sidebar-close-btn:hover {
+    color: #FFF;
+  }
+  .sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid #444;
+    overflow-y: auto;
+  }
+  .section-title {
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #FFF;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .no-selection-msg {
+    padding: 32px 16px;
+    color: #888;
+    text-align: center;
+    font-style: italic;
+  }
+  .property-group {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #3A3A3A;
+  }
+  .property-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  .group-title {
+    font-weight: 600;
+    color: #AAA;
+    margin-bottom: 8px;
     font-size: 11px;
   }
-  .admin-layer-tools{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:10px;}
-  .admin-layer-name{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--ink);}
-  .admin-tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px;}
-  .admin-tool-grid button,.admin-tool-row button{
-    border:1px solid var(--border-strong);background:#fff;border-radius:6px;padding:6px 4px;
-    font-size:12px;font-weight:700;cursor:pointer;color:var(--ink);
+  .figma-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
   }
-  .admin-tool-row{display:flex;gap:5px;margin-bottom:8px;}
-  .admin-tool-row button{flex:1;}
-  .admin-danger{color:#9B0000!important;}
+  .figma-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .figma-col.full-width {
+    flex: 0 0 100%;
+  }
+  .figma-col label {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .figma-sidebar input[type=text],
+  .figma-sidebar input[type=number],
+  .figma-sidebar select {
+    background: #1E1E1E;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #FFF;
+    padding: 6px 8px;
+    font-size: 12px;
+    outline: none;
+    font-family: inherit;
+  }
+  .figma-sidebar input[type=text]:focus,
+  .figma-sidebar input[type=number]:focus,
+  .figma-sidebar select:focus {
+    border-color: #0C8CE9;
+  }
+  .figma-btn {
+    flex: 1;
+    background: #3A3A3A;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #FFF;
+    padding: 6px 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    font-size: 11px;
+    transition: background 0.15s;
+  }
+  .figma-btn:hover {
+    background: #4A4A4A;
+  }
+  .figma-btn.primary {
+    background: #0C8CE9;
+    border-color: #0C8CE9;
+  }
+  .figma-btn.primary:hover {
+    background: #0077D4;
+  }
+  .figma-btn.danger {
+    background: #E01A2B;
+    border-color: #E01A2B;
+  }
+  .figma-btn.danger:hover {
+    background: #C01422;
+  }
+  .align-center-row {
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .nudge-btn {
+    width: 24px;
+    height: 24px;
+    background: #3A3A3A;
+    border: 1px solid #444;
+    color: #FFF;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nudge-btn:hover {
+    background: #4A4A4A;
+  }
+  .nudge-label {
+    margin-left: 8px;
+    color: #888;
+    font-size: 11px;
+  }
+  .segment-control {
+    display: flex;
+    background: #1E1E1E;
+    border: 1px solid #444;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .segment-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #AAA;
+    padding: 6px 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+  }
+  .segment-btn:hover {
+    color: #FFF;
+    background: rgba(255,255,255,0.05);
+  }
+  .segment-btn.active {
+    background: #0C8CE9;
+    color: #FFF;
+  }
+  .check-row {
+    gap: 8px;
+    cursor: pointer;
+  }
+  .check-row input[type=checkbox] {
+    accent-color: #0C8CE9;
+    width: 14px;
+    height: 14px;
+  }
+  .save-status {
+    font-size: 10px;
+    color: #00FF88;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .admin-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  input[type=color] {
+    width: 100%;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #1E1E1E;
+    cursor: pointer;
+  }
   #qrHidden{position:absolute;left:-9999px;top:-9999px;}
 </style>
 </head>
@@ -372,44 +567,133 @@ Food truck will be present"></textarea>
   </div>
 </div>
 
-<div id="adminPanel">
-  <div style="font-weight:bold; margin-bottom: 8px; font-size:14px; color:var(--blue);">SECRET ADMIN BUILDER</div>
-  <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; margin-bottom:8px; background:var(--blue);" onclick="document.getElementById('customBgUpload').click()">Upload Custom BG</button>
-  <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
-  <br>
-  <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; margin-bottom:8px; background:#177245;" onclick="saveCurrentTemplate()">Save current template</button>
-  <div id="adminSaveStatus" style="font-size:11px;color:var(--muted);margin-bottom:8px;"></div>
-  <button class="btn btn-primary" style="font-size:12px; padding:6px 10px; background:var(--ink);" onclick="exportTemplateJSON()">Export Template JSON</button>
-  <div class="admin-layer-tools" id="adminLayerTools">
-    <div class="admin-layer-name" id="adminLayerName">No layer selected</div>
-    <div class="admin-tool-grid">
-      <button onclick="nudgeSelectedLayer(0,-5)">Up</button>
-      <button onclick="nudgeSelectedLayer(-5,0)">Left</button>
-      <button onclick="nudgeSelectedLayer(5,0)">Right</button>
-      <button onclick="nudgeSelectedLayer(0,5)">Down</button>
-      <button onclick="nudgeSelectedLayer(-25,0)">Left 25</button>
-      <button onclick="nudgeSelectedLayer(25,0)">Right 25</button>
+<div id="figmaSidebar" class="figma-sidebar" style="display: none;">
+  <div class="sidebar-header">
+    <span class="sidebar-title">Inspector</span>
+    <button class="sidebar-close-btn" onclick="toggleAdminMode(false)">&times;</button>
+  </div>
+  
+  <div class="sidebar-section">
+    <div class="section-title">Template Admin</div>
+    <div class="admin-actions">
+      <button class="figma-btn primary" onclick="saveCurrentTemplate()">Save Template</button>
+      <button class="figma-btn" onclick="exportTemplateJSON()">Export JSON</button>
+      <button class="figma-btn" onclick="document.getElementById('customBgUpload').click()">Upload BG</button>
+      <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
     </div>
-    <div class="admin-tool-row">
-      <button onclick="alignSelectedLayer('left')">Left</button>
-      <button onclick="alignSelectedLayer('center')">Center</button>
-      <button onclick="alignSelectedLayer('right')">Right</button>
+    <div id="adminSaveStatus" class="save-status"></div>
+  </div>
+
+  <div id="noLayerSelected" class="no-selection-msg">
+    Select a layer on the poster to edit properties
+  </div>
+
+  <div id="adminLayerTools" class="sidebar-section" style="display: none;">
+    <div class="section-title" id="adminLayerName">Layer Properties</div>
+    
+    <!-- POSITION / LAYOUT -->
+    <div class="property-group">
+      <div class="group-title">Layout</div>
+      <div class="figma-row">
+        <div class="figma-col">
+          <label>X (%)</label>
+          <input type="number" id="prop-x" step="0.5" oninput="updateSelectedLayerProp('x', this.value / 100)">
+        </div>
+        <div class="figma-col">
+          <label>Y (%)</label>
+          <input type="number" id="prop-y" step="0.5" oninput="updateSelectedLayerProp('y', this.value / 100)">
+        </div>
+      </div>
+      <div class="figma-row align-center-row">
+        <button class="nudge-btn" onclick="nudgeSelectedLayer(0,-1)" title="Nudge Up 1px">↑</button>
+        <button class="nudge-btn" onclick="nudgeSelectedLayer(-1,0)" title="Nudge Left 1px">←</button>
+        <button class="nudge-btn" onclick="nudgeSelectedLayer(1,0)" title="Nudge Right 1px">→</button>
+        <button class="nudge-btn" onclick="nudgeSelectedLayer(0,1)" title="Nudge Down 1px">↓</button>
+        <span class="nudge-label">Nudge</span>
+      </div>
+      <div class="figma-row prop-size-row" id="prop-size-container" style="display:none;">
+        <div class="figma-col">
+          <label id="size-label">Size</label>
+          <input type="number" id="prop-size" step="0.1" oninput="updateSelectedLayerProp('size', parseFloat(this.value) || 0)">
+        </div>
+      </div>
     </div>
-    <div class="admin-tool-row">
-      <button onclick="spaceSelectedLayer(-1)">A-</button>
-      <button onclick="spaceSelectedLayer(1)">A+</button>
-      <button onclick="undoAdminChange()">Undo</button>
+
+    <!-- TYPOGRAPHY -->
+    <div class="property-group" id="group-typography" style="display: none;">
+      <div class="group-title">Typography</div>
+      <div class="figma-row">
+        <div class="figma-col full-width">
+          <label>Font Family</label>
+          <select id="prop-font-family" onchange="updateSelectedLayerTypography()">
+            <option value="RigidSquareWeb">Rigid Square</option>
+            <option value="Inter">Inter</option>
+            <option value="Chakra Petch">Chakra Petch</option>
+          </select>
+        </div>
+      </div>
+      <div class="figma-row">
+        <div class="figma-col">
+          <label>Size (px)</label>
+          <input type="number" id="prop-font-size" oninput="updateSelectedLayerTypography()">
+        </div>
+        <div class="figma-col">
+          <label>Spacing</label>
+          <input type="number" id="prop-letter-spacing" oninput="updateSelectedLayerProp('letterSpacing', parseInt(this.value) || 0)">
+        </div>
+      </div>
+      <div class="figma-row">
+        <div class="figma-col full-width">
+          <label>Alignment</label>
+          <div class="segment-control">
+            <button id="align-left" class="segment-btn" onclick="alignSelectedLayer('left')">Left</button>
+            <button id="align-center" class="segment-btn" onclick="alignSelectedLayer('center')">Center</button>
+            <button id="align-right" class="segment-btn" onclick="alignSelectedLayer('right')">Right</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="admin-tool-row">
-      <button onclick="resizeSelectedLayer(-1)">Smaller</button>
-      <button onclick="resizeSelectedLayer(1)">Bigger</button>
+
+    <!-- EFFECTS (GLOW/SHADOW) -->
+    <div class="property-group" id="group-effects">
+      <div class="group-title">Effects</div>
+      <div class="figma-row check-row">
+        <input type="checkbox" id="prop-shadow-enable" onchange="updateSelectedLayerShadow()">
+        <label for="prop-shadow-enable">Drop Shadow</label>
+      </div>
+      <div id="shadow-properties" style="display: none;">
+        <div class="figma-row">
+          <div class="figma-col">
+            <label>Offset X</label>
+            <input type="number" id="prop-shadow-x" oninput="updateSelectedLayerShadow()">
+          </div>
+          <div class="figma-col">
+            <label>Offset Y</label>
+            <input type="number" id="prop-shadow-y" oninput="updateSelectedLayerShadow()">
+          </div>
+        </div>
+        <div class="figma-row">
+          <div class="figma-col">
+            <label>Blur</label>
+            <input type="number" id="prop-shadow-blur" oninput="updateSelectedLayerShadow()">
+          </div>
+          <div class="figma-col">
+            <label>Color</label>
+            <input type="color" id="prop-shadow-color" oninput="updateSelectedLayerShadow()">
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="admin-tool-row">
-      <button onclick="toggleSelectedLayer()">Hide/show</button>
-      <button class="admin-danger" onclick="deleteSelectedLayer()">Delete</button>
+
+    <!-- LAYER OPTIONS -->
+    <div class="property-group">
+      <div class="group-title">Layer Actions</div>
+      <div class="figma-row">
+        <button class="figma-btn" onclick="toggleSelectedLayer()">Hide / Show</button>
+        <button class="figma-btn danger" onclick="deleteSelectedLayer()">Delete</button>
+      </div>
     </div>
   </div>
-  <br>
   <textarea id="adminExportOutput" style="display:none;" readonly></textarea>
 </div>
 
@@ -489,8 +773,61 @@ function loadCopyDraft(tplKey){
 function saveCurrentTemplate(){
   saveCopyDraft();
   saveLayerOverrides();
+  
+  const t = TEMPLATES[currentTpl];
+  if (!t) return;
+  const localOverrides = {};
+  (t.layers || []).forEach(layer => {
+    localOverrides[layer.id + ':' + layer.type] = {
+      x: layer.x,
+      y: layer.y,
+      align: layer.align,
+      hidden: !!layer.hidden,
+      letterSpacing: layer.letterSpacing || 0,
+      text: layer.text,
+      font: layer.font,
+      size: layer.size,
+      lineWidth: layer.lineWidth,
+      x1: layer.x1,
+      x2: layer.x2,
+      shadow: layer.shadow
+    };
+  });
+
   const status = document.getElementById('adminSaveStatus');
-  if (status) status.textContent = 'Saved for this browser/template. Export below captures current template JSON.';
+  if (status) {
+    status.textContent = 'Saving globally...';
+    status.style.color = '#FFA500';
+  }
+
+  fetch('/api/save-template', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      tplKey: currentTpl,
+      overrides: localOverrides
+    })
+  })
+  .then(res => {
+    if (res.ok) {
+      if (status) {
+        status.textContent = 'Saved globally!';
+        status.style.color = '#00FF88';
+      }
+    } else {
+      if (status) {
+        status.textContent = 'Saved to browser.';
+        status.style.color = '#FF4444';
+      }
+    }
+  })
+  .catch(err => {
+    if (status) {
+      status.textContent = 'Saved locally.';
+      status.style.color = '#FF4444';
+    }
+  });
+
   exportCurrentTemplateJSON();
 }
 
@@ -1259,22 +1596,25 @@ function saveLayerOverrides(){
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
 }
 
+let globalOverrides = {};
+
 function applyLayerOverrides(tplKey){
   const t = TEMPLATES[tplKey];
   if (!t) return;
-  let overrides = {};
-  try { overrides = JSON.parse(localStorage.getItem(overrideStorageKey(tplKey)) || '{}'); }
-  catch (e) { overrides = {}; }
+  let localOverrides = {};
+  try { localOverrides = JSON.parse(localStorage.getItem(overrideStorageKey(tplKey)) || '{}'); }
+  catch (e) { localOverrides = {}; }
+  
+  const merged = Object.assign({}, globalOverrides[tplKey] || {}, localOverrides);
+  
   (t.layers || []).forEach(layer => {
-    const saved = overrides[layer.id + ':' + layer.type];
+    const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
 }
-
-Object.keys(TEMPLATES).forEach(applyLayerOverrides);
 
 function editableLayersForTemplate(t){
   const hasRowEditors = (t.layers || []).some(layer => layer.type === 'edit_row');
@@ -1452,19 +1792,152 @@ function selectAdminLayer(layer){
   if (!isAdminMode) return;
   selectedAdminLayer = layer;
   const tools = document.getElementById('adminLayerTools');
+  const noSelection = document.getElementById('noLayerSelected');
   const name = document.getElementById('adminLayerName');
+  
+  if (!layer) {
+    if (tools) tools.style.display = 'none';
+    if (noSelection) noSelection.style.display = 'block';
+    return;
+  }
+  
   if (tools) tools.style.display = 'block';
-  if (name) name.textContent = `Layer: ${layer.id} (${layer.type})`;
+  if (noSelection) noSelection.style.display = 'none';
+  if (name) name.textContent = `Layer: ${layer.id.replace('f-', '').toUpperCase()}`;
+  
+  // 1. Position / Layout
+  document.getElementById('prop-x').value = Math.round((layer.x || 0) * 1000) / 10;
+  document.getElementById('prop-y').value = Math.round((layer.y || 0) * 1000) / 10;
+  
+  // 2. Sizing / Sizing group
+  const sizeContainer = document.getElementById('prop-size-container');
+  const sizeLabel = document.getElementById('size-label');
+  const sizeInput = document.getElementById('prop-size');
+  
+  if (layer.type === 'qr') {
+    sizeContainer.style.display = 'flex';
+    sizeLabel.textContent = 'Size (Scale)';
+    sizeInput.value = layer.size || 0.08;
+    sizeInput.step = '0.01';
+  } else if (layer.type === 'rule') {
+    sizeContainer.style.display = 'flex';
+    sizeLabel.textContent = 'Line Width';
+    sizeInput.value = layer.lineWidth || 2;
+    sizeInput.step = '1';
+  } else {
+    sizeContainer.style.display = 'none';
+  }
+  
+  // 3. Typography
+  const typoGroup = document.getElementById('group-typography');
+  if (layer.font || layer.type === 'edit_row' || layer.type === 'text') {
+    typoGroup.style.display = 'block';
+    
+    // Parse font (e.g. "bold 32px RigidSquareWeb")
+    const fontStr = layer.font || '';
+    
+    // Set font family
+    const familySelect = document.getElementById('prop-font-family');
+    if (fontStr.includes('RigidSquareWeb')) familySelect.value = 'RigidSquareWeb';
+    else if (fontStr.includes('Inter')) familySelect.value = 'Inter';
+    else if (fontStr.includes('Chakra Petch')) familySelect.value = 'Chakra Petch';
+    
+    // Set font size
+    const sizeMatch = fontStr.match(/(\d+)px/);
+    document.getElementById('prop-font-size').value = sizeMatch ? parseInt(sizeMatch[1]) : 28;
+    
+    // Set letter spacing
+    document.getElementById('prop-letter-spacing').value = layer.letterSpacing || 0;
+    
+    // Set alignment button states
+    const align = layer.align || 'left';
+    document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById('align-' + (align === 'group-center-left' ? 'center' : align));
+    if (activeBtn) activeBtn.classList.add('active');
+  } else {
+    typoGroup.style.display = 'none';
+  }
+  
+  // 4. Effects (Shadow)
+  const shadowCheck = document.getElementById('prop-shadow-enable');
+  const shadowProps = document.getElementById('shadow-properties');
+  if (layer.shadow) {
+    shadowCheck.checked = true;
+    shadowProps.style.display = 'block';
+    document.getElementById('prop-shadow-x').value = layer.shadow.x || 0;
+    document.getElementById('prop-shadow-y').value = layer.shadow.y || 0;
+    document.getElementById('prop-shadow-blur').value = layer.shadow.blur || 0;
+    document.getElementById('prop-shadow-color').value = layer.shadow.color || '#ffffff';
+  } else {
+    shadowCheck.checked = false;
+    shadowProps.style.display = 'none';
+  }
+  
   updateAdminGuides();
 }
 
+function updateSelectedLayerProp(key, value) {
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  selectedAdminLayer[key] = value;
+  saveLayerOverrides();
+  render();
+}
+
+function updateSelectedLayerTypography() {
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  
+  const family = document.getElementById('prop-font-family').value;
+  const size = document.getElementById('prop-font-size').value;
+  
+  const isBold = parseInt(size) >= 16;
+  const fontStyle = isBold ? 'bold' : '500';
+  selectedAdminLayer.font = `${fontStyle} ${size}px "${family}", sans-serif`;
+  
+  if (selectedAdminLayer.boldFont) {
+    selectedAdminLayer.boldFont = `bold ${size}px "${family}", sans-serif`;
+  }
+  
+  saveLayerOverrides();
+  render();
+}
+
+function updateSelectedLayerShadow() {
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  
+  const enabled = document.getElementById('prop-shadow-enable').checked;
+  if (enabled) {
+    selectedAdminLayer.shadow = {
+      x: parseInt(document.getElementById('prop-shadow-x').value) || 0,
+      y: parseInt(document.getElementById('prop-shadow-y').value) || 0,
+      blur: parseInt(document.getElementById('prop-shadow-blur').value) || 0,
+      color: document.getElementById('prop-shadow-color').value || '#ffffff'
+    };
+    document.getElementById('shadow-properties').style.display = 'block';
+  } else {
+    selectedAdminLayer.shadow = null;
+    document.getElementById('shadow-properties').style.display = 'none';
+  }
+  
+  saveLayerOverrides();
+  render();
+}
+
 function refreshAdminPanel(){
-  const panel = document.getElementById('adminPanel');
-  const tools = document.getElementById('adminLayerTools');
-  const name = document.getElementById('adminLayerName');
-  if (panel) panel.style.display = isAdminMode ? 'block' : 'none';
-  if (tools) tools.style.display = isAdminMode ? 'block' : 'none';
-  if (name && !selectedAdminLayer) name.textContent = 'Select a text row on the poster';
+  const sidebar = document.getElementById('figmaSidebar');
+  if (sidebar) {
+    sidebar.style.display = isAdminMode ? 'flex' : 'none';
+    if (isAdminMode) {
+      document.body.classList.add('admin-active');
+    } else {
+      document.body.classList.remove('admin-active');
+    }
+  }
+  if (!selectedAdminLayer) {
+    selectAdminLayer(null);
+  }
 }
 
 function layersMovedWith(layer){
@@ -1489,6 +1962,11 @@ function nudgeSelectedLayer(dx, dy){
   pushUndoSnapshot();
   const t = TEMPLATES[currentTpl];
   moveLayerGroup(selectedAdminLayer, dx / (t.w || W), dy / (t.h || H));
+  
+  // Update sidebar inputs
+  document.getElementById('prop-x').value = Math.round((selectedAdminLayer.x || 0) * 1000) / 10;
+  document.getElementById('prop-y').value = Math.round((selectedAdminLayer.y || 0) * 1000) / 10;
+  
   saveLayerOverrides();
   render();
 }
@@ -1499,6 +1977,12 @@ function alignSelectedLayer(align){
   selectedAdminLayer.align = align;
   if (align === 'left') selectedAdminLayer.x -= 0.005;
   if (align === 'right') selectedAdminLayer.x += 0.005;
+  
+  // Update segment control buttons active state
+  document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById('align-' + align);
+  if (activeBtn) activeBtn.classList.add('active');
+  
   saveLayerOverrides();
   render();
 }
@@ -1507,6 +1991,10 @@ function spaceSelectedLayer(delta){
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   selectedAdminLayer.letterSpacing = Math.max(-20, Math.min(80, (selectedAdminLayer.letterSpacing || 0) + delta));
+  
+  // Update spacing input
+  document.getElementById('prop-letter-spacing').value = selectedAdminLayer.letterSpacing;
+  
   saveLayerOverrides();
   render();
 }
@@ -1702,28 +2190,42 @@ function startLayerDrag(e, layer){
   const pixelsPerDesignX = displayW / designW;
   const pixelsPerDesignY = displayH / designH;
   let moved = false;
+  let animationFrameId = null;
   const onMove = moveEvent => {
     const dx = moveEvent.clientX - startX;
     const dy = moveEvent.clientY - startY;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
-    layerStarts.forEach(start => {
-      const normalizedDx = (dx / pixelsPerDesignX) / designW;
-      const normalizedDy = (dy / pixelsPerDesignY) / designH;
-      if (start.item.type === 'rule'){
-        start.item.x1 = start.x1 + normalizedDx;
-        start.item.x2 = start.x2 + normalizedDx;
-        start.item.y = start.y + normalizedDy;
-      } else {
-        start.item.x = start.x + normalizedDx;
-        start.item.y = start.y + normalizedDy;
+    
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    
+    animationFrameId = requestAnimationFrame(() => {
+      layerStarts.forEach(start => {
+        const normalizedDx = (dx / pixelsPerDesignX) / designW;
+        const normalizedDy = (dy / pixelsPerDesignY) / designH;
+        if (start.item.type === 'rule'){
+          start.item.x1 = start.x1 + normalizedDx;
+          start.item.x2 = start.x2 + normalizedDx;
+          start.item.y = start.y + normalizedDy;
+        } else {
+          start.item.x = start.x + normalizedDx;
+          start.item.y = start.y + normalizedDy;
+        }
+      });
+      
+      // Update sidebar inputs on drag
+      if (selectedAdminLayer) {
+        document.getElementById('prop-x').value = Math.round((selectedAdminLayer.x || 0) * 1000) / 10;
+        document.getElementById('prop-y').value = Math.round((selectedAdminLayer.y || 0) * 1000) / 10;
       }
+      
+      updateAdminGuides();
+      render();
     });
-    updateAdminGuides();
-    render();
   };
   const onUp = () => {
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('pointerup', onUp);
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
     if (moved) {
       e.currentTarget.dataset.dragged = 'true';
       saveLayerOverrides();
@@ -1815,15 +2317,19 @@ const CUSTOM_CONFIG = {
   footIntro: { x: 0.15, y: 0.96, size: 0.010, align: 'left', color: 'ink', visible: true },
 };
 
+function toggleAdminMode(val) {
+  isAdminMode = (val !== undefined) ? val : !isAdminMode;
+  refreshAdminPanel();
+  updateAdminGuides();
+  document.querySelectorAll('.adv-ctrls').forEach(el => {
+    el.style.display = isAdminMode ? 'flex' : 'none';
+  });
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.shiftKey && e.code === 'KeyA') {
     e.preventDefault();
-    isAdminMode = !isAdminMode;
-    refreshAdminPanel();
-    updateAdminGuides();
-    document.querySelectorAll('.adv-ctrls').forEach(el => {
-      el.style.display = isAdminMode ? 'flex' : 'none';
-    });
+    toggleAdminMode();
   }
 });
 
@@ -2191,8 +2697,25 @@ document.getElementById('downloadBtn').addEventListener('click', ()=>{
 });
 
 
-initBgImages();
-render();
+async function loadGlobalOverrides() {
+  try {
+    const res = await fetch('overrides.json');
+    if (res.ok) {
+      globalOverrides = await res.json();
+      Object.keys(TEMPLATES).forEach(applyLayerOverrides);
+    }
+  } catch (e) {
+    console.log("No global overrides loaded");
+  }
+}
+
+async function initApp() {
+  initBgImages();
+  await loadGlobalOverrides();
+  render();
+}
+
+initApp();
 
 /* Canvas doesn't auto-redraw when a @font-face finishes loading, so once
    your real Rigid Square files are in place, re-render as soon as they're

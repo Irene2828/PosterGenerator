@@ -598,11 +598,17 @@ Food truck will be present"></textarea>
       <div class="figma-row">
         <div class="figma-col">
           <label>X (%)</label>
-          <input type="number" id="prop-x" step="0.5" oninput="updateSelectedLayerProp('x', this.value / 100)">
+          <input type="number" step="0.1" id="prop-x" oninput="updateSelectedLayerProp('x', parseFloat(this.value)/100)">
         </div>
         <div class="figma-col">
           <label>Y (%)</label>
-          <input type="number" id="prop-y" step="0.5" oninput="updateSelectedLayerProp('y', this.value / 100)">
+          <input type="number" step="0.1" id="prop-y" oninput="updateSelectedLayerProp('y', parseFloat(this.value)/100)">
+        </div>
+      </div>
+      <div class="figma-row">
+        <div class="figma-col full-width">
+          <label>Max Width (%) - auto-shrinks text if exceeded</label>
+          <input type="number" step="0.1" id="prop-maxW" placeholder="None" oninput="updateSelectedLayerProp('maxW', parseFloat(this.value)/100 || 0)">
         </div>
       </div>
       <div class="figma-row align-center-row">
@@ -791,7 +797,8 @@ function saveCurrentTemplate(){
       lineWidth: layer.lineWidth,
       x1: layer.x1,
       x2: layer.x2,
-      shadow: layer.shadow
+      shadow: layer.shadow,
+      maxW: layer.maxW
     };
   });
 
@@ -1602,7 +1609,9 @@ function saveLayerOverrides(){
       size: layer.size,
       lineWidth: layer.lineWidth,
       x1: layer.x1,
-      x2: layer.x2
+      x2: layer.x2,
+      shadow: layer.shadow,
+      maxW: layer.maxW
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -1622,7 +1631,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
@@ -1824,9 +1833,17 @@ function selectAdminLayer(layer){
   if (noSelection) noSelection.style.display = 'none';
   if (name) name.textContent = `Layer: ${layer.id.replace('f-', '').toUpperCase()}`;
   
-  // 1. Position / Layout
-  document.getElementById('prop-x').value = Math.round((layer.x || 0) * 1000) / 10;
-  document.getElementById('prop-y').value = Math.round((layer.y || 0) * 1000) / 10;
+  // 1. Position  // 2. Layout
+  document.getElementById('prop-x').value = ((layer.x || 0) * 100).toFixed(1);
+  document.getElementById('prop-y').value = ((layer.y || 0) * 100).toFixed(1);
+  
+  const maxWInput = document.getElementById('prop-maxW');
+  if (maxWInput) {
+    const t = TEMPLATES[currentTpl];
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const currentMaxW = layer.maxW || source.maxW || 0;
+    maxWInput.value = currentMaxW ? (currentMaxW * 100).toFixed(1) : '';
+  }
   
   // 2. Sizing / Sizing group
   const sizeContainer = document.getElementById('prop-size-container');

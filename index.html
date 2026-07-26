@@ -579,6 +579,7 @@ Food truck will be present"></textarea>
       <button class="figma-btn primary" onclick="saveCurrentTemplate()">Save Template</button>
       <button class="figma-btn" onclick="exportTemplateJSON()">Export JSON</button>
       <button class="figma-btn" onclick="document.getElementById('customBgUpload').click()">Upload BG</button>
+      <button class="figma-btn" onclick="toggleGrid()">Toggle Grid (24x24)</button>
       <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
     </div>
     <div id="adminSaveStatus" class="save-status"></div>
@@ -1798,6 +1799,13 @@ function mountVisualEditor(layer, rect){
     }
   });
 }
+let canvas, ctx;
+let showGrid = false;
+
+function toggleGrid() {
+  showGrid = !showGrid;
+  render();
+}
 
 function selectAdminLayer(layer){
   if (!isAdminMode) return;
@@ -2177,6 +2185,29 @@ function updateEditOverlay(){
     });
     editOverlay.appendChild(hot);
   });
+
+  if (showGrid && isAdminMode) {
+    const gridSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    gridSvg.style.position = 'absolute';
+    gridSvg.style.left = dx + 'px';
+    gridSvg.style.top = dy + 'px';
+    gridSvg.style.width = (designW * fit) + 'px';
+    gridSvg.style.height = (designH * fit) + 'px';
+    gridSvg.style.pointerEvents = 'none';
+    gridSvg.style.zIndex = '999';
+
+    // 8px screen-space grid for alignment
+    const spacing = 8;
+    gridSvg.innerHTML = `
+      <defs>
+        <pattern id="grid8" width="${spacing}" height="${spacing}" patternUnits="userSpaceOnUse">
+          <path d="M ${spacing} 0 L 0 0 0 ${spacing}" fill="none" stroke="rgba(0, 255, 255, 0.4)" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid8)" />
+    `;
+    editOverlay.appendChild(gridSvg);
+  }
 }
 
 function startLayerDrag(e, layer){

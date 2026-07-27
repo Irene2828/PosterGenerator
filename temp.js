@@ -1198,6 +1198,20 @@ function selectAdminLayer(layer){
     const currentMaxW = layer.maxW || source.maxW || 0;
     maxWInput.value = currentMaxW ? (currentMaxW * 100).toFixed(1) : '';
   }
+
+  const gapContainer = document.getElementById('prop-gap-container');
+  const gapInput = document.getElementById('prop-gap');
+  const group = layersMovedWith(layer);
+  if (group.length > 1) {
+    gapContainer.style.display = 'flex';
+    const sorted = [...group].sort((a, b) => a.y - b.y);
+    const t = TEMPLATES[currentTpl];
+    const designH = t.h || H;
+    const currentGap = Math.round((sorted[1].y - sorted[0].y) * designH);
+    gapInput.value = currentGap;
+  } else {
+    gapContainer.style.display = 'none';
+  }
   
   // 2. Sizing / Sizing group
   const sizeContainer = document.getElementById('prop-size-container');
@@ -1283,7 +1297,22 @@ function selectAdminLayer(layer){
 function updateSelectedLayerProp(key, value) {
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
-  selectedAdminLayer[key] = value;
+  
+  const group = layersMovedWith(selectedAdminLayer);
+  if (group.length > 1) {
+    if (key === 'x') {
+      group.forEach(l => l.x = value);
+    } else if (key === 'y') {
+      const deltaY = value - selectedAdminLayer.y;
+      group.forEach(l => l.y += deltaY);
+    } else if (key === 'align') {
+      group.forEach(l => l.align = value);
+    } else {
+      selectedAdminLayer[key] = value;
+    }
+  } else {
+    selectedAdminLayer[key] = value;
+  }
   
   const editor = document.querySelector('.visual-editor');
   if (editor) {
@@ -1373,7 +1402,41 @@ function refreshAdminPanel(){
 }
 
 function layersMovedWith(layer){
+  const t = TEMPLATES[currentTpl];
+  if (!t) return [layer];
+  
+  // Group 1: Schedule items
+  const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
+  if (layer.type === 'edit_row' && scheduleFields.includes(layer.field)) {
+    return t.layers.filter(l => l.type === 'edit_row' && scheduleFields.includes(l.field));
+  }
+  
+  // Group 2: Footer items
+  const footerFields = ['f-footintro', 'f-url', 'f-email'];
+  if (layer.type === 'edit_row' && footerFields.includes(layer.field)) {
+    return t.layers.filter(l => l.type === 'edit_row' && footerFields.includes(l.field));
+  }
+  
   return [layer];
+}
+
+function updateGroupGap(gapPx) {
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  const group = layersMovedWith(selectedAdminLayer);
+  if (group.length > 1) {
+    const t = TEMPLATES[currentTpl];
+    const designH = t.h || H;
+    const spacingRatio = gapPx / designH;
+    const sorted = [...group].sort((a, b) => a.y - b.y);
+    const baseY = sorted[0].y;
+    sorted.forEach((l, index) => {
+      l.y = baseY + index * spacingRatio;
+      if (l.lineHeight !== undefined) l.lineHeight = gapPx;
+    });
+  }
+  saveLayerOverrides();
+  render();
 }
 
 function moveLayerGroup(layer, dx, dy){

@@ -658,6 +658,9 @@ Food truck will be present"></textarea>
             <button id="align-right" class="segment-btn" onclick="alignSelectedLayer('right')">Right</button>
           </div>
         </div>
+      <div class="figma-row check-row" id="prop-bullet-container" style="display: none; margin-top: 10px;">
+        <input type="checkbox" id="prop-bullet" onchange="updateSelectedLayerProp('bullet', this.checked)">
+        <label for="prop-bullet" style="margin-left: 8px;">Show Bullet Dot</label>
       </div>
     </div>
 
@@ -1113,7 +1116,10 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
     return;
   }
 
-  const prefix = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false) ? '\u2022  ' : '';
+  const hasBullet = layer.bullet !== undefined 
+    ? layer.bullet 
+    : (layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false));
+  const prefix = hasBullet ? '\u2022  ' : '';
   ctx.font = regularFont;
   wrapLines(ctx, prefix + rawText, maxWidth, regularFont).forEach(line => {
     drawTextLine(ctx, line, x, y, layer);
@@ -1611,7 +1617,8 @@ function saveLayerOverrides(){
       x1: layer.x1,
       x2: layer.x2,
       shadow: layer.shadow,
-      maxW: layer.maxW
+      maxW: layer.maxW,
+      bullet: layer.bullet
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -1631,7 +1638,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
@@ -1884,7 +1891,20 @@ function selectAdminLayer(layer){
     // Set font size
     const sizeMatch = fontStr.match(/(\d+)px/);
     document.getElementById('prop-font-size').value = sizeMatch ? parseInt(sizeMatch[1]) : 28;
-    
+  }
+  
+  // 3b. Bullet Toggle
+  const bulletContainer = document.getElementById('prop-bullet-container');
+  const bulletCheckbox = document.getElementById('prop-bullet');
+  if (layer.type === 'edit_row' || layer.type === 'schedule_list' || layer.type === 'list') {
+    bulletContainer.style.display = 'flex';
+    const t = TEMPLATES[currentTpl];
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
+    bulletCheckbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
+  } else {
+    bulletContainer.style.display = 'none';
+  }  
     // Set letter spacing
     document.getElementById('prop-letter-spacing').value = layer.letterSpacing || 0;
     

@@ -189,24 +189,24 @@
       "maxW": 0.23
     },
     "t1:edit_row": {
-      "x": 0.5009609375,
-      "y": 0.8573523956723339,
+      "x": 0.498421875,
+      "y": 0.8427349841147175,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.32
     },
     "bullet1:edit_row": {
-      "x": 0.5009609375,
-      "y": 0.8775544158743541,
+      "x": 0.498421875,
+      "y": 0.8629370043167377,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.32
     },
     "bullet2:edit_row": {
-      "x": 0.5009609375,
-      "y": 0.8977564360763743,
+      "x": 0.498421875,
+      "y": 0.8831390245187579,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -238,7 +238,7 @@
     },
     "footIntro:edit_row": {
       "x": 0.1144,
-      "y": 0.9533,
+      "y": 0.9555095959595961,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
@@ -246,7 +246,7 @@
     },
     "url:edit_row": {
       "x": 0.1144,
-      "y": 0.9666,
+      "y": 0.968809595959596,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
@@ -254,7 +254,7 @@
     },
     "email:edit_row": {
       "x": 0.1154265625,
-      "y": 0.9799,
+      "y": 0.982109595959596,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
@@ -273,7 +273,7 @@
     },
     "date:text": {
       "x": 0.5,
-      "y": 0.7574,
+      "y": 0.7530862745098029,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -295,28 +295,27 @@
       "align": "group-center-left",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "500 67px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
+      "font": "500 71px \"RigidSquareWeb\", sans-serif"
     },
     "t1:edit_row": {
-      "x": 0.5010078125,
-      "y": 0.8340111497412678,
+      "x": 0.498125,
+      "y": 0.8201365001078043,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "700 71px \"RigidSquareWeb\", sans-serif",
       "maxW": 0.32
     },
     "bullet1:edit_row": {
-      "x": 0.50125,
-      "y": 0.8487111497412678,
+      "x": 0.4983671874999999,
+      "y": 0.8377835589313337,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.32
     },
     "bullet2:edit_row": {
-      "x": 0.50125,
-      "y": 0.8634111497412678,
+      "x": 0.4983671874999999,
+      "y": 0.8554306177548631,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,

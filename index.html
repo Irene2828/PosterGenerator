@@ -1181,7 +1181,7 @@ function drawBackground(ctx, t, w, h){
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
+  const showQr = showQrRadio ? showQrRadio.value === 'yes' : false;
   if (!showQr && layer.type === 'qr') return;
   
   if (layer.hidden) return;
@@ -1565,7 +1565,7 @@ const footerFields = ['f-footintro', 'f-url', 'f-email'];
 
 function qrUrlForTemplate(){
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
+  const showQr = showQrRadio ? showQrRadio.value === 'yes' : false;
   if (!showQr) return '';
   const value = document.getElementById('f-qr-url').value;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
@@ -3069,6 +3069,17 @@ function canvasToPdfDataUrl(canvasEl){
 }
 
 document.getElementById('downloadBtn').addEventListener('click', ()=>{
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (!showQrRadio) {
+    alert("Please select whether to include the QR Code on the poster first.");
+    const qrField = document.querySelector('input[name="show-qr-radio"]').closest('.field');
+    if (qrField) {
+      qrField.style.transition = 'background-color 0.3s ease';
+      qrField.style.backgroundColor = 'rgba(230, 62, 48, 0.15)';
+      setTimeout(() => { qrField.style.backgroundColor = 'transparent'; }, 1000);
+    }
+    return;
+  }
   const t = TEMPLATES[currentTpl];
   const size = getExportSize(t);
   const format = document.getElementById('f-format').value;

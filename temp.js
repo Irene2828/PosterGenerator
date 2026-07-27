@@ -89,7 +89,8 @@ function saveCurrentTemplate(){
       lineWidth: layer.lineWidth,
       x1: layer.x1,
       x2: layer.x2,
-      shadow: layer.shadow
+      shadow: layer.shadow,
+      maxW: layer.maxW
     };
   });
 
@@ -360,7 +361,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   const rawText = getLayerEditValue(layer).trim();
   if (!rawText) return;
   if (['f-footintro','f-url','f-email'].includes(layer.field) && !copy.url) return;
-  const sourceFont = source.font || '500 24px sans-serif';
+  const sourceFont = layer.font || source.font || '500 24px sans-serif';
   const px = Math.round(parseInt(sourceFont.match(/(\d+)px/)[1],10) * scale);
   const regularFont = sourceFont.replace(/\d+px/, px+'px');
   const boldFont = (source.boldFont || sourceFont).replace(/\d+px/, px+'px');
@@ -404,7 +405,10 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
     return;
   }
 
-  const prefix = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false) ? '\u2022  ' : '';
+  const hasBullet = layer.bullet !== undefined 
+    ? layer.bullet 
+    : (layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false));
+  const prefix = hasBullet ? '\u2022  ' : '';
   ctx.font = regularFont;
   wrapLines(ctx, prefix + rawText, maxWidth, regularFont).forEach(line => {
     drawTextLine(ctx, line, x, y, layer);
@@ -900,7 +904,10 @@ function saveLayerOverrides(){
       size: layer.size,
       lineWidth: layer.lineWidth,
       x1: layer.x1,
-      x2: layer.x2
+      x2: layer.x2,
+      shadow: layer.shadow,
+      maxW: layer.maxW,
+      bullet: layer.bullet
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -920,7 +927,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
@@ -1122,9 +1129,17 @@ function selectAdminLayer(layer){
   if (noSelection) noSelection.style.display = 'none';
   if (name) name.textContent = `Layer: ${layer.id.replace('f-', '').toUpperCase()}`;
   
-  // 1. Position / Layout
-  document.getElementById('prop-x').value = Math.round((layer.x || 0) * 1000) / 10;
-  document.getElementById('prop-y').value = Math.round((layer.y || 0) * 1000) / 10;
+  // 1. Position  // 2. Layout
+  document.getElementById('prop-x').value = ((layer.x || 0) * 100).toFixed(1);
+  document.getElementById('prop-y').value = ((layer.y || 0) * 100).toFixed(1);
+  
+  const maxWInput = document.getElementById('prop-maxW');
+  if (maxWInput) {
+    const t = TEMPLATES[currentTpl];
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const currentMaxW = layer.maxW || source.maxW || 0;
+    maxWInput.value = currentMaxW ? (currentMaxW * 100).toFixed(1) : '';
+  }
   
   // 2. Sizing / Sizing group
   const sizeContainer = document.getElementById('prop-size-container');
@@ -1150,18 +1165,32 @@ function selectAdminLayer(layer){
   if (layer.font || layer.type === 'edit_row' || layer.type === 'text') {
     typoGroup.style.display = 'block';
     
-    // Parse font (e.g. "bold 32px RigidSquareWeb")
-    const fontStr = layer.font || '';
+    const t = TEMPLATES[currentTpl];
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const fontStr = layer.font || source.font || '';
     
-    // Set font family
-    const familySelect = document.getElementById('prop-font-family');
-    if (fontStr.includes('RigidSquareWeb')) familySelect.value = 'RigidSquareWeb';
-    else if (fontStr.includes('Inter')) familySelect.value = 'Inter';
-    else if (fontStr.includes('Chakra Petch')) familySelect.value = 'Chakra Petch';
+    // Set font weight
+    const weightSelect = document.getElementById('prop-font-weight');
+    if (weightSelect) {
+      if (fontStr.toLowerCase().includes('italic')) weightSelect.value = 'italic';
+      else if (fontStr.toLowerCase().includes('bold') || fontStr.includes('700') || fontStr.includes('600')) weightSelect.value = '700';
+      else weightSelect.value = '400';
+    }
     
     // Set font size
     const sizeMatch = fontStr.match(/(\d+)px/);
     document.getElementById('prop-font-size').value = sizeMatch ? parseInt(sizeMatch[1]) : 28;
+    
+    // 3b. Bullet Toggle
+    const bulletContainer = document.getElementById('prop-bullet-container');
+    const bulletCheckbox = document.getElementById('prop-bullet');
+    if (layer.type === 'edit_row' || layer.type === 'schedule_list' || layer.type === 'list') {
+      bulletContainer.style.display = 'flex';
+      const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
+      bulletCheckbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
+    } else {
+      bulletContainer.style.display = 'none';
+    }  
     
     // Set letter spacing
     document.getElementById('prop-letter-spacing').value = layer.letterSpacing || 0;
@@ -1197,6 +1226,15 @@ function updateSelectedLayerProp(key, value) {
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   selectedAdminLayer[key] = value;
+  
+  const editor = document.querySelector('.visual-editor');
+  if (editor) {
+    const t = TEMPLATES[currentTpl];
+    const displayScale = canvas.clientWidth / (t.w || 3300);
+    if (key === 'letterSpacing') editor.style.letterSpacing = ((value || 0) * displayScale) + 'px';
+    if (key === 'align') editor.style.textAlign = value === 'group-center-left' ? 'left' : value;
+  }
+  
   saveLayerOverrides();
   render();
 }
@@ -1205,15 +1243,34 @@ function updateSelectedLayerTypography() {
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   
-  const family = document.getElementById('prop-font-family').value;
+  const weightSelect = document.getElementById('prop-font-weight');
+  const weightVal = weightSelect ? weightSelect.value : '400';
   const size = document.getElementById('prop-font-size').value;
   
-  const isBold = parseInt(size) >= 16;
-  const fontStyle = isBold ? 'bold' : '500';
-  selectedAdminLayer.font = `${fontStyle} ${size}px "${family}", sans-serif`;
+  const oldFontStr = selectedAdminLayer.font || '500 28px "RigidSquareWeb", sans-serif';
+  const sizeMatch = oldFontStr.match(/(\d+)px\s*(.*)$/);
+  const familyPart = sizeMatch ? sizeMatch[2] : '"RigidSquareWeb", sans-serif';
+  
+  let fontStyle = '';
+  let fontWeight = '';
+  if (weightVal === 'italic') {
+    fontStyle = 'italic ';
+    fontWeight = '400 ';
+  } else {
+    fontWeight = weightVal + ' ';
+  }
+  
+  selectedAdminLayer.font = `${fontStyle}${fontWeight}${size}px ${familyPart}`;
   
   if (selectedAdminLayer.boldFont) {
-    selectedAdminLayer.boldFont = `bold ${size}px "${family}", sans-serif`;
+    selectedAdminLayer.boldFont = `bold ${size}px ${familyPart}`;
+  }
+  
+  const editor = document.querySelector('.visual-editor');
+  if (editor) {
+    const t = TEMPLATES[currentTpl];
+    const displayScale = canvas.clientWidth / (t.w || 3300);
+    editor.style.font = selectedAdminLayer.font.replace(/(\d+)px/, (_, px) => Math.max(8, Math.round(Number(px) * displayScale)) + 'px');
   }
   
   saveLayerOverrides();

@@ -1891,20 +1891,18 @@ function selectAdminLayer(layer){
     // Set font size
     const sizeMatch = fontStr.match(/(\d+)px/);
     document.getElementById('prop-font-size').value = sizeMatch ? parseInt(sizeMatch[1]) : 28;
-  }
-  
-  // 3b. Bullet Toggle
-  const bulletContainer = document.getElementById('prop-bullet-container');
-  const bulletCheckbox = document.getElementById('prop-bullet');
-  if (layer.type === 'edit_row' || layer.type === 'schedule_list' || layer.type === 'list') {
-    bulletContainer.style.display = 'flex';
-    const t = TEMPLATES[currentTpl];
-    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-    const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
-    bulletCheckbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
-  } else {
-    bulletContainer.style.display = 'none';
-  }  
+    
+    // 3b. Bullet Toggle
+    const bulletContainer = document.getElementById('prop-bullet-container');
+    const bulletCheckbox = document.getElementById('prop-bullet');
+    if (layer.type === 'edit_row' || layer.type === 'schedule_list' || layer.type === 'list') {
+      bulletContainer.style.display = 'flex';
+      const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
+      bulletCheckbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
+    } else {
+      bulletContainer.style.display = 'none';
+    }  
+    
     // Set letter spacing
     document.getElementById('prop-letter-spacing').value = layer.letterSpacing || 0;
     

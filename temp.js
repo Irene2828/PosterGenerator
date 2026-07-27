@@ -2085,6 +2085,21 @@ function drawThumb(key){
     });
   }
 }
+// One-time local storage migration to clear old preselected Yes radios from drafts
+if (!localStorage.getItem('qr_preselect_migration_v3')) {
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('posterCopyDraft:')) {
+      try {
+        const draft = JSON.parse(localStorage.getItem(key));
+        if (draft && draft['show-qr-radio'] === 'yes') {
+          delete draft['show-qr-radio'];
+          localStorage.setItem(key, JSON.stringify(draft));
+        }
+      } catch (e) {}
+    }
+  });
+  localStorage.setItem('qr_preselect_migration_v3', 'true');
+}
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));
 

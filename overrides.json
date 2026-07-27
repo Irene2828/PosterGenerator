@@ -189,24 +189,24 @@
       "maxW": 0.23
     },
     "t1:edit_row": {
-      "x": 0.5,
-      "y": 0.856,
+      "x": 0.5009609375,
+      "y": 0.8573523956723339,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.32
     },
     "bullet1:edit_row": {
-      "x": 0.5,
-      "y": 0.8758024161647019,
+      "x": 0.5009609375,
+      "y": 0.8775544158743541,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.32
     },
     "bullet2:edit_row": {
-      "x": 0.5,
-      "y": 0.8932651515151514,
+      "x": 0.5009609375,
+      "y": 0.8977564360763743,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -259,6 +259,117 @@
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.606
+    }
+  },
+  "communityRunRed": {
+    "city:text": {
+      "x": 0.4994609375,
+      "y": 0.054361424644243206,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 198px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.289
+    },
+    "date:text": {
+      "x": 0.5,
+      "y": 0.7574,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 193px \"RigidSquareWeb\", sans-serif",
+      "maxW": 0.7109
+    },
+    "location:text": {
+      "x": 0.5,
+      "y": 0.7958,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 125px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.5808
+    },
+    "schedule:schedule_list": {
+      "x": 0.5,
+      "y": 0.8268,
+      "align": "group-center-left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 67px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
+    },
+    "t1:edit_row": {
+      "x": 0.5010078125,
+      "y": 0.8340111497412678,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 71px \"RigidSquareWeb\", sans-serif",
+      "maxW": 0.32
+    },
+    "bullet1:edit_row": {
+      "x": 0.50125,
+      "y": 0.8487111497412678,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "bullet2:edit_row": {
+      "x": 0.50125,
+      "y": 0.8634111497412678,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "qr:qr": {
+      "x": 0.0152,
+      "y": 0.9191,
+      "hidden": false,
+      "letterSpacing": 0,
+      "size": 0.1005
+    },
+    "divider:rule": {
+      "y": 0.933,
+      "hidden": false,
+      "letterSpacing": 0,
+      "lineWidth": 4,
+      "x1": 0.1313,
+      "x2": 0.6604
+    },
+    "footer:qr_caption": {
+      "x": 0.1313,
+      "y": 0.954,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.5417
+    },
+    "footIntro:edit_row": {
+      "x": 0.1313,
+      "y": 0.954,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 67px \"RigidSquareWeb\", sans-serif",
+      "maxW": 0.5417
+    },
+    "url:edit_row": {
+      "x": 0.1313,
+      "y": 0.9687,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.5417
+    },
+    "email:edit_row": {
+      "x": 0.1313,
+      "y": 0.9834,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.5417
     }
   }
 }

@@ -1848,23 +1848,91 @@ function mountVisualEditor(layer, rect){
   editor.focus();
   editor.select();
   let cancelled = false;
+  
   const finish = () => {
     if (cancelled) return;
     activeEditingLayer = null;
+    const bulletWrap = editOverlay.querySelector('.visual-editor-bullet-wrap');
+    if (bulletWrap) bulletWrap.remove();
+    editor.remove();
     commitLayerEdit(layer, editor.value);
   };
-  editor.addEventListener('blur', finish, { once:true });
+  
+  const onMouseDownOutside = (e) => {
+    if (e.target === editor || e.target.closest('.visual-editor-bullet-wrap')) {
+      return;
+    }
+    document.removeEventListener('mousedown', onMouseDownOutside);
+    finish();
+  };
+  document.addEventListener('mousedown', onMouseDownOutside);
+  
+  // Show a floating "Show Bullet" checkbox for all text layers
+  const supportsBullet = ['text', 'wrap', 'list', 'schedule_list', 'edit_row'].includes(layer.type);
+  if (supportsBullet) {
+    const bulletToggleWrap = document.createElement('div');
+    bulletToggleWrap.className = 'visual-editor-bullet-wrap';
+    bulletToggleWrap.style.position = 'absolute';
+    bulletToggleWrap.style.left = rect.left + 'px';
+    bulletToggleWrap.style.top = (rect.top + (useTextarea ? Math.max(24, rect.height + 2) : 26) + 6) + 'px';
+    bulletToggleWrap.style.background = '#0B132B';
+    bulletToggleWrap.style.color = '#FFFFFF';
+    bulletToggleWrap.style.padding = '4px 8px';
+    bulletToggleWrap.style.borderRadius = '4px';
+    bulletToggleWrap.style.fontSize = '12px';
+    bulletToggleWrap.style.display = 'flex';
+    bulletToggleWrap.style.alignItems = 'center';
+    bulletToggleWrap.style.zIndex = '1001';
+    bulletToggleWrap.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'visual-editor-bullet-check';
+    checkbox.style.width = 'auto';
+    checkbox.style.margin = '0 6px 0 0';
+    checkbox.style.cursor = 'pointer';
+    
+    const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
+    checkbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
+    
+    checkbox.addEventListener('change', () => {
+      pushUndoSnapshot();
+      layer.bullet = checkbox.checked;
+      saveLayerOverrides();
+      render();
+    });
+    
+    const label = document.createElement('label');
+    label.htmlFor = 'visual-editor-bullet-check';
+    label.textContent = 'Show Bullet';
+    label.style.cursor = 'pointer';
+    label.style.margin = '0';
+    label.style.fontSize = '12px';
+    label.style.color = '#FFFFFF';
+    label.style.fontWeight = 'normal';
+    label.style.textTransform = 'none';
+    label.style.letterSpacing = 'normal';
+    
+    bulletToggleWrap.appendChild(checkbox);
+    bulletToggleWrap.appendChild(label);
+    editOverlay.appendChild(bulletToggleWrap);
+  }
+  
   editor.addEventListener('keydown', e => {
     if (e.key === 'Escape'){
       cancelled = true;
       activeEditingLayer = null;
+      document.removeEventListener('mousedown', onMouseDownOutside);
+      const bulletWrap = editOverlay.querySelector('.visual-editor-bullet-wrap');
+      if (bulletWrap) bulletWrap.remove();
       editor.remove();
       render();
       return;
     }
     if (e.key === 'Enter' && (editor.tagName === 'INPUT' || e.metaKey || e.ctrlKey)){
       e.preventDefault();
-      editor.blur();
+      document.removeEventListener('mousedown', onMouseDownOutside);
+      finish();
     }
   });
 }

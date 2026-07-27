@@ -1179,7 +1179,7 @@ function mountVisualEditor(layer, rect){
       pushUndoSnapshot();
       layer.bullet = checkbox.checked;
       saveLayerOverrides();
-      render();
+      render(() => mountVisualEditor(layer, rect));
     });
     
     const label = document.createElement('label');
@@ -2344,6 +2344,16 @@ COPY_FIELD_IDS
     });
   });
 document.getElementById('f-format').addEventListener('change', render);
+window.addEventListener('keydown', e => {
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const isUndo = (isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase() === 'z' && !e.shiftKey;
+  const isRedo = (isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase() === 'z' && e.shiftKey;
+  if (isUndo) {
+    e.preventDefault();
+    undoLastUserEdit();
+  }
+});
+
 document.getElementById('userUndoBtn').addEventListener('click', undoLastUserEdit);
 updateUserUndoButton();
 

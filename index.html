@@ -484,7 +484,11 @@
 	      <div class="qr-input-wrap" id="qrInputWrap">
 	        <input type="text" id="f-url" placeholder="terryfox.org">
 	      </div>
-	      <div class="qr-caption">Scan the code to test it before downloading. If you don't need a QR code or link, you can hide them by clicking them on the poster and selecting "Hide" (or clicking the red X).</div>
+	      <div class="qr-caption">Scan the code to test it before downloading your poster.</div>
+      <div class="check-row" style="margin-top: 8px; display: flex; align-items: center;">
+        <input type="checkbox" id="f-show-qr" checked onchange="saveCopyDraft(); render();" style="width: auto; margin: 0; cursor: pointer;">
+        <label for="f-show-qr" style="margin-left: 8px; font-weight: normal; margin-bottom: 0; cursor: pointer; user-select: none;">Include QR code and registration text on poster</label>
+      </div>
 	    </div>
 
 	    <div class="field">
@@ -766,6 +770,8 @@ function saveCopyDraft(tplKey = currentTpl){
     const el = document.getElementById(id);
     if (el) draft[id] = el.value;
   });
+  const showQrEl = document.getElementById('f-show-qr');
+  if (showQrEl) draft['f-show-qr'] = showQrEl.checked;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
 }
 
@@ -778,6 +784,8 @@ function loadCopyDraft(tplKey){
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
   });
+  const showQrEl = document.getElementById('f-show-qr');
+  if (showQrEl) showQrEl.checked = values['f-show-qr'] !== undefined ? values['f-show-qr'] : true;
 }
 
 function saveCurrentTemplate(){
@@ -1147,6 +1155,12 @@ function drawBackground(ctx, t, w, h){
 }
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
+  const showQrEl = document.getElementById('f-show-qr');
+  const showQrAndFooter = showQrEl ? showQrEl.checked : true;
+  if (!showQrAndFooter && ['qr', 'qr_caption', 'social_footer'].includes(layer.type)) return;
+  if (!showQrAndFooter && layer.type === 'edit_row' && ['f-footintro', 'f-url', 'f-email'].includes(layer.field)) return;
+  if (!showQrAndFooter && layer.type === 'rule' && layer.id === 'divider') return;
+  
   if (layer.hidden) return;
   if (layer === activeEditingLayer) return;
   const designW = t.w || 1122;

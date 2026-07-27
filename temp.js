@@ -55,6 +55,8 @@ function saveCopyDraft(tplKey = currentTpl){
     const el = document.getElementById(id);
     if (el) draft[id] = el.value;
   });
+  const showQrEl = document.getElementById('f-show-qr');
+  if (showQrEl) draft['f-show-qr'] = showQrEl.checked;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
 }
 
@@ -67,6 +69,8 @@ function loadCopyDraft(tplKey){
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
   });
+  const showQrEl = document.getElementById('f-show-qr');
+  if (showQrEl) showQrEl.checked = values['f-show-qr'] !== undefined ? values['f-show-qr'] : true;
 }
 
 function saveCurrentTemplate(){
@@ -436,6 +440,12 @@ function drawBackground(ctx, t, w, h){
 }
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
+  const showQrEl = document.getElementById('f-show-qr');
+  const showQrAndFooter = showQrEl ? showQrEl.checked : true;
+  if (!showQrAndFooter && ['qr', 'qr_caption', 'social_footer'].includes(layer.type)) return;
+  if (!showQrAndFooter && layer.type === 'edit_row' && ['f-footintro', 'f-url', 'f-email'].includes(layer.field)) return;
+  if (!showQrAndFooter && layer.type === 'rule' && layer.id === 'divider') return;
+  
   if (layer.hidden) return;
   if (layer === activeEditingLayer) return;
   const designW = t.w || 1122;

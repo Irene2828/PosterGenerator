@@ -1277,7 +1277,7 @@ function selectAdminLayer(layer){
     const textVal = getLayerEditValue(layer);
     
     let isShrunk = false;
-    if (maxW && textVal) {
+    if ((layer.type === 'text' || layer.type === 'static') && maxW && textVal) {
       const dummyCanvas = document.createElement('canvas');
       const dummyCtx = dummyCanvas.getContext('2d');
       dummyCtx.font = fontStr;

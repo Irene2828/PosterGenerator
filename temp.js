@@ -537,6 +537,8 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.type === 'text'){
     const value = (copy[layer.id] || '').toString();
     if (!value) { ctx.globalAlpha = 1; return; }
+    const prefix = layer.bullet ? '\u2022  ' : '';
+    const textToDraw = prefix + value;
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
     ctx.font = font;
@@ -547,16 +549,18 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
     if (layer.maxW){
       const maxWidth = layer.maxW * w;
       let size = px;
-      while (ctx.measureText(value).width > maxWidth && size > 12*s){
+      while (ctx.measureText(textToDraw).width > maxWidth && size > 12*s){
         size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
       }
     }
-    drawTextLine(ctx, value, x, y, layer);
+    drawTextLine(ctx, textToDraw, x, y, layer);
   }
 
   if (layer.type === 'wrap'){
     const value = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id]||'');
     if (!value) { ctx.globalAlpha = 1; return; }
+    const prefix = layer.bullet ? '\u2022  ' : '';
+    const textToDraw = prefix + value;
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
     ctx.font = font;
@@ -564,7 +568,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
     ctx.textAlign = layer.align;
     const x = layer.x * w;
     let y = layer.y * h;
-    const lines = wrapLines(ctx, value, layer.maxW * w, font);
+    const lines = wrapLines(ctx, textToDraw, layer.maxW * w, font);
     lines.slice(0,3).forEach(l=>{ drawTextLine(ctx, l, x, y, layer); y += layer.lineHeight * s; });
   }
 
@@ -1158,8 +1162,7 @@ function selectAdminLayer(layer){
   if (name) {
     const group = layersMovedWith(layer);
     if (group.length > 1) {
-      const groupName = scheduleFields.includes(layer.field) ? 'Schedule Rows' : 'Footer Rows';
-      name.textContent = `Group: ${groupName} (${layer.id.toUpperCase()})`;
+      name.textContent = `Group: Auto Layout (${layer.id.toUpperCase()})`;
     } else {
       name.textContent = `Layer: ${layer.id.replace('f-', '').toUpperCase()}`;
     }
@@ -1234,13 +1237,16 @@ function selectAdminLayer(layer){
     // 3b. Bullet Toggle
     const bulletContainer = document.getElementById('prop-bullet-container');
     const bulletCheckbox = document.getElementById('prop-bullet');
-    if (layer.type === 'edit_row' || layer.type === 'schedule_list' || layer.type === 'list') {
+    const supportsBullet = ['text', 'wrap', 'list', 'schedule_list', 'edit_row'].includes(layer.type);
+    if (supportsBullet) {
       bulletContainer.style.display = 'flex';
+      const t = TEMPLATES[currentTpl];
+      const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
       const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
       bulletCheckbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
     } else {
       bulletContainer.style.display = 'none';
-    }  
+    }
     
     // Set letter spacing
     document.getElementById('prop-letter-spacing').value = layer.letterSpacing !== undefined ? layer.letterSpacing : (source.letterSpacing || 0);
@@ -1680,6 +1686,52 @@ function updateEditOverlay(){
 
     editOverlay.appendChild(hot);
   });
+
+  if (selectedAdminLayer && isAdminMode) {
+    const group = layersMovedWith(selectedAdminLayer);
+    if (group.length > 1) {
+      let minLeft = Infinity, minTop = Infinity;
+      let maxRight = -Infinity, maxBottom = -Infinity;
+      group.forEach(gl => {
+        const source = gl.type === 'edit_row' ? styleSourceForEditRow(t, gl) : gl;
+        const sourceFont = source.font || gl.font || '500 28px "RigidSquareWeb", "Chakra Petch", sans-serif';
+        const fontPx = parseInt(sourceFont.match(/(\d+)px/)[1], 10) * fit * scaleX;
+        const geom = overlayGeometryForLayer(gl, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx);
+        const lHeight = gl.type === 'edit_row' ? Math.max(14, fontPx * 1.25) : (geom.height || Math.max(24, fontPx * 1.4));
+        const r = geom.left + geom.width;
+        const b = geom.top + lHeight;
+        if (geom.left < minLeft) minLeft = geom.left;
+        if (geom.top < minTop) minTop = geom.top;
+        if (r > maxRight) maxRight = r;
+        if (b > maxBottom) maxBottom = b;
+      });
+      const frame = document.createElement('div');
+      frame.className = 'group-outline-frame';
+      frame.style.position = 'absolute';
+      frame.style.left = (minLeft - 4) + 'px';
+      frame.style.top = (minTop - 4) + 'px';
+      frame.style.width = (maxRight - minLeft + 8) + 'px';
+      frame.style.height = (maxBottom - minTop + 8) + 'px';
+      frame.style.border = '2px dashed #18a0fb';
+      frame.style.borderRadius = '4px';
+      frame.style.pointerEvents = 'none';
+      frame.style.zIndex = '5';
+      const label = document.createElement('span');
+      label.textContent = 'Auto Layout Group';
+      label.style.position = 'absolute';
+      label.style.top = '-18px';
+      label.style.left = '0';
+      label.style.background = '#18a0fb';
+      label.style.color = '#FFFFFF';
+      label.style.fontSize = '9px';
+      label.style.fontWeight = 'bold';
+      label.style.padding = '2px 6px';
+      label.style.borderRadius = '2px';
+      label.style.textTransform = 'uppercase';
+      frame.appendChild(label);
+      editOverlay.appendChild(frame);
+    }
+  }
 
   if (showGrid && isAdminMode) {
     const gridSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");

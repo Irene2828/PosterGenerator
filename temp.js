@@ -421,9 +421,12 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
     : (layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false));
   const prefix = hasBullet ? '\u2022  ' : '';
   ctx.font = regularFont;
-  wrapLines(ctx, prefix + rawText, maxWidth, regularFont).forEach(line => {
-    drawTextLine(ctx, line, x, y, layer);
-    y += lineHeight;
+  const paragraphs = rawText.split('\n').map(p => prefix + p);
+  paragraphs.forEach(p => {
+    wrapLines(ctx, p, maxWidth || (w * 0.9), regularFont).forEach(line => {
+      drawTextLine(ctx, line, x, y, layer);
+      y += lineHeight;
+    });
   });
 }
 
@@ -535,32 +538,9 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'text'){
-    const value = (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || '')).toString();
-    if (!value) { ctx.globalAlpha = 1; return; }
+    const rawText = (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || '')).toString();
+    if (!rawText) { ctx.globalAlpha = 1; return; }
     const prefix = layer.bullet ? '\u2022  ' : '';
-    const textToDraw = prefix + value;
-    const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
-    const font = layer.font.replace(/\d+px/, px+'px');
-    ctx.font = font;
-    ctx.fillStyle = resolveColor(t, layer.color);
-    ctx.textAlign = layer.align;
-    const x = layer.x * w;
-    const y = layer.y * h;
-    if (layer.maxW){
-      const maxWidth = layer.maxW * w;
-      let size = px;
-      while (ctx.measureText(textToDraw).width > maxWidth && size > 12*s){
-        size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
-      }
-    }
-    drawTextLine(ctx, textToDraw, x, y, layer);
-  }
-
-  if (layer.type === 'wrap'){
-    const value = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || ''));
-    if (!value) { ctx.globalAlpha = 1; return; }
-    const prefix = layer.bullet ? '\u2022  ' : '';
-    const textToDraw = prefix + value;
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
     ctx.font = font;
@@ -568,8 +548,48 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
     ctx.textAlign = layer.align;
     const x = layer.x * w;
     let y = layer.y * h;
-    const lines = wrapLines(ctx, textToDraw, layer.maxW * w, font);
-    lines.slice(0,3).forEach(l=>{ drawTextLine(ctx, l, x, y, layer); y += layer.lineHeight * s; });
+    const maxWidth = layer.maxW ? layer.maxW * w : w;
+    const lineHeight = layer.lineHeight ? layer.lineHeight * s : px * 1.2;
+    
+    if (layer.maxW){
+      let size = px;
+      const paragraphs = rawText.split('\n').map(p => prefix + p);
+      while (size > 12*s){
+        let fits = true;
+        paragraphs.forEach(p => { if (ctx.measureText(p).width > maxWidth) fits = false; });
+        if (fits) break;
+        size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
+      }
+    }
+    const paragraphs = rawText.split('\n').map(p => prefix + p);
+    paragraphs.forEach(p => {
+      wrapLines(ctx, p, maxWidth, ctx.font).forEach(line => {
+        drawTextLine(ctx, line, x, y, layer);
+        y += lineHeight;
+      });
+    });
+  }
+
+  if (layer.type === 'wrap'){
+    const rawText = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || ''));
+    if (!rawText) { ctx.globalAlpha = 1; return; }
+    const prefix = layer.bullet ? '\u2022  ' : '';
+    const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
+    const font = layer.font.replace(/\d+px/, px+'px');
+    ctx.font = font;
+    ctx.fillStyle = resolveColor(t, layer.color);
+    ctx.textAlign = layer.align;
+    const x = layer.x * w;
+    let y = layer.y * h;
+    const maxWidth = layer.maxW ? layer.maxW * w : (w * 0.9);
+    const lineHeight = layer.lineHeight ? layer.lineHeight * s : px * 1.2;
+    const paragraphs = rawText.split('\n').map(p => prefix + p);
+    paragraphs.forEach(p => {
+      wrapLines(ctx, p, maxWidth, font).forEach(line => {
+        drawTextLine(ctx, line, x, y, layer);
+        y += lineHeight;
+      });
+    });
   }
 
   if (layer.type === 'qr_caption'){

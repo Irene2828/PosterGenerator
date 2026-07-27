@@ -1243,7 +1243,7 @@ function selectAdminLayer(layer){
     }  
     
     // Set letter spacing
-    document.getElementById('prop-letter-spacing').value = layer.letterSpacing || 0;
+    document.getElementById('prop-letter-spacing').value = layer.letterSpacing !== undefined ? layer.letterSpacing : (source.letterSpacing || 0);
     
     // Set alignment button states
     const align = layer.align || 'left';
@@ -1285,6 +1285,11 @@ function updateSelectedLayerProp(key, value) {
       group.forEach(l => l.y += deltaY);
     } else if (key === 'align') {
       group.forEach(l => l.align = value);
+    } else if (key === 'letterSpacing') {
+      const t = TEMPLATES[currentTpl];
+      const source = selectedAdminLayer.type === 'edit_row' ? styleSourceForEditRow(t, selectedAdminLayer) : selectedAdminLayer;
+      if (source) source[key] = value;
+      group.forEach(l => delete l[key]);
     } else {
       selectedAdminLayer[key] = value;
     }
@@ -1316,26 +1321,36 @@ function updateSelectedLayerTypography() {
   const sizeMatch = oldFontStr.match(/(\d+)px\s*(.*)$/);
   const familyPart = sizeMatch ? sizeMatch[2] : '"RigidSquareWeb", sans-serif';
   
-  let fontStyle = '';
-  let fontWeight = '';
-  if (weightVal === 'italic') {
-    fontStyle = 'italic ';
-    fontWeight = '400 ';
+  const fontStyle = weightVal === 'italic' ? 'italic ' : '';
+  const fontWeight = weightVal === '700' ? '700 ' : weightVal === 'italic' ? '400 ' : '500 ';
+  const newFont = `${fontStyle}${fontWeight}${size}px ${familyPart}`;
+  
+  const group = layersMovedWith(selectedAdminLayer);
+  if (group.length > 1) {
+    const t = TEMPLATES[currentTpl];
+    const source = selectedAdminLayer.type === 'edit_row' ? styleSourceForEditRow(t, selectedAdminLayer) : selectedAdminLayer;
+    if (source && source !== selectedAdminLayer) {
+      source.font = newFont;
+      if (selectedAdminLayer.boldFont || source.boldFont) {
+        source.boldFont = `bold ${size}px ${familyPart}`;
+      }
+    }
+    group.forEach(l => {
+      delete l.font;
+      delete l.boldFont;
+    });
   } else {
-    fontWeight = weightVal + ' ';
-  }
-  
-  selectedAdminLayer.font = `${fontStyle}${fontWeight}${size}px ${familyPart}`;
-  
-  if (selectedAdminLayer.boldFont) {
-    selectedAdminLayer.boldFont = `bold ${size}px ${familyPart}`;
+    selectedAdminLayer.font = newFont;
+    if (selectedAdminLayer.boldFont) {
+      selectedAdminLayer.boldFont = `bold ${size}px ${familyPart}`;
+    }
   }
   
   const editor = document.querySelector('.visual-editor');
   if (editor) {
     const t = TEMPLATES[currentTpl];
     const displayScale = canvas.clientWidth / (t.w || 3300);
-    editor.style.font = selectedAdminLayer.font.replace(/(\d+)px/, (_, px) => Math.max(8, Math.round(Number(px) * displayScale)) + 'px');
+    editor.style.font = newFont.replace(/(\d+)px/, (_, px) => Math.max(8, Math.round(Number(px) * displayScale)) + 'px');
   }
   
   saveLayerOverrides();

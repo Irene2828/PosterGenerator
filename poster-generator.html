@@ -5,7 +5,7 @@
 <title>Poster Generator</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Chakra+Petch:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Chakra+Petch:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Roboto+Condensed:wght@300;400;500;600;700;800;900&display=swap');
 
   /* Local Rigid Square brand files. The canvas renderer uses these exact
      weight/style tokens, so Figma font weights map to real local font files. */
@@ -1063,20 +1063,20 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#FFFFFF',
     layers: [
-      { id:'city',      type:'text',   x:0.0480, y:0.0874, align:'left', font:'700 110px "Chakra Petch", sans-serif', color:'accent', prefix:'TERRY FOX RUN ', maxW:0.38 },
-      { id:'subtitle',  type:'static', x:0.0480, y:0.1344, align:'left', font:'500 55px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', text:'For The Institute of Cancer Research', maxW:0.38 },
-      { id:'date',      type:'text',   x:0.0480, y:0.2083, align:'left', font:'700 70px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', maxW:0.38 },
-      { id:'location',  type:'text',   x:0.0480, y:0.2587, align:'left', font:'700 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.38 },
-      { id:'schedule',  type:'schedule_list', x:0.0480, y:0.2856, align:'left', font:'500 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', lineHeight:63, bullet:false, maxItems:2 },
-      { id:'t1',        type:'edit_row', x:0.0480, y:0.2856, align:'left', field:'f-t1', maxW:0.38, lineHeight:63 },
-      { id:'t2',        type:'edit_row', x:0.0480, y:0.3125, align:'left', field:'f-t2', maxW:0.38, lineHeight:63 },
-      { id:'guest',     type:'wrap',   x:0.0480, y:0.3511, align:'left', font:'italic 400 41px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.38, lineHeight:55 },
-      { id:'staticWho',  type:'static', x:0.0480, y:0.4435, align:'left', font:'700 59px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', text:'WHO WAS TERRY?', maxW:0.38 },
-      { id:'staticBio',  type:'wrap',   x:0.0480, y:0.4905, align:'left', font:'400 33px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.37, lineHeight:43, text:'In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 40 countries participate in his name to raise funds for cancer research.' },
-      { id:'bullets',   type:'list',   x:0.1642, y:0.7660, align:'left', font:'500 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.27, lineHeight:55, bullet:true, maxItems:3 },
-      { id:'bullet1',   type:'edit_row', x:0.1642, y:0.7660, align:'left', field:'f-bullets', maxW:0.27, lineHeight:55 },
+      { id:'city',      type:'text',   x:0.0480, y:0.0850, align:'left', font:'700 110px "Roboto Condensed", sans-serif', color:'accent', prefix:'TERRY FOX RUN ', maxW:0.38 },
+      { id:'subtitle',  type:'static', x:0.0480, y:0.1300, align:'left', font:'500 52px "Roboto Condensed", sans-serif', color:'ink', text:'For The Institute of Cancer Research', maxW:0.38 },
+      { id:'date',      type:'text',   x:0.0480, y:0.1980, align:'left', font:'700 68px "Roboto Condensed", sans-serif', color:'accent', maxW:0.38 },
+      { id:'location',  type:'text',   x:0.0480, y:0.2450, align:'left', font:'700 41px "Roboto Condensed", sans-serif', color:'ink', maxW:0.38 },
+      { id:'schedule',  type:'schedule_list', x:0.0480, y:0.2700, align:'left', font:'500 41px "Roboto Condensed", sans-serif', color:'ink', lineHeight:50, bullet:false, maxItems:2 },
+      { id:'t1',        type:'edit_row', x:0.0480, y:0.2700, align:'left', field:'f-t1', maxW:0.38, lineHeight:50 },
+      { id:'t2',        type:'edit_row', x:0.0480, y:0.2915, align:'left', field:'f-t2', maxW:0.38, lineHeight:50 },
+      { id:'guest',     type:'wrap',   x:0.0480, y:0.3250, align:'left', font:'italic 400 39px "Roboto Condensed", sans-serif', color:'ink', maxW:0.38, lineHeight:48 },
+      { id:'staticWho',  type:'static', x:0.0480, y:0.4150, align:'left', font:'700 55px "Roboto Condensed", sans-serif', color:'accent', text:'WHO WAS TERRY?', maxW:0.38 },
+      { id:'staticBio',  type:'wrap',   x:0.0480, y:0.4550, align:'left', font:'400 31px "Roboto Condensed", sans-serif', color:'ink', maxW:0.37, lineHeight:38, text:'In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 40 countries participate in his name to raise funds for cancer research.' },
+      { id:'bullets',   type:'list',   x:0.1642, y:0.7660, align:'left', font:'500 41px "Roboto Condensed", sans-serif', color:'ink', maxW:0.27, lineHeight:48, bullet:true, maxItems:3 },
+      { id:'bullet1',   type:'edit_row', x:0.1642, y:0.7660, align:'left', field:'f-bullets', maxW:0.27, lineHeight:48 },
       { id:'qr',        type:'qr',     x:0.0480, y:0.7425, size:0.0879, pad:6 },
-      { id:'footer',    type:'wrap',   x:0.1642, y:0.9323, align:'left', font:'700 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', maxW:0.27, lineHeight:55 }
+      { id:'footer',    type:'wrap',   x:0.1642, y:0.9323, align:'left', font:'700 41px "Roboto Condensed", sans-serif', color:'accent', maxW:0.27, lineHeight:48 }
     ],
     socialLayers: []
   },

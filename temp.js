@@ -56,8 +56,6 @@ function saveCopyDraft(tplKey = currentTpl){
     const el = document.getElementById(id);
     if (el) draft[id] = el.value;
   });
-  const sameLinkEl = document.getElementById('qr-same-link');
-  if (sameLinkEl) draft['qr-same-link'] = sameLinkEl.checked;
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
   if (showQrRadio) draft['show-qr-radio'] = showQrRadio.value;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
@@ -72,13 +70,6 @@ function loadCopyDraft(tplKey){
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
   });
-  
-  const sameLinkEl = document.getElementById('qr-same-link');
-  if (sameLinkEl) {
-    const isSame = values['qr-same-link'] !== undefined ? values['qr-same-link'] : true;
-    sameLinkEl.checked = isSame;
-    document.getElementById('qr-custom-link-container').style.display = isSame ? 'none' : 'block';
-  }
   
   const savedShowQr = values['show-qr-radio'] || 'yes';
   const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
@@ -833,6 +824,9 @@ function isValidQrInput(value){
   }
 }
 
+const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
+const footerFields = ['f-footintro', 'f-url', 'f-email'];
+
 function qrUrlForTemplate(){
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
   const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
@@ -841,33 +835,9 @@ function qrUrlForTemplate(){
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
 }
 
-function onPrintedUrlChange() {
-  const sameLinkEl = document.getElementById('qr-same-link');
-  const sameLink = sameLinkEl ? sameLinkEl.checked : true;
-  if (sameLink) {
-    const printedVal = document.getElementById('f-url').value;
-    const qrUrlInput = document.getElementById('f-qr-url');
-    if (qrUrlInput) qrUrlInput.value = printedVal;
-  }
-  saveCopyDraft();
-  render();
-}
-
 function onQrToggle(show) {
   const section = document.getElementById('qr-link-section');
   if (section) section.style.display = show ? 'block' : 'none';
-  saveCopyDraft();
-  render();
-}
-
-function onSameLinkToggle(same) {
-  const container = document.getElementById('qr-custom-link-container');
-  if (container) container.style.display = same ? 'none' : 'block';
-  if (same) {
-    const printedVal = document.getElementById('f-url').value;
-    const qrUrlInput = document.getElementById('f-qr-url');
-    if (qrUrlInput) qrUrlInput.value = printedVal;
-  }
   saveCopyDraft();
   render();
 }
@@ -1185,7 +1155,15 @@ function selectAdminLayer(layer){
   
   if (tools) tools.style.display = 'block';
   if (noSelection) noSelection.style.display = 'none';
-  if (name) name.textContent = `Layer: ${layer.id.replace('f-', '').toUpperCase()}`;
+  if (name) {
+    const group = layersMovedWith(layer);
+    if (group.length > 1) {
+      const groupName = scheduleFields.includes(layer.field) ? 'Schedule Rows' : 'Footer Rows';
+      name.textContent = `Group: ${groupName} (${layer.id.toUpperCase()})`;
+    } else {
+      name.textContent = `Layer: ${layer.id.replace('f-', '').toUpperCase()}`;
+    }
+  }
   
   // 1. Position  // 2. Layout
   document.getElementById('prop-x').value = ((layer.x || 0) * 100).toFixed(1);
@@ -1405,14 +1383,10 @@ function layersMovedWith(layer){
   const t = TEMPLATES[currentTpl];
   if (!t) return [layer];
   
-  // Group 1: Schedule items
-  const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
   if (layer.type === 'edit_row' && scheduleFields.includes(layer.field)) {
     return t.layers.filter(l => l.type === 'edit_row' && scheduleFields.includes(l.field));
   }
   
-  // Group 2: Footer items
-  const footerFields = ['f-footintro', 'f-url', 'f-email'];
   if (layer.type === 'edit_row' && footerFields.includes(layer.field)) {
     return t.layers.filter(l => l.type === 'edit_row' && footerFields.includes(l.field));
   }

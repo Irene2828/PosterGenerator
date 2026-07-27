@@ -937,17 +937,17 @@ const TEMPLATE_COPY = {
     footIntro: 'visit:'
   },
   londonFlyer: {
-    city: 'LONDON',
-    date: 'SUNDAY, SEPTEMBER 15, 2024',
-    guest: 'With special guest, Fred Fox, brother of Terry Fox.',
-    location: 'Battersea Park',
-    t1: 'Registration 08:30 to 10:00',
-    t2: 'Start 10:00, Ends 13:00',
+    city: 'Sussex',
+    date: 'SUNDAY, SEPTEMBER 6, 2026',
+    guest: '',
+    location: 'Tinwood Estate',
+    t1: 'Registration 09:00 to 10:00',
+    t2: 'Start 10:00, Ends 12:00',
     t3: '',
-    bullets: ['2.5 / 5 / 7.5 / 10 km Fun Run!', 'Register to run, ride, or walk', 'at terryfoxrunuk.org'],
-    url: 'terryfoxrunuk.org',
+    bullets: ['Walk, run, or ride', 'Route through the vineyard', 'Free entry & open to all'],
+    url: 'terryfoxrunuk.org/events/sussex2026',
     email: '',
-    footIntro: '#NoMatterWhat #TerryFoxRunUK'
+    footIntro: '#TerryFoxRunUK'
   }
 };
 
@@ -1055,28 +1055,28 @@ const TEMPLATES = {
     name: 'London Run Flyer (A4 Landscape, Two-Up)',
     kind: 'image',
     twoUp: true,
-    w: 842,
-    h: 595,
+    w: 3300,
+    h: 2332,
     src: "./London_Flyer_clean.png",
     ink: '#1D1D1D',
     accent: '#1D1D1D',
     qrBg: '#FFFFFF',
     edgeColor: '#FFFFFF',
     layers: [
-      { id:'city',      type:'text',   x:0.0480, y:0.0874, align:'left', font:'700 28px "Chakra Petch", sans-serif', color:'accent', prefix:'TERRY FOX RUN ', maxW:0.38 },
-      { id:'subtitle',  type:'static', x:0.0480, y:0.1344, align:'left', font:'500 14px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', text:'For The Institute of Cancer Research', maxW:0.38 },
-      { id:'date',      type:'text',   x:0.0480, y:0.2083, align:'left', font:'700 18px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', maxW:0.38 },
-      { id:'location',  type:'text',   x:0.0480, y:0.2587, align:'left', font:'700 11px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.38 },
-      { id:'schedule',  type:'schedule_list', x:0.0480, y:0.2856, align:'left', font:'500 11px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', lineHeight:14, bullet:false, maxItems:2 },
-      { id:'t1',        type:'edit_row', x:0.0480, y:0.2856, align:'left', field:'f-t1', maxW:0.38, lineHeight:14 },
-      { id:'t2',        type:'edit_row', x:0.0480, y:0.3125, align:'left', field:'f-t2', maxW:0.38, lineHeight:14 },
-      { id:'guest',     type:'wrap',   x:0.0480, y:0.3511, align:'left', font:'italic 400 10.5px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.38, lineHeight:14 },
-      { id:'staticWho',  type:'static', x:0.0480, y:0.4435, align:'left', font:'700 15px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', text:'WHO WAS TERRY?', maxW:0.38 },
-      { id:'staticBio',  type:'wrap',   x:0.0480, y:0.4905, align:'left', font:'400 8.5px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.37, lineHeight:11, text:'In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 30 countries participate in his name to raise funds for cancer research.' },
-      { id:'bullets',   type:'list',   x:0.1642, y:0.7660, align:'left', font:'500 11px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.27, lineHeight:14, bullet:true, maxItems:3 },
-      { id:'bullet1',   type:'edit_row', x:0.1642, y:0.7660, align:'left', field:'f-bullets', maxW:0.27, lineHeight:14 },
+      { id:'city',      type:'text',   x:0.0480, y:0.0874, align:'left', font:'700 110px "Chakra Petch", sans-serif', color:'accent', prefix:'TERRY FOX RUN ', maxW:0.38 },
+      { id:'subtitle',  type:'static', x:0.0480, y:0.1344, align:'left', font:'500 55px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', text:'For The Institute of Cancer Research', maxW:0.38 },
+      { id:'date',      type:'text',   x:0.0480, y:0.2083, align:'left', font:'700 70px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', maxW:0.38 },
+      { id:'location',  type:'text',   x:0.0480, y:0.2587, align:'left', font:'700 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.38 },
+      { id:'schedule',  type:'schedule_list', x:0.0480, y:0.2856, align:'left', font:'500 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', lineHeight:63, bullet:false, maxItems:2 },
+      { id:'t1',        type:'edit_row', x:0.0480, y:0.2856, align:'left', field:'f-t1', maxW:0.38, lineHeight:63 },
+      { id:'t2',        type:'edit_row', x:0.0480, y:0.3125, align:'left', field:'f-t2', maxW:0.38, lineHeight:63 },
+      { id:'guest',     type:'wrap',   x:0.0480, y:0.3511, align:'left', font:'italic 400 41px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.38, lineHeight:55 },
+      { id:'staticWho',  type:'static', x:0.0480, y:0.4435, align:'left', font:'700 59px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', text:'WHO WAS TERRY?', maxW:0.38 },
+      { id:'staticBio',  type:'wrap',   x:0.0480, y:0.4905, align:'left', font:'400 33px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.37, lineHeight:43, text:'In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 40 countries participate in his name to raise funds for cancer research.' },
+      { id:'bullets',   type:'list',   x:0.1642, y:0.7660, align:'left', font:'500 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'ink', maxW:0.27, lineHeight:55, bullet:true, maxItems:3 },
+      { id:'bullet1',   type:'edit_row', x:0.1642, y:0.7660, align:'left', field:'f-bullets', maxW:0.27, lineHeight:55 },
       { id:'qr',        type:'qr',     x:0.0480, y:0.7425, size:0.0879, pad:6 },
-      { id:'footer',    type:'wrap',   x:0.1642, y:0.9323, align:'left', font:'700 11px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', maxW:0.27, lineHeight:14 }
+      { id:'footer',    type:'wrap',   x:0.1642, y:0.9323, align:'left', font:'700 43px "Inter", "Helvetica Neue", Arial, sans-serif', color:'accent', maxW:0.27, lineHeight:55 }
     ],
     socialLayers: []
   },
@@ -2972,6 +2972,12 @@ if (!localStorage.getItem('bullet_t1_migration_v1')) {
     }
   });
   localStorage.setItem('bullet_t1_migration_v1', 'true');
+}
+// One-time migration: reset londonFlyer draft & overrides to apply new Sussex text defaults and upscaled dimensions
+if (!localStorage.getItem('sussex_2026_migration_v1')) {
+  localStorage.removeItem('posterCopyDraft:londonFlyer');
+  localStorage.removeItem('posterLayerOverrides:londonFlyer');
+  localStorage.setItem('sussex_2026_migration_v1', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

@@ -185,12 +185,12 @@
       "align": "group-center-left",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "font": "500 52px \"RigidSquareWeb\", sans-serif",
       "maxW": 0.23
     },
     "t1:edit_row": {
       "x": 0.498421875,
-      "y": 0.8427349841147175,
+      "y": 0.8425417847329555,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -198,7 +198,7 @@
     },
     "bullet1:edit_row": {
       "x": 0.498421875,
-      "y": 0.8629370043167377,
+      "y": 0.8627438049349757,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -206,7 +206,7 @@
     },
     "bullet2:edit_row": {
       "x": 0.498421875,
-      "y": 0.8831390245187579,
+      "y": 0.8829458251369959,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -259,6 +259,15 @@
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.606
+    },
+    "custom_1785160434867:text": {
+      "x": 0.498421875,
+      "y": 0.9060193711652849,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "5 km or 10 km options",
+      "font": "500 50px \"RigidSquareWeb\", sans-serif"
     }
   },
   "communityRunRed": {

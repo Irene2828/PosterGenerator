@@ -1249,6 +1249,32 @@ function selectAdminLayer(layer){
     }
   }
   
+  // Show warning if text is auto-shrunk
+  const shrinkWarn = document.getElementById('prop-shrink-warning');
+  if (shrinkWarn) {
+    const t = TEMPLATES[currentTpl];
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    const fontStr = layer.font || source.font || '500 28px "RigidSquareWeb"';
+    const sizeMatch = fontStr.match(/(\d+)px/);
+    const basePx = sizeMatch ? parseInt(sizeMatch[1], 10) : 28;
+    const maxW = layer.maxW || source.maxW;
+    const textVal = getLayerEditValue(layer);
+    
+    let isShrunk = false;
+    if (maxW && textVal) {
+      const dummyCanvas = document.createElement('canvas');
+      const dummyCtx = dummyCanvas.getContext('2d');
+      dummyCtx.font = fontStr;
+      const textWidth = dummyCtx.measureText(textVal).width;
+      const designW = t.w || 3300;
+      const maxWidth = maxW * designW;
+      if (textWidth > maxWidth) {
+        isShrunk = true;
+      }
+    }
+    shrinkWarn.style.display = isShrunk ? 'block' : 'none';
+  }
+  
   // 1. Position  // 2. Layout
   document.getElementById('prop-x').value = ((layer.x || 0) * 100).toFixed(1);
   document.getElementById('prop-y').value = ((layer.y || 0) * 100).toFixed(1);
@@ -1663,13 +1689,19 @@ function addNewTextRow() {
         }
       }
       
-      let maxY = -Infinity;
-      group.forEach(l => { if (l.y > maxY) maxY = l.y; });
-      newLayer.y = maxY + 0.03;
+      const designH = t.h || 1588;
+      const source = selectedAdminLayer.type === 'edit_row' ? styleSourceForEditRow(t, selectedAdminLayer) : selectedAdminLayer;
+      const spacingRatio = (source.lineHeight || 56) / designH;
+      
+      const sorted = [...group].sort((a, b) => a.y - b.y);
+      const lastLayer = sorted[sorted.length - 1];
+      
+      newLayer.y = lastLayer.y + spacingRatio;
       newLayer.x = selectedAdminLayer.x;
       newLayer.align = selectedAdminLayer.align;
       newLayer.font = selectedAdminLayer.font || '500 36px "RigidSquareWeb", sans-serif';
       newLayer.color = selectedAdminLayer.color;
+      if (selectedAdminLayer.maxW !== undefined) newLayer.maxW = selectedAdminLayer.maxW;
     }
   }
   

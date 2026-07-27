@@ -479,17 +479,38 @@
 	    <div class="panel">
 	    <div class="step-tag">Final Details</div>
 
-	    <div class="field">
-	      <label>Your event's link for a QR code</label>
-	      <div class="qr-input-wrap" id="qrInputWrap">
-	        <input type="text" id="f-url" placeholder="terryfox.org">
-	      </div>
-	      <div class="qr-caption">Scan the code to test it before downloading your poster.</div>
-      <div class="check-row" style="margin-top: 8px; display: flex; align-items: center;">
-        <input type="checkbox" id="f-show-qr" checked onchange="saveCopyDraft(); render();" style="width: auto; margin: 0; cursor: pointer;">
-        <label for="f-show-qr" style="margin-left: 8px; font-weight: normal; margin-bottom: 0; cursor: pointer; user-select: none;">Include QR code and registration text on poster</label>
+      <!-- WEBSITE PRINTED ON POSTER -->
+      <div class="field">
+        <label>Website link printed on poster</label>
+        <input type="text" id="f-url" placeholder="terryfox.org" oninput="onPrintedUrlChange()">
       </div>
-	    </div>
+
+      <!-- QR CODE OPTIONS -->
+      <div class="field">
+        <label>Include QR Code on poster?</label>
+        <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
+          <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #FFFFFF; font-size: 14px;">
+            <input type="radio" name="show-qr-radio" value="yes" checked onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
+          </label>
+          <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #FFFFFF; font-size: 14px;">
+            <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
+          </label>
+        </div>
+      </div>
+
+      <div id="qr-link-section" style="margin-top: 12px; margin-bottom: 12px;">
+        <div class="check-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+          <input type="checkbox" id="qr-same-link" checked onchange="onSameLinkToggle(this.checked)" style="width: auto; margin: 0; cursor: pointer;">
+          <label for="qr-same-link" style="margin-left: 8px; font-weight: normal; margin-bottom: 0; cursor: pointer; user-select: none; color: #E5E5E5; font-size: 13px;">Use same link for QR code</label>
+        </div>
+        <div class="field" id="qr-custom-link-container" style="display: none;">
+          <label>QR Code Scan Link</label>
+          <div class="qr-input-wrap" id="qrInputWrap">
+            <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="saveCopyDraft(); render();">
+          </div>
+        </div>
+        <div class="qr-caption" style="margin-top: 6px;">Scan the QR code on the poster to test it before downloading.</div>
+      </div>
 
 	    <div class="field">
 	      <label>Save format</label>
@@ -736,12 +757,13 @@ function getCopy(){
     bullets: bullets,
     url: f('f-url'),
     email: f('f-email'),
-    footIntro: f('f-footintro')
+    footIntro: f('f-footintro'),
+    qrUrl: f('f-qr-url')
   };
   function f(id){ return document.getElementById(id).value.trim(); }
 }
 
-const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro'];
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
   return 'posterCopyDraft:' + tplKey;
@@ -770,8 +792,10 @@ function saveCopyDraft(tplKey = currentTpl){
     const el = document.getElementById(id);
     if (el) draft[id] = el.value;
   });
-  const showQrEl = document.getElementById('f-show-qr');
-  if (showQrEl) draft['f-show-qr'] = showQrEl.checked;
+  const sameLinkEl = document.getElementById('qr-same-link');
+  if (sameLinkEl) draft['qr-same-link'] = sameLinkEl.checked;
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (showQrRadio) draft['show-qr-radio'] = showQrRadio.value;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
 }
 
@@ -784,8 +808,22 @@ function loadCopyDraft(tplKey){
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
   });
-  const showQrEl = document.getElementById('f-show-qr');
-  if (showQrEl) showQrEl.checked = values['f-show-qr'] !== undefined ? values['f-show-qr'] : true;
+  
+  const sameLinkEl = document.getElementById('qr-same-link');
+  if (sameLinkEl) {
+    const isSame = values['qr-same-link'] !== undefined ? values['qr-same-link'] : true;
+    sameLinkEl.checked = isSame;
+    document.getElementById('qr-custom-link-container').style.display = isSame ? 'none' : 'block';
+  }
+  
+  const savedShowQr = values['show-qr-radio'] || 'yes';
+  const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
+  const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
+  if (radioYes && radioNo) {
+    radioYes.checked = savedShowQr === 'yes';
+    radioNo.checked = savedShowQr === 'no';
+    document.getElementById('qr-link-section').style.display = (savedShowQr === 'yes') ? 'block' : 'none';
+  }
 }
 
 function saveCurrentTemplate(){
@@ -1155,11 +1193,9 @@ function drawBackground(ctx, t, w, h){
 }
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
-  const showQrEl = document.getElementById('f-show-qr');
-  const showQrAndFooter = showQrEl ? showQrEl.checked : true;
-  if (!showQrAndFooter && ['qr', 'qr_caption', 'social_footer'].includes(layer.type)) return;
-  if (!showQrAndFooter && layer.type === 'edit_row' && ['f-footintro', 'f-url', 'f-email'].includes(layer.field)) return;
-  if (!showQrAndFooter && layer.type === 'rule' && layer.id === 'divider') return;
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
+  if (!showQr && layer.type === 'qr') return;
   
   if (layer.hidden) return;
   if (layer === activeEditingLayer) return;
@@ -1534,8 +1570,42 @@ function isValidQrInput(value){
 }
 
 function qrUrlForTemplate(){
-  const value = document.getElementById('f-url').value;
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
+  if (!showQr) return '';
+  const value = document.getElementById('f-qr-url').value;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
+}
+
+function onPrintedUrlChange() {
+  const sameLinkEl = document.getElementById('qr-same-link');
+  const sameLink = sameLinkEl ? sameLinkEl.checked : true;
+  if (sameLink) {
+    const printedVal = document.getElementById('f-url').value;
+    const qrUrlInput = document.getElementById('f-qr-url');
+    if (qrUrlInput) qrUrlInput.value = printedVal;
+  }
+  saveCopyDraft();
+  render();
+}
+
+function onQrToggle(show) {
+  const section = document.getElementById('qr-link-section');
+  if (section) section.style.display = show ? 'block' : 'none';
+  saveCopyDraft();
+  render();
+}
+
+function onSameLinkToggle(same) {
+  const container = document.getElementById('qr-custom-link-container');
+  if (container) container.style.display = same ? 'none' : 'block';
+  if (same) {
+    const printedVal = document.getElementById('f-url').value;
+    const qrUrlInput = document.getElementById('f-qr-url');
+    if (qrUrlInput) qrUrlInput.value = printedVal;
+  }
+  saveCopyDraft();
+  render();
 }
 
 function extractUrlFromText(value){
@@ -1545,13 +1615,13 @@ function extractUrlFromText(value){
 
 function updateQrStatus(){
   const t = TEMPLATES[currentTpl];
-  const urlInput = document.getElementById('f-url');
+  const urlInput = document.getElementById('f-qr-url');
   const qrInputWrap = document.getElementById('qrInputWrap');
   if (!urlInput) return;
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   const copy = getCopy();
   const defaultUrl = (TEMPLATE_COPY[currentTpl] || {}).url || '';
-  urlInput.placeholder = defaultUrl || copy.url || '';
+  urlInput.placeholder = defaultUrl || copy.qrUrl || '';
   if (!hasQrLayer){
     urlInput.classList.remove('qr-processed');
     if (qrInputWrap) qrInputWrap.classList.remove('ready');
@@ -1672,11 +1742,7 @@ function getLayerEditValue(layer){
   if (layer.type === 'edit_row'){
     const field = document.getElementById(layer.field);
     if (!field) return '';
-    let value = field.value.trim();
-    if (!value) {
-      const defaults = getTemplateDefaults(currentTpl);
-      value = defaults[layer.field] || '';
-    }
+    const value = field.value.trim();
     if (layer.row !== undefined){
       return value.split('\n')[layer.row] || '';
     }

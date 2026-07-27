@@ -21,12 +21,13 @@ function getCopy(){
     bullets: bullets,
     url: f('f-url'),
     email: f('f-email'),
-    footIntro: f('f-footintro')
+    footIntro: f('f-footintro'),
+    qrUrl: f('f-qr-url')
   };
   function f(id){ return document.getElementById(id).value.trim(); }
 }
 
-const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro'];
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
   return 'posterCopyDraft:' + tplKey;
@@ -55,8 +56,10 @@ function saveCopyDraft(tplKey = currentTpl){
     const el = document.getElementById(id);
     if (el) draft[id] = el.value;
   });
-  const showQrEl = document.getElementById('f-show-qr');
-  if (showQrEl) draft['f-show-qr'] = showQrEl.checked;
+  const sameLinkEl = document.getElementById('qr-same-link');
+  if (sameLinkEl) draft['qr-same-link'] = sameLinkEl.checked;
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (showQrRadio) draft['show-qr-radio'] = showQrRadio.value;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
 }
 
@@ -69,8 +72,22 @@ function loadCopyDraft(tplKey){
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
   });
-  const showQrEl = document.getElementById('f-show-qr');
-  if (showQrEl) showQrEl.checked = values['f-show-qr'] !== undefined ? values['f-show-qr'] : true;
+  
+  const sameLinkEl = document.getElementById('qr-same-link');
+  if (sameLinkEl) {
+    const isSame = values['qr-same-link'] !== undefined ? values['qr-same-link'] : true;
+    sameLinkEl.checked = isSame;
+    document.getElementById('qr-custom-link-container').style.display = isSame ? 'none' : 'block';
+  }
+  
+  const savedShowQr = values['show-qr-radio'] || 'yes';
+  const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
+  const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
+  if (radioYes && radioNo) {
+    radioYes.checked = savedShowQr === 'yes';
+    radioNo.checked = savedShowQr === 'no';
+    document.getElementById('qr-link-section').style.display = (savedShowQr === 'yes') ? 'block' : 'none';
+  }
 }
 
 function saveCurrentTemplate(){
@@ -440,11 +457,9 @@ function drawBackground(ctx, t, w, h){
 }
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
-  const showQrEl = document.getElementById('f-show-qr');
-  const showQrAndFooter = showQrEl ? showQrEl.checked : true;
-  if (!showQrAndFooter && ['qr', 'qr_caption', 'social_footer'].includes(layer.type)) return;
-  if (!showQrAndFooter && layer.type === 'edit_row' && ['f-footintro', 'f-url', 'f-email'].includes(layer.field)) return;
-  if (!showQrAndFooter && layer.type === 'rule' && layer.id === 'divider') return;
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
+  if (!showQr && layer.type === 'qr') return;
   
   if (layer.hidden) return;
   if (layer === activeEditingLayer) return;
@@ -819,8 +834,42 @@ function isValidQrInput(value){
 }
 
 function qrUrlForTemplate(){
-  const value = document.getElementById('f-url').value;
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  const showQr = showQrRadio ? showQrRadio.value === 'yes' : true;
+  if (!showQr) return '';
+  const value = document.getElementById('f-qr-url').value;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
+}
+
+function onPrintedUrlChange() {
+  const sameLinkEl = document.getElementById('qr-same-link');
+  const sameLink = sameLinkEl ? sameLinkEl.checked : true;
+  if (sameLink) {
+    const printedVal = document.getElementById('f-url').value;
+    const qrUrlInput = document.getElementById('f-qr-url');
+    if (qrUrlInput) qrUrlInput.value = printedVal;
+  }
+  saveCopyDraft();
+  render();
+}
+
+function onQrToggle(show) {
+  const section = document.getElementById('qr-link-section');
+  if (section) section.style.display = show ? 'block' : 'none';
+  saveCopyDraft();
+  render();
+}
+
+function onSameLinkToggle(same) {
+  const container = document.getElementById('qr-custom-link-container');
+  if (container) container.style.display = same ? 'none' : 'block';
+  if (same) {
+    const printedVal = document.getElementById('f-url').value;
+    const qrUrlInput = document.getElementById('f-qr-url');
+    if (qrUrlInput) qrUrlInput.value = printedVal;
+  }
+  saveCopyDraft();
+  render();
 }
 
 function extractUrlFromText(value){
@@ -830,13 +879,13 @@ function extractUrlFromText(value){
 
 function updateQrStatus(){
   const t = TEMPLATES[currentTpl];
-  const urlInput = document.getElementById('f-url');
+  const urlInput = document.getElementById('f-qr-url');
   const qrInputWrap = document.getElementById('qrInputWrap');
   if (!urlInput) return;
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   const copy = getCopy();
   const defaultUrl = (TEMPLATE_COPY[currentTpl] || {}).url || '';
-  urlInput.placeholder = defaultUrl || copy.url || '';
+  urlInput.placeholder = defaultUrl || copy.qrUrl || '';
   if (!hasQrLayer){
     urlInput.classList.remove('qr-processed');
     if (qrInputWrap) qrInputWrap.classList.remove('ready');
@@ -957,11 +1006,7 @@ function getLayerEditValue(layer){
   if (layer.type === 'edit_row'){
     const field = document.getElementById(layer.field);
     if (!field) return '';
-    let value = field.value.trim();
-    if (!value) {
-      const defaults = getTemplateDefaults(currentTpl);
-      value = defaults[layer.field] || '';
-    }
+    const value = field.value.trim();
     if (layer.row !== undefined){
       return value.split('\n')[layer.row] || '';
     }

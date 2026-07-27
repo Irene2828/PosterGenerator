@@ -481,12 +481,12 @@
 
       <!-- QR CODE OPTIONS -->
       <div class="field">
-        <label>Include QR Code on poster?</label>
+        <label style="color: #111827; font-weight: bold;">Include QR Code on poster?</label>
         <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
-          <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #FFFFFF; font-size: 14px;">
+          <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #111827; font-size: 14px;">
             <input type="radio" name="show-qr-radio" value="yes" checked onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
           </label>
-          <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #FFFFFF; font-size: 14px;">
+          <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #111827; font-size: 14px;">
             <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
           </label>
         </div>
@@ -494,7 +494,7 @@
 
       <div id="qr-link-section" style="margin-top: 12px; margin-bottom: 12px;">
         <div class="field">
-          <label>QR Code Scan Link</label>
+          <label style="color: #111827;">Type the link for the QR code here</label>
           <div class="qr-input-wrap" id="qrInputWrap">
             <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="saveCopyDraft(); render();">
           </div>
@@ -526,6 +526,7 @@
 	    </div>
 
 	    <div class="copy-fields-hidden" aria-hidden="true">
+	    <input type="text" id="f-url" placeholder="terryfox.org">
 	    <input type="text" id="f-email" placeholder="TwinCitiesTerryFoxRun@outlook.com">
 	    <div class="field">
 	      <label>City / chapter name</label>

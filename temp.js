@@ -71,7 +71,7 @@ function loadCopyDraft(tplKey){
     if (el) el.value = values[id] || '';
   });
   
-  const savedShowQr = values['show-qr-radio'] || 'yes';
+  const savedShowQr = values['show-qr-radio'] || '';
   const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
   const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
   if (radioYes && radioNo) {

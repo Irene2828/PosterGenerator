@@ -414,7 +414,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
 
   const hasBullet = layer.bullet !== undefined 
     ? layer.bullet 
-    : (layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false));
+    : (layer.field === 'f-bullets');
   const prefix = hasBullet ? '\u2022  ' : '';
   ctx.font = regularFont;
   const paragraphs = rawText.split('\n').map(p => prefix + p);
@@ -1120,7 +1120,8 @@ function openVisualEditor(layer, rect){
 
 function mountVisualEditor(layer, rect){
   const currentValue = getLayerEditValue(layer);
-  const useTextarea = layer.type !== 'text' && layer.id !== 'date' || currentValue.length > 34;
+  const editRowMultiLine = layer.type === 'edit_row' && (currentValue.indexOf('\n') !== -1 || currentValue.length > 34);
+  const useTextarea = editRowMultiLine || (layer.type !== 'text' && layer.id !== 'date') || currentValue.length > 34;
   const editor = document.createElement(useTextarea ? 'textarea' : 'input');
   const t = TEMPLATES[currentTpl];
   const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
@@ -1139,7 +1140,11 @@ function mountVisualEditor(layer, rect){
   editor.style.textAlign = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'left');
   editor.style.letterSpacing = ((layer.letterSpacing || 0) * displayScale) + 'px';
   if (layer.lineHeight || source.lineHeight) editor.style.lineHeight = Math.max(1, Math.round((layer.lineHeight || source.lineHeight) * displayScale)) + 'px';
-  if (useTextarea) editor.style.height = Math.max(24, rect.height + 2) + 'px';
+  if (useTextarea) {
+    const contentLines = Math.max(2, currentValue.split('\n').length + 1);
+    const lhPx = (layer.lineHeight || source.lineHeight || 28) * displayScale;
+    editor.style.height = Math.max(24, Math.max(rect.height + 2, contentLines * lhPx * 1.15)) + 'px';
+  }
   editOverlay.appendChild(editor);
   editor.focus();
   editor.select();
@@ -1188,7 +1193,7 @@ function mountVisualEditor(layer, rect){
     checkbox.style.margin = '0 6px 0 0';
     checkbox.style.cursor = 'pointer';
     
-    const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
+    const defaultBullet = layer.field === 'f-bullets';
     checkbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
     
     checkbox.addEventListener('change', () => {
@@ -1365,7 +1370,7 @@ function selectAdminLayer(layer){
       bulletContainer.style.display = 'flex';
       const t = TEMPLATES[currentTpl];
       const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-      const defaultBullet = layer.field === 'f-bullets' || (source.type === 'schedule_list' && source.bullet !== false);
+      const defaultBullet = layer.field === 'f-bullets';
       bulletCheckbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
     } else {
       bulletContainer.style.display = 'none';
@@ -1857,15 +1862,17 @@ function updateEditOverlay(){
     const left = geometry.left;
     const top = geometry.top;
     const width = geometry.width;
+    const editRowLineCount = layer.type === 'edit_row' ? Math.max(1, (getLayerEditValue(layer) || '').split('\n').length) : 1;
     const lineCount = layer.type === 'edit_row'
-      ? 1
+      ? editRowLineCount
       : layer.type === 'schedule_list' ? (layer.maxItems || 2)
       : layer.type === 'qr_caption' ? 3
       : layer.type === 'list' ? (layer.maxItems || 2)
       : layer.type === 'wrap' ? estimatedOverlayLineCount(layer, width, fontPx)
       : 1;
+    const editRowLH = (layer.lineHeight || source.lineHeight || 75) * fit * scaleY;
     const height = layer.type === 'edit_row'
-      ? Math.max(14, fontPx * 1.25)
+      ? Math.max(14, editRowLineCount > 1 ? editRowLH * editRowLineCount : fontPx * 1.25)
       : geometry.height || Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
     const hot = document.createElement('button');
     hot.type = 'button';
@@ -2147,6 +2154,25 @@ if (!localStorage.getItem('qr_preselect_migration_v3')) {
     }
   });
   localStorage.setItem('qr_preselect_migration_v3', 'true');
+}
+// One-time migration: strip bullet:true from t1/t2/t3 overrides (old schedule source inheritance)
+if (!localStorage.getItem('bullet_t1_migration_v1')) {
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('posterLayerOverrides:')) {
+      try {
+        const overrides = JSON.parse(localStorage.getItem(key));
+        let changed = false;
+        ['t1:edit_row','t2:edit_row','t3:edit_row'].forEach(k => {
+          if (overrides[k] && overrides[k].bullet === true) {
+            delete overrides[k].bullet;
+            changed = true;
+          }
+        });
+        if (changed) localStorage.setItem(key, JSON.stringify(overrides));
+      } catch (e) {}
+    }
+  });
+  localStorage.setItem('bullet_t1_migration_v1', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

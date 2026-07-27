@@ -535,7 +535,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'text'){
-    const value = (copy[layer.id] || '').toString();
+    const value = (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || '')).toString();
     if (!value) { ctx.globalAlpha = 1; return; }
     const prefix = layer.bullet ? '\u2022  ' : '';
     const textToDraw = prefix + value;
@@ -557,7 +557,7 @@ function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'wrap'){
-    const value = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id]||'');
+    const value = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || ''));
     if (!value) { ctx.globalAlpha = 1; return; }
     const prefix = layer.bullet ? '\u2022  ' : '';
     const textToDraw = prefix + value;
@@ -976,6 +976,7 @@ function editableLayersForTemplate(t){
 }
 
 function getLayerEditValue(layer){
+  if (layer.text !== undefined) return layer.text;
   const copy = getCopy();
   if (layer.type === 'edit_row'){
     const field = document.getElementById(layer.field);
@@ -1049,7 +1050,12 @@ function commitLayerEdit(layer, value, trackUndo = true){
     saveLayerOverrides();
   } else {
     const field = document.getElementById('f-' + layer.id);
-    if (field) field.value = value.replace(/\n+/g, ' ').trim();
+    if (field) {
+      field.value = value.replace(/\n+/g, ' ').trim();
+    } else {
+      layer.text = value.replace(/\n+/g, ' ').trim();
+      saveLayerOverrides();
+    }
   }
   saveCopyDraft();
   render();
@@ -1221,6 +1227,7 @@ function toggleGrid() {
 function selectAdminLayer(layer){
   if (!isAdminMode) return;
   selectedAdminLayer = layer;
+  updateHiddenLayersList();
   const tools = document.getElementById('adminLayerTools');
   const noSelection = document.getElementById('noLayerSelected');
   const name = document.getElementById('adminLayerName');
@@ -1598,13 +1605,131 @@ function toggleSelectedLayer(){
 function deleteSelectedLayer(){
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
-  if (selectedAdminLayer.type === 'edit_row'){
+  const t = TEMPLATES[currentTpl];
+  if (t && selectedAdminLayer.id.startsWith('custom_')) {
+    t.layers = t.layers.filter(l => l !== selectedAdminLayer);
+    selectedAdminLayer = null;
+    saveLayerOverrides();
+    render();
+    selectAdminLayer(null);
+  } else if (selectedAdminLayer.type === 'edit_row'){
     commitLayerEdit(selectedAdminLayer, '', false);
   } else {
     selectedAdminLayer.hidden = true;
     saveLayerOverrides();
     render();
+    selectAdminLayer(null);
   }
+}
+
+function addNewTextRow() {
+  const t = TEMPLATES[currentTpl];
+  if (!t) return;
+  pushUndoSnapshot();
+  
+  const text = prompt("Enter text for the new row:", "New Text Row");
+  if (text === null) return;
+  
+  const id = 'custom_' + Date.now();
+  const newLayer = {
+    id: id,
+    type: 'text',
+    x: 0.5,
+    y: 0.5,
+    align: 'center',
+    font: '500 36px "RigidSquareWeb", sans-serif',
+    color: 'primary',
+    text: text
+  };
+  
+  if (selectedAdminLayer) {
+    const group = layersMovedWith(selectedAdminLayer);
+    if (group.length > 1) {
+      const customGroup = selectedAdminLayer.group;
+      if (customGroup) {
+        newLayer.group = customGroup;
+      } else {
+        const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
+        if (scheduleFields.includes(selectedAdminLayer.field)) {
+          newLayer.group = 'schedule_custom';
+          t.layers.forEach(l => {
+            if (scheduleFields.includes(l.field)) l.group = 'schedule_custom';
+          });
+        } else {
+          newLayer.group = 'footer_custom';
+          t.layers.forEach(l => {
+            if (['f-footintro', 'f-url', 'f-email'].includes(l.field)) l.group = 'footer_custom';
+          });
+        }
+      }
+      
+      let maxY = -Infinity;
+      group.forEach(l => { if (l.y > maxY) maxY = l.y; });
+      newLayer.y = maxY + 0.03;
+      newLayer.x = selectedAdminLayer.x;
+      newLayer.align = selectedAdminLayer.align;
+      newLayer.font = selectedAdminLayer.font || '500 36px "RigidSquareWeb", sans-serif';
+      newLayer.color = selectedAdminLayer.color;
+    }
+  }
+  
+  t.layers.push(newLayer);
+  saveLayerOverrides();
+  render();
+  selectAdminLayer(newLayer);
+}
+
+function updateHiddenLayersList() {
+  const container = document.getElementById('hiddenLayersSection');
+  const list = document.getElementById('hiddenLayersList');
+  if (!container || !list) return;
+  
+  const t = TEMPLATES[currentTpl];
+  if (!t) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  const hidden = (t.layers || []).filter(l => l.hidden && ['text','wrap','edit_row','schedule_list','list'].includes(l.type));
+  if (hidden.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  container.style.display = 'block';
+  list.innerHTML = '';
+  hidden.forEach(layer => {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.justifyContent = 'space-between';
+    row.style.alignItems = 'center';
+    row.style.background = '#1E1E1E';
+    row.style.padding = '4px 8px';
+    row.style.borderRadius = '4px';
+    row.style.fontSize = '12px';
+    row.style.color = '#E0E0E0';
+    
+    const label = document.createElement('span');
+    label.textContent = layer.id.toUpperCase();
+    
+    const btn = document.createElement('button');
+    btn.className = 'figma-btn';
+    btn.style.padding = '2px 6px';
+    btn.style.fontSize = '10px';
+    btn.textContent = 'Show';
+    btn.onclick = () => {
+      pushUndoSnapshot();
+      layer.hidden = false;
+      saveLayerOverrides();
+      render();
+      selectAdminLayer(layer);
+      updateHiddenLayersList();
+    };
+    
+    row.appendChild(label);
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
 }
 
 function undoAdminChange(){

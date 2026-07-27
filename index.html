@@ -484,7 +484,7 @@
 	      <div class="qr-input-wrap" id="qrInputWrap">
 	        <input type="text" id="f-url" placeholder="terryfox.org">
 	      </div>
-	      <div class="qr-caption">Scan the code to test it before downloading your poster.</div>
+	      <div class="qr-caption">Scan the code to test it before downloading. If you don't need a QR code or link, you can hide them by clicking them on the poster and selecting "Hide" (or clicking the red X).</div>
 	    </div>
 
 	    <div class="field">
@@ -1071,7 +1071,6 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   const source = styleSourceForEditRow(t, layer);
   const rawText = getLayerEditValue(layer).trim();
   if (!rawText) return;
-  if (['f-footintro','f-url','f-email'].includes(layer.field) && !copy.url) return;
   const sourceFont = layer.font || source.font || '500 24px sans-serif';
   const px = Math.round(parseInt(sourceFont.match(/(\d+)px/)[1],10) * scale);
   const regularFont = sourceFont.replace(/\d+px/, px+'px');
@@ -1659,10 +1658,14 @@ function getLayerEditValue(layer){
   if (layer.type === 'edit_row'){
     const field = document.getElementById(layer.field);
     if (!field) return '';
-    if (layer.row !== undefined){
-      return (field.value || '').split('\n')[layer.row] || '';
+    let value = field.value.trim();
+    if (!value) {
+      const defaults = getTemplateDefaults(currentTpl);
+      value = defaults[layer.field] || '';
     }
-    const value = field.value || '';
+    if (layer.row !== undefined){
+      return value.split('\n')[layer.row] || '';
+    }
     return layer.prefix && value ? layer.prefix + value : value;
   }
   if (layer.id === 'schedule') {
@@ -2249,6 +2252,36 @@ function updateEditOverlay(){
         height
       });
     });
+
+    if (selectedAdminLayer === layer && isAdminMode) {
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'hotspot-close-btn';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.style.position = 'absolute';
+      closeBtn.style.top = '-8px';
+      closeBtn.style.right = '-8px';
+      closeBtn.style.width = '18px';
+      closeBtn.style.height = '18px';
+      closeBtn.style.borderRadius = '50%';
+      closeBtn.style.background = '#FF3B30';
+      closeBtn.style.color = '#FFFFFF';
+      closeBtn.style.border = 'none';
+      closeBtn.style.cursor = 'pointer';
+      closeBtn.style.display = 'flex';
+      closeBtn.style.alignItems = 'center';
+      closeBtn.style.justifyContent = 'center';
+      closeBtn.style.fontSize = '12px';
+      closeBtn.style.fontWeight = 'bold';
+      closeBtn.style.lineHeight = '1';
+      closeBtn.style.zIndex = '1000';
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleSelectedLayer();
+      });
+      hot.appendChild(closeBtn);
+    }
+
     editOverlay.appendChild(hot);
   });
 

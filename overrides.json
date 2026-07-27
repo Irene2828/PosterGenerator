@@ -1,1 +1,264 @@
-{}
+{
+  "socialTerryRun": {
+    "city:text": {
+      "x": 0.5,
+      "y": 0.03997777777777777,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 44px \"Chakra Petch\", sans-serif",
+      "maxW": 0.187
+    },
+    "staticSub:static": {
+      "x": 0.63,
+      "y": 0.238,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "For Cancer Research",
+      "font": "700 44px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.355
+    },
+    "date:wrap": {
+      "x": 0.63,
+      "y": 0.332,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 56px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.32
+    },
+    "location:wrap": {
+      "x": 0.63,
+      "y": 0.458,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 28px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.32
+    },
+    "schedule:schedule_list": {
+      "x": 0.63,
+      "y": 0.585,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 24px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      }
+    },
+    "t1:edit_row": {
+      "x": 0.63,
+      "y": 0.5516666666666681,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "t2:edit_row": {
+      "x": 0.63,
+      "y": 0.578329629629631,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "bullets:list": {
+      "x": 0.63,
+      "y": 0.685,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 24px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.32
+    },
+    "bullet1:edit_row": {
+      "x": 0.63,
+      "y": 0.654629629629631,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "bullet2:edit_row": {
+      "x": 0.63,
+      "y": 0.7323686595775474,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "guest:text": {
+      "x": 0.5,
+      "y": 0.935,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "italic 400 32px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.6741
+    },
+    "footer:social_footer": {
+      "x": 0.2537,
+      "y": 0.982,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 20px \"Chakra Petch\", sans-serif",
+      "maxW": 0.4685
+    },
+    "url:edit_row": {
+      "x": 0.2537,
+      "y": 0.9664444444444451,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.4685
+    }
+  },
+  "communityRunLetter": {
+    "city:text": {
+      "x": 0.5102124183006536,
+      "y": 0.045074076838711626,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 112px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.25
+    },
+    "date:text": {
+      "x": 0.5,
+      "y": 0.775,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 128px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.688
+    },
+    "location:text": {
+      "x": 0.5,
+      "y": 0.817,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 72px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.48
+    },
+    "schedule:schedule_list": {
+      "x": 0.5,
+      "y": 0.856,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
+    },
+    "bullets:list": {
+      "x": 0.5,
+      "y": 0.881,
+      "align": "group-center-left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.23
+    },
+    "t1:edit_row": {
+      "x": 0.5,
+      "y": 0.856,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "bullet1:edit_row": {
+      "x": 0.5,
+      "y": 0.8758024161647019,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "bullet2:edit_row": {
+      "x": 0.5,
+      "y": 0.8932651515151514,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
+    },
+    "qr:qr": {
+      "x": 0.0147,
+      "y": 0.9154,
+      "hidden": false,
+      "letterSpacing": 0,
+      "size": 0.0868
+    },
+    "divider:rule": {
+      "y": 0.9331,
+      "hidden": false,
+      "letterSpacing": 0,
+      "lineWidth": 4,
+      "x1": 0.1144,
+      "x2": 0.6895
+    },
+    "footer:qr_caption": {
+      "x": 0.1144,
+      "y": 0.9533,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "300 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.606
+    },
+    "footIntro:edit_row": {
+      "x": 0.1144,
+      "y": 0.9533,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.606
+    },
+    "url:edit_row": {
+      "x": 0.1144,
+      "y": 0.9666,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.606
+    },
+    "email:edit_row": {
+      "x": 0.1154265625,
+      "y": 0.9799,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.606
+    }
+  }
+}

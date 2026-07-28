@@ -86,14 +86,14 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);font-family:'Inter',sans-serif;color:var(--ink);}
-  .wrap{max-width:1150px;margin:0 auto;padding:0 0 60px;}
-  .toolbar{background:#0B132B;border-bottom:none;}
-  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:17px 24px;max-width:1150px;margin:0 auto;}
-  .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;}
+  .wrap{max-width:1265px;margin:0 auto;padding:0 0 60px;}
+  .toolbar{background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);border-bottom:none;}
+  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:17px 24px;max-width:1265px;margin:0 auto;}
+  .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;letter-spacing:.35px;}
   .toolbar .sub{font-size:11px;color:#A0AABF;letter-spacing:1.5px;text-transform:uppercase;}
   .content{padding:32px 24px 0;}
   h2.section-title{font-size:15px;font-weight:600;margin:0 0 14px;}
-  .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:16px;letter-spacing:1.5px;}
+  .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:32px;letter-spacing:1.5px;}
   .templates{display:flex;flex-direction:column;align-items:center;gap:16px;}
   .tpl-card{
     flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
@@ -111,12 +111,12 @@
     opacity:1;
     filter:none;
     border-color:var(--blue);
-    box-shadow:0 0 0 3px var(--blue-wash);
+    box-shadow:0 0 0 2px rgba(13,139,255,.08);
   }
   .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
   .tpl-name{font-size:13px;text-align:center;padding:8px 6px;font-weight:500;}
   .grid{display:grid;grid-template-columns:160px 1fr 340px;gap:32px;align-items:start;}
-  .templates-col{padding-top:26px;}
+  .templates-col{padding-top:0;}
   @media (max-width:900px){
     .grid{grid-template-columns:1fr;}
     .templates-col{padding-top:0;}
@@ -132,7 +132,7 @@
   }
   .field textarea{min-height:64px;line-height:1.4;}
   .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;cursor:pointer;}
-  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-wash);}
+  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(13,139,255,.08);}
   .qr-status{margin-top:7px;font-size:12px;line-height:1.35;color:var(--muted);}
   .qr-status strong{color:#177245;font-weight:700;}
   .qr-status.qr-active{border:1px solid #BFE6CC;background:#EFFAF2;border-radius:8px;padding:8px 10px;color:#315D3A;}
@@ -148,11 +148,11 @@
   .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:'Inter';font-weight:700;font-size:15px;cursor:pointer;}
   .btn-primary{background:#E01A2B;color:#fff;}
   .btn-primary:hover{opacity:.9;}
-  .preview-col{position:sticky;top:24px;}
+  .preview-col{position:static;}
   .canvas-shell{background:#FFFFFF;border-radius:16px;padding:10px 4px 26px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);}
   .visual-hint{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;}
   .poster-stage{position:relative;width:100%;max-width:500px;}
-  canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 12px 32px rgba(0,0,0,.14);display:block;}
+  canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 6px 16px rgba(0,0,0,.07);display:block;}
   .edit-overlay{position:absolute;inset:0;border-radius:0;pointer-events:none;}
   .edit-hotspot{position:absolute;transform:translate(-50%,-76%);min-width:34px;min-height:18px;border:1px solid transparent;border-radius:3px;pointer-events:auto;cursor:text;background:transparent;padding:0;appearance:none;}
   .edit-hotspot.admin-draggable{cursor:move;border-color:rgba(13,139,255,.45);background:rgba(13,139,255,.035);}
@@ -175,9 +175,16 @@
     overflow:hidden;
   }
   .preview-caption{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
-  .preview-actions{margin-top:10px;display:flex;justify-content:center;gap:8px;}
-  .subtle-undo{border:1px solid var(--border);background:#fff;color:var(--muted);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;opacity:.78;}
-  .subtle-undo:hover,.subtle-undo:focus{opacity:1;color:var(--ink);border-color:var(--border-strong);outline:none;}
+  .preview-actions{width:100%;max-width:500px;margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:12px;}
+  .preview-icon{width:30px;height:30px;border:0;background:transparent;color:var(--muted);border-radius:50%;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.72;}
+  .preview-icon:hover,.preview-icon:focus{opacity:1;color:var(--ink);outline:none;background:#F7F8FA;}
+  .large-preview{position:fixed;inset:0;z-index:20000;background:rgba(255,255,255,.94);display:none;align-items:center;justify-content:center;padding:22px;}
+  .large-preview.open{display:flex;}
+  .large-preview img{max-width:96vw;max-height:90vh;object-fit:contain;box-shadow:0 8px 24px rgba(0,0,0,.10);background:#fff;}
+  .large-preview-close{position:absolute;right:22px;top:18px;width:38px;height:38px;border:1px solid var(--border);border-radius:50%;background:#fff;color:#111827;font-size:24px;line-height:1;cursor:pointer;}
+  .subtle-undo{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:7px 0;font-size:12px;font-weight:600;letter-spacing:.035em;cursor:pointer;opacity:.78;display:inline-flex;align-items:center;gap:6px;}
+  .subtle-undo::before{content:'↺';font-size:14px;line-height:1;}
+  .subtle-undo:hover,.subtle-undo:focus{opacity:1;color:var(--ink);outline:none;}
   .subtle-undo:disabled{opacity:.35;cursor:not-allowed;}
   .scratchpad{margin-top:36px;border:1px solid #E2E5E9;border-radius:0;background:#FFFFFF;color:#5A626A;box-shadow:none;overflow:hidden;}
   .scratchpad-head{display:flex;align-items:center;justify-content:space-between;background:#FFFFFF;border-bottom:1px solid #E2E5E9;padding:12px 16px;font-size:14px;font-weight:600;color:#6B7280;}
@@ -470,6 +477,7 @@
 	        <div class="admin-guide selected-h" id="selectedGuideH"></div>
 	      </div>
 	      <div class="preview-actions">
+	        <button type="button" class="preview-icon" id="largePreviewBtn" aria-label="Open large preview" title="Open large preview">⤢</button>
 	        <button type="button" class="subtle-undo" id="userUndoBtn">Undo last edit</button>
 	      </div>
 	    </div>
@@ -480,7 +488,7 @@
 	    <div class="step-tag">Final Details</div>
 
       <!-- QR CODE OPTIONS -->
-      <div class="field">
+      <div class="field" id="qr-options-section">
         <label style="color: #111827; font-weight: bold;">Include QR Code on poster?</label>
         <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
           <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #111827; font-size: 14px;">
@@ -580,6 +588,11 @@ Food truck will be present"></textarea>
 	  </div>
     </div>
   </div>
+</div>
+
+<div class="large-preview" id="largePreview" aria-hidden="true">
+  <button type="button" class="large-preview-close" id="largePreviewClose" aria-label="Close large preview">×</button>
+  <img id="largePreviewImg" alt="Large poster preview">
 </div>
 
 <div id="figmaSidebar" class="figma-sidebar" style="display: none;">
@@ -692,7 +705,7 @@ Food truck will be present"></textarea>
         </div>
       <div class="figma-row check-row" id="prop-bullet-container" style="display: none; margin-top: 10px;">
         <input type="checkbox" id="prop-bullet" onchange="updateSelectedLayerProp('bullet', this.checked)">
-        <label for="prop-bullet" style="margin-left: 8px;">Show Bullet Dot</label>
+        <label for="prop-bullet" style="margin-left: 8px;">Bullet Dot</label>
       </div>
     </div>
 
@@ -789,7 +802,8 @@ function getTemplateDefaults(tplKey){
     'f-bullets': (defaults.bullets || []).join('\n'),
     'f-url': defaults.url || '',
     'f-email': defaults.email || '',
-    'f-footintro': defaults.footIntro || ''
+    'f-footintro': defaults.footIntro || '',
+    'f-qr-url': defaults.qrUrl || ''
   };
 }
 
@@ -814,14 +828,15 @@ function loadCopyDraft(tplKey){
     if (el) el.value = values[id] || '';
   });
   
-  const savedShowQr = values['show-qr-radio'] || '';
+  const savedShowQr = templateHasQrChoice(tplKey) ? 'yes' : '';
   const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
   const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
   if (radioYes && radioNo) {
     radioYes.checked = savedShowQr === 'yes';
-    radioNo.checked = savedShowQr === 'no';
+    radioNo.checked = false;
     document.getElementById('qr-link-section').style.display = (savedShowQr === 'yes') ? 'block' : 'none';
   }
+  updateQrControls();
 }
 
 function saveCurrentTemplate(){
@@ -907,7 +922,7 @@ const TEMPLATE_COPY = {
     t3: '',
     bullets: ['Fun run or walk', '5 km, 10 km options'],
     url: 'mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026',
-    email: 'TwinCitiesTerryFoxRun@outlook.com',
+    email: '',
     footIntro: 'To register please visit:'
   },
   communityRunLetter: {
@@ -920,7 +935,7 @@ const TEMPLATE_COPY = {
     t3: '',
     bullets: ['Fun run or walk', '5 km, 10 km options'],
     url: 'mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026',
-    email: 'TwinCitiesTerryFoxRun@outlook.com',
+    email: '',
     footIntro: 'To register please visit:'
   },
   socialTerryRun: {
@@ -939,13 +954,14 @@ const TEMPLATE_COPY = {
   londonFlyer: {
     city: 'Sussex',
     date: 'SUNDAY, SEPTEMBER 6, 2026',
-    guest: '',
+    guest: "The U.K.'s first Terry Fox Run in a vineyard!",
     location: 'Tinwood Estate',
-    t1: 'Registration 09:00 to 10:00',
-    t2: 'Start 10:00, Ends 12:00',
+    t1: '09:00 - Registration Opens',
+    t2: '09:45 - Terry Fox Run/Walk Starts',
     t3: '',
-    bullets: ['Walk, run, or ride', 'Route through the vineyard', 'Free entry & open to all'],
+    bullets: ['Register to run, ride, or walk', 'at terryfoxrunuk.org'],
     url: 'terryfoxrunuk.org/events/sussex2026',
+    qrUrl: 'https://terryfoxrunuk.org/events/sussex2026',
     email: '',
     footIntro: '#TerryFoxRunUK'
   }
@@ -969,15 +985,14 @@ const TEMPLATES = {
       { id:'city',     type:'text',   x:0.5000,y:0.0547, align:'center', font:'700 175px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent', maxW:0.2890 },
       { id:'date',     type:'text',   x:0.5000,y:0.7574, align:'center', font:'600 175px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.7109 },
       { id:'location', type:'text',   x:0.5000,y:0.7958, align:'center', font:'600 117px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.5808 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8268, align:'group-center-left', font:'500 67px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:75, bullet:true, includeBullets:true, maxItems:3 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:75 },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8415, align:'center', field:'f-bullets', maxW:0.32, lineHeight:75 },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8268, align:'group-center-left', font:'500 67px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:77, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:77, bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8419, align:'center', field:'f-bullets', maxW:0.32, lineHeight:77, bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9191, size:0.1005 },
-      { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4 },
-      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75 },
-      { id:'footIntro', type:'edit_row', x:0.1313,y:0.9540, align:'left', field:'f-footintro', maxW:0.5417, lineHeight:75 },
-      { id:'url',       type:'edit_row', x:0.1313,y:0.9687, align:'left', field:'f-url', maxW:0.5417, lineHeight:75 },
-      { id:'email',     type:'edit_row', x:0.1313,y:0.9834, align:'left', field:'f-email', prefix:'e-mail: ', maxW:0.5417, lineHeight:75 }
+      { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
+      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75, noQrX:0.0340 },
+      { id:'footIntro', type:'edit_row', x:0.1313,y:0.9540, align:'left', field:'f-footintro', maxW:0.5417, lineHeight:75, noQrX:0.0340 },
+      { id:'url',       type:'edit_row', x:0.1313,y:0.9687, align:'left', field:'f-url', maxW:0.5417, lineHeight:75, noQrX:0.0340 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent' },
@@ -1000,16 +1015,15 @@ const TEMPLATES = {
       { id:'city',     type:'text',   x:0.5000,y:0.0550, align:'center', font:'700 112px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent', maxW:0.2500 },
       { id:'date',     type:'text',   x:0.5000,y:0.7750, align:'center', font:'600 128px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.6880 },
       { id:'location', type:'text',   x:0.5000,y:0.8170, align:'center', font:'600 72px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.4800 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:56, bullet:false, maxItems:1 },
-      { id:'bullets',  type:'list',   x:0.5000,y:0.8810, align:'group-center-left', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.2300, lineHeight:54, maxItems:2 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8560, align:'center', field:'f-t1', maxW:0.32, lineHeight:56 },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8810, align:'center', field:'f-bullets', maxW:0.32, lineHeight:54 },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:59, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'bullets',  type:'list',   x:0.5000,y:0.8746, align:'group-center-left', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.2300, lineHeight:59, bullet:true, maxItems:2 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8560, align:'center', field:'f-t1', maxW:0.32, lineHeight:59, bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8746, align:'center', field:'f-bullets', maxW:0.32, lineHeight:59, bullet:true },
       { id:'qr',       type:'qr',     x:0.0147,y:0.9154, size:0.0868 },
-      { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9331, color:'ink', alpha:0.95, lineWidth:4 },
-      { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:42 },
-      { id:'footIntro', type:'edit_row', x:0.1144,y:0.9533, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:42 },
-      { id:'url',       type:'edit_row', x:0.1144,y:0.9666, align:'left', field:'f-url', maxW:0.6060, lineHeight:42 },
-      { id:'email',     type:'edit_row', x:0.1152,y:0.9799, align:'left', field:'f-email', prefix:'e-mail: ', maxW:0.6060, lineHeight:42 }
+      { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9331, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
+      { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:43, noQrX:0.0320 },
+      { id:'footIntro', type:'edit_row', x:0.1144,y:0.9533, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:43, noQrX:0.0320 },
+      { id:'url',       type:'edit_row', x:0.1144,y:0.9669, align:'left', field:'f-url', maxW:0.6060, lineHeight:43, noQrX:0.0320 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'accent' }
@@ -1053,6 +1067,7 @@ const TEMPLATES = {
   },
   londonFlyer: {
     name: 'London Run Flyer (A4 Landscape, Two-Up)',
+    hiddenFromPicker: true,
     kind: 'image',
     twoUp: true,
     w: 3300,
@@ -1063,20 +1078,21 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#FFFFFF',
     layers: [
-      { id:'city',      type:'text',   x:0.0480, y:0.0850, align:'left', font:'700 110px "Roboto Condensed", sans-serif', color:'accent', prefix:'TERRY FOX RUN ', maxW:0.38 },
-      { id:'subtitle',  type:'static', x:0.0480, y:0.1300, align:'left', font:'500 52px "Roboto Condensed", sans-serif', color:'ink', text:'For The Institute of Cancer Research', maxW:0.38 },
-      { id:'date',      type:'text',   x:0.0480, y:0.1980, align:'left', font:'700 68px "Roboto Condensed", sans-serif', color:'accent', maxW:0.38 },
-      { id:'location',  type:'text',   x:0.0480, y:0.2450, align:'left', font:'700 41px "Roboto Condensed", sans-serif', color:'ink', maxW:0.38 },
-      { id:'schedule',  type:'schedule_list', x:0.0480, y:0.2700, align:'left', font:'500 41px "Roboto Condensed", sans-serif', color:'ink', lineHeight:50, bullet:false, maxItems:2 },
-      { id:'t1',        type:'edit_row', x:0.0480, y:0.2700, align:'left', field:'f-t1', maxW:0.38, lineHeight:50 },
-      { id:'t2',        type:'edit_row', x:0.0480, y:0.2915, align:'left', field:'f-t2', maxW:0.38, lineHeight:50 },
-      { id:'guest',     type:'wrap',   x:0.0480, y:0.3250, align:'left', font:'italic 400 39px "Roboto Condensed", sans-serif', color:'ink', maxW:0.38, lineHeight:48 },
-      { id:'staticWho',  type:'static', x:0.0480, y:0.4150, align:'left', font:'700 55px "Roboto Condensed", sans-serif', color:'accent', text:'WHO WAS TERRY?', maxW:0.38 },
-      { id:'staticBio',  type:'wrap',   x:0.0480, y:0.4550, align:'left', font:'400 31px "Roboto Condensed", sans-serif', color:'ink', maxW:0.37, lineHeight:38, text:'In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 40 countries participate in his name to raise funds for cancer research.' },
-      { id:'bullets',   type:'list',   x:0.1642, y:0.7660, align:'left', font:'500 41px "Roboto Condensed", sans-serif', color:'ink', maxW:0.27, lineHeight:48, bullet:true, maxItems:3 },
-      { id:'bullet1',   type:'edit_row', x:0.1642, y:0.7660, align:'left', field:'f-bullets', maxW:0.27, lineHeight:48 },
-      { id:'qr',        type:'qr',     x:0.0480, y:0.7425, size:0.0879, pad:6 },
-      { id:'footer',    type:'wrap',   x:0.1642, y:0.9323, align:'left', font:'700 41px "Roboto Condensed", sans-serif', color:'accent', maxW:0.27, lineHeight:48 }
+      { id:'city',      type:'static', x:0.0480, y:0.0950, align:'left', font:'900 116px "RigidSquareWeb", "Roboto Condensed", sans-serif', color:'accent', text:'TERRY FOX RUN Sussex', maxW:0.39, scaleX:0.68 },
+      { id:'subtitle',  type:'static', x:0.0480, y:0.1360, align:'left', font:'700 92px "RigidSquareWeb", "Roboto Condensed", sans-serif', color:'ink', text:'For The Institute of Cancer Research', maxW:0.39, scaleX:0.43, letterSpacing:2 },
+      { id:'date',      type:'text',   x:0.0480, y:0.2350, align:'left', font:'900 76px "RigidSquareWeb", "Roboto Condensed", sans-serif', color:'accent', maxW:0.39, scaleX:0.64 },
+      { id:'location',  type:'text',   x:0.0480, y:0.2765, align:'left', font:'400 50px "Roboto Condensed", sans-serif', color:'ink', maxW:0.38 },
+      { id:'schedule',  type:'schedule_list', x:0.0480, y:0.3075, align:'left', font:'400 50px "Roboto Condensed", sans-serif', color:'ink', lineHeight:72, bullet:false, maxItems:2 },
+      { id:'t1',        type:'edit_row', x:0.0480, y:0.3075, align:'left', field:'f-t1', maxW:0.38, lineHeight:72 },
+      { id:'t2',        type:'edit_row', x:0.0480, y:0.3385, align:'left', field:'f-t2', maxW:0.38, lineHeight:72 },
+      { id:'t3',        type:'edit_row', x:0.0480, y:0.3695, align:'left', field:'f-t3', maxW:0.38, lineHeight:72, hidden:true },
+      { id:'guest',     type:'wrap',   x:0.0480, y:0.3850, align:'left', font:'700 54px "Roboto Condensed", sans-serif', color:'ink', maxW:0.34, lineHeight:58 },
+      { id:'staticWho',  type:'static', x:0.0480, y:0.4620, align:'left', font:'900 76px "RigidSquareWeb", "Roboto Condensed", sans-serif', color:'accent', text:'WHO WAS TERRY?', maxW:0.38, scaleX:0.64 },
+      { id:'staticBio',  type:'wrap',   x:0.0480, y:0.5070, align:'left', font:'400 38px "Roboto Condensed", sans-serif', color:'ink', maxW:0.394, lineHeight:44, text:'In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 40 countries participate in his name to raise funds for cancer research.' },
+      { id:'bullets',   type:'list',   x:0.1642, y:0.7480, align:'left', font:'700 51px "Roboto Condensed", sans-serif', color:'ink', maxW:0.30, lineHeight:58, bullet:false, maxItems:2, noQrX:0.0480 },
+      { id:'bullet1',   type:'edit_row', x:0.1642, y:0.7480, align:'left', field:'f-bullets', maxW:0.30, lineHeight:58, bullet:false, noQrX:0.0480 },
+      { id:'qr',        type:'qr',     x:0.0480, y:0.7160, size:0.0879, pad:6 },
+      { id:'footer',    type:'wrap',   x:0.3150, y:0.9440, align:'left', font:'900 78px "RigidSquareWeb", "Roboto Condensed", sans-serif', color:'accent', maxW:0.20, lineHeight:78, footerTextOnly:true, scaleX:0.58 }
     ],
     socialLayers: []
   },
@@ -1135,6 +1151,7 @@ function styleSourceForEditRow(t, layer){
   const byId = id => (t.layers || []).find(item => item.id === id);
   if (['f-footintro','f-url','f-email'].includes(layer.field)) return byId('footer') || layer;
   if (layer.field === 'f-t1' || layer.field === 'f-t2' || layer.field === 'f-t3') return byId('schedule') || layer;
+  if (layer.field === 'f-bullets' && ['communityRunRed','communityRunLetter'].includes(t._key)) return byId('schedule') || layer;
   if (layer.field === 'f-bullets') return byId('bullets') || byId('schedule') || layer;
   return byId((layer.field || '').replace(/^f-/, '')) || layer;
 }
@@ -1160,7 +1177,8 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   const lineHeight = (layer.lineHeight || source.lineHeight || px * 1.2) * scale;
   const maxWidth = (layer.maxW || source.maxW || 0.5) * w;
   const color = resolveColor(t, source.color || layer.color);
-  const x = layer.x * w;
+  const layerX = (!shouldShowQr() && layer.noQrX !== undefined) ? layer.noQrX : layer.x;
+  const x = layerX * w;
   let y = layer.y * h;
   ctx.textAlign = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'left');
   ctx.fillStyle = color;
@@ -1232,10 +1250,6 @@ function drawBackground(ctx, t, w, h){
 }
 
 function drawLayer(ctx, t, layer, copy, w, h, qrCanvas){
-  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  const showQr = showQrRadio ? showQrRadio.value === 'yes' : false;
-  if (!showQr && layer.type === 'qr') return;
-  
   if (layer.hidden) return;
   if (layer === activeEditingLayer) return;
   
@@ -1302,7 +1316,8 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     if (layer.maxW){
       const maxWidth = layer.maxW * w;
       let size = px;
-      while (ctx.measureText(value).width > maxWidth && size > 12*s){
+      const fitScaleX = layer.scaleX || 1;
+      while (ctx.measureText(value).width * fitScaleX > maxWidth && size > 12*s){
         size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
       }
     }
@@ -1325,9 +1340,10 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const widest = layer.align === 'group-center-left'
       ? Math.max(...textItems.map(item => ctx.measureText(item).width), 0)
       : 0;
+    const layerX = (!shouldShowQr() && layer.noQrX !== undefined) ? layer.noQrX : layer.x;
     const x = layer.align === 'group-center-left'
-      ? (layer.x * w) - (widest / 2)
-      : layer.x * w;
+      ? (layerX * w) - (widest / 2)
+      : layerX * w;
     let y = layer.y * h;
     textItems.forEach(item => { drawTextLine(ctx, item, x, y, layer); y += layer.lineHeight * s; });
   }
@@ -1349,16 +1365,17 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     if (layer.maxW){
       let size = px;
       const paragraphs = rawText.split('\n').map(p => prefix + p);
+      const fitScaleX = layer.scaleX || 1;
       while (size > 12*s){
         let fits = true;
-        paragraphs.forEach(p => { if (ctx.measureText(p).width > maxWidth) fits = false; });
+        paragraphs.forEach(p => { if (ctx.measureText(p).width * fitScaleX > maxWidth) fits = false; });
         if (fits) break;
         size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
       }
     }
     const paragraphs = rawText.split('\n').map(p => prefix + p);
     paragraphs.forEach(p => {
-      wrapLines(ctx, p, maxWidth, ctx.font).forEach(line => {
+      wrapLines(ctx, p, maxWidth / (layer.scaleX || 1), ctx.font).forEach(line => {
         drawTextLine(ctx, line, x, y, layer);
         y += lineHeight;
       });
@@ -1366,7 +1383,9 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'wrap'){
-    const rawText = layer.id === 'footer' ? (copy.footIntro + '  ' + copy.url) : (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || ''));
+    const rawText = layer.id === 'footer'
+      ? (layer.footerTextOnly ? copy.footIntro : (copy.footIntro + '  ' + copy.url))
+      : (copy[layer.id] !== undefined ? copy[layer.id] : (layer.text || ''));
     if (!rawText) { ctx.globalAlpha = 1; return; }
     const prefix = layer.bullet ? '\u2022  ' : '';
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
@@ -1418,7 +1437,7 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     ctx.textAlign = 'left';
     let y = layer.y * h;
     lines.slice(0,3).forEach(line => {
-      let x = layer.x * w;
+      let x = (!shouldShowQr() && layer.noQrX !== undefined) ? layer.noQrX * w : layer.x * w;
       line.forEach(part => { ctx.font = part.bold ? boldFont : regularFont; ctx.fillText(part.text, x, y); x += ctx.measureText(part.text).width; });
       y += layer.lineHeight * s;
     });
@@ -1454,6 +1473,8 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
   }
 
   if (layer.type === 'list'){
+    const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+    const showQr = showQrRadio ? showQrRadio.value === 'yes' : false;
     const items = copy.bullets || [];
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const font = layer.font.replace(/\d+px/, px+'px');
@@ -1463,7 +1484,8 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const isGroupCenterLeft = layer.align === 'group-center-left';
     ctx.textAlign = isGroupCenterLeft ? 'left' : layer.align;
     const widest = isGroupCenterLeft ? Math.max(...renderedItems.map(item => ctx.measureText(item).width), 0) : 0;
-    const x = isGroupCenterLeft ? (layer.x * w) - (widest / 2) : layer.x * w;
+    const layerX = (!showQr && layer.noQrX !== undefined) ? layer.noQrX : layer.x;
+    const x = isGroupCenterLeft ? (layerX * w) - (widest / 2) : layerX * w;
     let y = layer.y * h;
     renderedItems.forEach(bulletText=>{
       if (layer.maxW){
@@ -1479,19 +1501,23 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
   if (layer.type === 'rule'){
     ctx.strokeStyle = resolveColor(t, layer.color);
     ctx.lineWidth = layer.lineWidth ? layer.lineWidth * s : Math.max(1, 1.5*s);
+    const showQr = shouldShowQr();
+    const x1 = (!showQr && layer.noQrX1 !== undefined) ? layer.noQrX1 : layer.x1;
+    const x2 = (!showQr && layer.noQrX2 !== undefined) ? layer.noQrX2 : layer.x2;
     ctx.beginPath();
-    ctx.moveTo(layer.x1*w, layer.y*h);
-    ctx.lineTo(layer.x2*w, layer.y*h);
+    ctx.moveTo(x1*w, layer.y*h);
+    ctx.lineTo(x2*w, layer.y*h);
     ctx.stroke();
   }
 
-  if (layer.type === 'qr' && qrCanvas){
+  if (layer.type === 'qr'){
     const size = layer.size * w;
     const x = layer.x * w, y = layer.y * h;
     const pad = (layer.pad ?? 18) * s;
-    ctx.fillStyle = t.qrBg;
+    const showQr = shouldShowQr();
+    ctx.fillStyle = showQr ? t.qrBg : (t.edgeColor || t.qrBg || '#FFFFFF');
     ctx.fillRect(x-pad, y-pad, size+pad*2, size+pad*2);
-    ctx.drawImage(qrCanvas, x, y, size, size);
+    if (showQr && qrCanvas) ctx.drawImage(qrCanvas, x, y, size, size);
   }
 
   ctx.globalAlpha = 1;
@@ -1500,6 +1526,27 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
 
 function drawTextLine(ctx, text, x, y, layer){
   const spacing = layer.letterSpacing || 0;
+  const scaleX = layer.scaleX || 1;
+  if (scaleX !== 1){
+    ctx.save();
+    ctx.translate(x, 0);
+    ctx.scale(scaleX, 1);
+    if (!spacing){
+      ctx.fillText(text, 0, y);
+    } else {
+      const previousAlign = ctx.textAlign;
+      ctx.textAlign = 'left';
+      let cursor = 0;
+      Array.from(text).forEach((char, index) => {
+        if (index) cursor += spacing;
+        ctx.fillText(char, cursor, y);
+        cursor += ctx.measureText(char).width;
+      });
+      ctx.textAlign = previousAlign;
+    }
+    ctx.restore();
+    return;
+  }
   if (!spacing){
     ctx.fillText(text, x, y);
     return;
@@ -1561,8 +1608,8 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
   const copy = getCopy();
   const qrLayer = (layersToDraw || []).find(l => l.type === 'qr');
   const drawTextLayers = (qrCanvas) => {
+    if (qrLayer) drawLayer(ctx, t, qrLayer, copy, wPx, hPx, qrCanvas);
     (layersToDraw || []).forEach(layer => { if (layer.type !== 'qr') drawLayer(ctx, t, layer, copy, wPx, hPx, null); });
-    if (qrLayer && qrCanvas) drawLayer(ctx, t, qrLayer, copy, wPx, hPx, qrCanvas);
     if (cb) cb();
   };
   const qrUrl = qrUrlForTemplate();
@@ -1605,7 +1652,7 @@ let renderPending = false;
 let renderCallbacks = [];
 
 function render(afterOverlay){
-  if (afterOverlay) renderCallbacks.push(afterOverlay);
+  if (typeof afterOverlay === 'function') renderCallbacks.push(afterOverlay);
   if (renderPending) return;
   renderPending = true;
   requestAnimationFrame(() => {
@@ -1647,17 +1694,66 @@ const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
 const footerFields = ['f-footintro', 'f-url', 'f-email'];
 
 function qrUrlForTemplate(){
-  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  const showQr = showQrRadio ? showQrRadio.value === 'yes' : false;
-  if (!showQr) return '';
+  const t = TEMPLATES[currentTpl];
+  const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
+  if (!hasQrLayer) return '';
+  if (!shouldShowQr()) return '';
   const value = document.getElementById('f-qr-url').value;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
+}
+
+function shouldShowQr(){
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (!templateHasQrChoice()) return false;
+  return showQrRadio ? showQrRadio.value === 'yes' : true;
+}
+
+function templateHasQrChoice(tplKey = currentTpl){
+  const t = TEMPLATES[tplKey];
+  return !!(t && (t.layers || []).some(layer => layer.type === 'qr'));
+}
+
+function updateQrControls(){
+  const hasQr = templateHasQrChoice();
+  const options = document.getElementById('qr-options-section');
+  const section = document.getElementById('qr-link-section');
+  if (options) options.style.display = hasQr ? 'block' : 'none';
+  if (!hasQr) {
+    if (section) section.style.display = 'none';
+    document.querySelectorAll('input[name="show-qr-radio"]').forEach(radio => { radio.checked = false; });
+    return;
+  }
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (section) section.style.display = showQrRadio?.value === 'yes' ? 'block' : 'none';
+}
+
+function suggestedQrUrl(){
+  const copy = getCopy();
+  const defaults = TEMPLATE_COPY[currentTpl] || {};
+  const candidates = [
+    copy.url,
+    defaults.qrUrl,
+    defaults.url,
+    extractUrlFromText(copy.footIntro),
+    extractUrlFromText((copy.bullets || []).join(' ')),
+    copy.qrUrl
+  ].filter(Boolean);
+  return candidates.find(isValidQrInput) || '';
 }
 
 function onQrToggle(show) {
   const section = document.getElementById('qr-link-section');
   if (section) section.style.display = show ? 'block' : 'none';
+  if (show) {
+    const urlInput = document.getElementById('f-qr-url');
+    const nextUrl = suggestedQrUrl();
+    if (urlInput && nextUrl) {
+      urlInput.value = normalizedQrUrl(nextUrl);
+      qrCache = { text: null, canvas: null };
+    }
+  }
   saveCopyDraft();
+  updateQrControls();
   render();
 }
 
@@ -1754,7 +1850,12 @@ function saveLayerOverrides(){
       x2: layer.x2,
       shadow: layer.shadow,
       maxW: layer.maxW,
-      bullet: layer.bullet
+      bullet: layer.bullet,
+      scaleX: layer.scaleX,
+      maxItems: layer.maxItems,
+      noQrX: layer.noQrX,
+      noQrX1: layer.noQrX1,
+      noQrX2: layer.noQrX2
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -1774,7 +1875,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
   });
@@ -1966,57 +2067,6 @@ function mountVisualEditor(layer, rect){
     finish();
   };
   document.addEventListener('mousedown', onMouseDownOutside);
-  
-  // Show a floating "Show Bullet" checkbox for all text layers
-  const supportsBullet = ['text', 'wrap', 'list', 'schedule_list', 'edit_row'].includes(layer.type);
-  if (supportsBullet) {
-    const bulletToggleWrap = document.createElement('div');
-    bulletToggleWrap.className = 'visual-editor-bullet-wrap';
-    bulletToggleWrap.style.position = 'absolute';
-    bulletToggleWrap.style.left = rect.left + 'px';
-    bulletToggleWrap.style.top = (rect.top + (useTextarea ? Math.max(24, rect.height + 2) : 26) + 6) + 'px';
-    bulletToggleWrap.style.background = '#0B132B';
-    bulletToggleWrap.style.color = '#FFFFFF';
-    bulletToggleWrap.style.padding = '4px 8px';
-    bulletToggleWrap.style.borderRadius = '4px';
-    bulletToggleWrap.style.fontSize = '12px';
-    bulletToggleWrap.style.display = 'flex';
-    bulletToggleWrap.style.alignItems = 'center';
-    bulletToggleWrap.style.zIndex = '1001';
-    bulletToggleWrap.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-    
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = 'visual-editor-bullet-check';
-    checkbox.style.width = 'auto';
-    checkbox.style.margin = '0 6px 0 0';
-    checkbox.style.cursor = 'pointer';
-    
-    const defaultBullet = layer.field === 'f-bullets';
-    checkbox.checked = layer.bullet !== undefined ? layer.bullet : defaultBullet;
-    
-    checkbox.addEventListener('change', () => {
-      pushUndoSnapshot();
-      layer.bullet = checkbox.checked;
-      saveLayerOverrides();
-      render(() => mountVisualEditor(layer, rect));
-    });
-    
-    const label = document.createElement('label');
-    label.htmlFor = 'visual-editor-bullet-check';
-    label.textContent = 'Show Bullet';
-    label.style.cursor = 'pointer';
-    label.style.margin = '0';
-    label.style.fontSize = '12px';
-    label.style.color = '#FFFFFF';
-    label.style.fontWeight = 'normal';
-    label.style.textTransform = 'none';
-    label.style.letterSpacing = 'normal';
-    
-    bulletToggleWrap.appendChild(checkbox);
-    bulletToggleWrap.appendChild(label);
-    editOverlay.appendChild(bulletToggleWrap);
-  }
   
   editor.addEventListener('keydown', e => {
     if (e.key === 'Escape'){
@@ -2886,7 +2936,7 @@ function initBgImages(){
         if (key === currentTpl) render();
         drawThumb(key);
       };
-      img.src = t.src;
+      img.src = t.src + (t.src.includes('?') ? '&' : '?') + 'v=terry-cutout-v2';
       bgImages[key] = img;
     }
   });
@@ -2899,6 +2949,7 @@ const canvas = document.getElementById('posterCanvas');
    ========================================================================= */
 const picker = document.getElementById('templatePicker');
 Object.entries(TEMPLATES).forEach(([key,t])=>{
+  if (t.hiddenFromPicker) return;
   const card = document.createElement('div');
   card.className = 'tpl-card' + (key===currentTpl ? ' active' : '');
   card.dataset.key = key;
@@ -2922,6 +2973,7 @@ Object.entries(TEMPLATES).forEach(([key,t])=>{
 function refreshActive(){ [...picker.children].forEach(c=>c.classList.toggle('active', c.dataset.key===currentTpl)); }
 function drawThumb(key){
   if (key === 'custom' && typeof syncCustomLayers === 'function') syncCustomLayers();
+  if (TEMPLATES[key]?.hiddenFromPicker) return;
   const card = picker.querySelector(`[data-key="${key}"]`);
   if (!card) return;
   const c = card.querySelector('canvas');
@@ -2973,11 +3025,21 @@ if (!localStorage.getItem('bullet_t1_migration_v1')) {
   });
   localStorage.setItem('bullet_t1_migration_v1', 'true');
 }
-// One-time migration: reset londonFlyer draft & overrides to apply new Sussex text defaults and upscaled dimensions
-if (!localStorage.getItem('sussex_2026_migration_v1')) {
+// One-time migration: reset londonFlyer draft & overrides to apply corrected Sussex reference copy/layout.
+if (!localStorage.getItem('sussex_2026_migration_v20')) {
   localStorage.removeItem('posterCopyDraft:londonFlyer');
   localStorage.removeItem('posterLayerOverrides:londonFlyer');
-  localStorage.setItem('sussex_2026_migration_v1', 'true');
+  localStorage.setItem('sussex_2026_migration_v20', 'true');
+}
+if (!localStorage.getItem('no_qr_footer_migration_v1')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.removeItem('posterLayerOverrides:communityRunLetter');
+  localStorage.setItem('no_qr_footer_migration_v1', 'true');
+}
+if (!localStorage.getItem('template_1_2_spacing_qr_migration_v3')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.removeItem('posterLayerOverrides:communityRunLetter');
+  localStorage.setItem('template_1_2_spacing_qr_migration_v3', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));
@@ -3373,7 +3435,7 @@ function canvasToPdfDataUrl(canvasEl){
 
 document.getElementById('downloadBtn').addEventListener('click', ()=>{
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  if (!showQrRadio) {
+  if (templateHasQrChoice() && !showQrRadio) {
     alert("Please select whether to include the QR Code on the poster first.");
     const qrField = document.querySelector('input[name="show-qr-radio"]').closest('.field');
     if (qrField) {
@@ -3397,6 +3459,33 @@ document.getElementById('downloadBtn').addEventListener('click', ()=>{
       downloadBlob(canvasToPng300Blob(out), base + '.png');
     }
   });
+});
+
+function openLargePreview(){
+  const overlay = document.getElementById('largePreview');
+  const img = document.getElementById('largePreviewImg');
+  if (!overlay || !img) return;
+  render(() => {
+    img.src = canvas.toDataURL('image/png');
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+  });
+}
+
+function closeLargePreview(){
+  const overlay = document.getElementById('largePreview');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+document.getElementById('largePreviewBtn')?.addEventListener('click', openLargePreview);
+document.getElementById('largePreviewClose')?.addEventListener('click', closeLargePreview);
+document.getElementById('largePreview')?.addEventListener('click', (event) => {
+  if (event.target.id === 'largePreview') closeLargePreview();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeLargePreview();
 });
 
 

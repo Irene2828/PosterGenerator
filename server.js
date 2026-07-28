@@ -50,7 +50,8 @@ const server = http.createServer((req, res) => {
   }
 
   // Serve static files
-  let filePath = req.url === '/' ? '/index.html' : req.url;
+  const pathname = new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname;
+  let filePath = pathname === '/' ? '/index.html' : pathname;
   filePath = path.join(__dirname, filePath);
   
   const ext = path.extname(filePath).toLowerCase();

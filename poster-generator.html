@@ -1028,9 +1028,9 @@ const TEMPLATES = {
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8268, align:'group-center-left', font:'500 67px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:77, bullet:true, includeBullets:true, maxItems:3 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7730, align:'center', field:'f-guest', maxW:0.5808, lineHeight:70 },
       { id:'location2', type:'text',   x:0.5000,y:0.8110, align:'center', font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.5808 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.8419, align:'center', field:'f-t2', maxW:0.32, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8570, align:'center', field:'f-bullets', maxW:0.76, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8725, align:'center', field:'f-t1', maxW:0.32, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8876, align:'center', field:'f-t2', maxW:0.32, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9027, align:'center', field:'f-bullets', maxW:0.76, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9191, size:0.1005 },
       { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
       { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75, noQrX:0.0340 },
@@ -3111,6 +3111,11 @@ if (!localStorage.getItem('chandler_template_1_2_v4')) {
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
   localStorage.removeItem('posterCopyDraft:communityRunLetter');
   localStorage.setItem('chandler_template_1_2_v4', 'true');
+}
+// One-time migration: correct bullet vertical alignment to avoid overlaps.
+if (!localStorage.getItem('chandler_template_1_2_v5')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.setItem('chandler_template_1_2_v5', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

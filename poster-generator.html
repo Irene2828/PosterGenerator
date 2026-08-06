@@ -591,6 +591,12 @@
         </div>
 
         <div class="field">
+          <label>Address <span class="optional">(optional)</span></label>
+          <input type="text" id="f-location2" placeholder="660 N Desert Breeze Blvd E, Chandler" maxlength="80">
+          <div class="adv-ctrls" data-key="location2"></div>
+        </div>
+
+        <div class="field">
           <label>Schedule</label>
           <div class="row2">
             <input type="text" id="f-t1" placeholder="Registration opens: 8:30" maxlength="30">
@@ -803,6 +809,7 @@ function getCopy(){
     date: f('f-date'),
     guest: f('f-guest'),
     location: f('f-location'),
+    location2: f('f-location2'),
     schedule: schedule,
     bullets: bullets,
     url: f('f-url'),
@@ -813,7 +820,7 @@ function getCopy(){
   function f(id){ return document.getElementById(id).value.trim(); }
 }
 
-const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro','f-qr-url'];
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
   return 'posterCopyDraft:' + tplKey;
@@ -826,6 +833,7 @@ function getTemplateDefaults(tplKey){
     'f-date': defaults.date || '',
     'f-guest': defaults.guest || '',
     'f-location': defaults.location || '',
+    'f-location2': defaults.location2 || '',
     'f-t1': defaults.t1 || '',
     'f-t2': defaults.t2 || '',
     'f-t3': defaults.t3 || '',
@@ -943,15 +951,16 @@ const W = 3300, H = 5100;
 
 const TEMPLATE_COPY = {
   communityRunRed: {
-    city: 'Twin Cities',
-    date: 'Sunday September 20 2026',
-    guest: '',
-    location: 'Father Hennepin Park, Minneapolis',
-    t1: 'Registration opens: 10:00',
-    t2: '',
+    city: 'Chandler',
+    date: 'Sunday January 31 2027',
+    guest: 'With special guest, Fred Fox, brother of Terry Fox',
+    location: 'Desert Breeze Park (Main Pavilions)',
+    location2: '660 N Desert Breeze Blvd E, Chandler',
+    t1: 'Registration opens: 09:00',
+    t2: 'Run start: 10:00',
     t3: '',
-    bullets: ['Fun run or walk', '5 km, 10 km options'],
-    url: 'mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026',
+    bullets: ['Run / walk / scooter / wheelchair / stroller / dogs on leash', '1, 2, or 3 laps of course (3 laps = 5 km)'],
+    url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: '',
     footIntro: 'To register please visit:'
   },
@@ -1016,8 +1025,11 @@ const TEMPLATES = {
       { id:'date',     type:'text',   x:0.5000,y:0.7574, align:'center', font:'600 175px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.7109 },
       { id:'location', type:'text',   x:0.5000,y:0.7958, align:'center', font:'600 117px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.5808 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8268, align:'group-center-left', font:'500 67px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:77, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7730, align:'center', field:'f-guest', maxW:0.5808, lineHeight:70 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8110, align:'center', font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.5808 },
       { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:77, bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8419, align:'center', field:'f-bullets', maxW:0.32, lineHeight:77, bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8419, align:'center', field:'f-t2', maxW:0.32, lineHeight:77, bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8570, align:'center', field:'f-bullets', maxW:0.76, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9191, size:0.1005 },
       { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
       { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75, noQrX:0.0340 },
@@ -3070,6 +3082,23 @@ if (!localStorage.getItem('template_1_2_spacing_qr_migration_v3')) {
   localStorage.removeItem('posterLayerOverrides:communityRunRed');
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
   localStorage.setItem('template_1_2_spacing_qr_migration_v3', 'true');
+}
+// One-time migration: reset communityRunRed to Chandler defaults (new template 1 design).
+if (!localStorage.getItem('chandler_template1_v1')) {
+  localStorage.removeItem('posterCopyDraft:communityRunRed');
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.setItem('chandler_template1_v1', 'true');
+}
+// One-time migration: clear communityRunRed layer overrides to pick up updated bullet maxW.
+if (!localStorage.getItem('chandler_template1_v2')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.setItem('chandler_template1_v2', 'true');
+}
+// One-time migration: guest under date, location2 address line, bullet font match.
+if (!localStorage.getItem('chandler_template1_v3')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.removeItem('posterCopyDraft:communityRunRed');
+  localStorage.setItem('chandler_template1_v3', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

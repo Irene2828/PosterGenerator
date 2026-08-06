@@ -154,17 +154,17 @@
       "maxW": 0.25
     },
     "date:text": {
-      "x": 0.5,
-      "y": 0.775,
+      "x": 0.50028125,
+      "y": 0.7594474497681607,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "600 128px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "font": "700 118px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "maxW": 0.688
     },
     "location:text": {
       "x": 0.5,
-      "y": 0.817,
+      "y": 0.8239129153786707,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -177,11 +177,7 @@
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "lineHeight": 59,
-      "bullet": true,
-      "includeBullets": true,
-      "maxItems": 3
+      "font": "500 42px \"RigidSquareWeb\", sans-serif"
     },
     "bullets:list": {
       "x": 0.5,
@@ -190,30 +186,23 @@
       "hidden": false,
       "letterSpacing": 0,
       "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "maxW": 0.23,
-      "lineHeight": 59,
-      "bullet": true,
-      "maxItems": 2
+      "maxW": 0.23
     },
     "t1:edit_row": {
-      "x": 0.5,
-      "y": 0.856,
+      "x": 0.5028281250000001,
+      "y": 0.8760685857805256,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
-      "lineHeight": 59,
-      "bullet": true
+      "maxW": 0.88
     },
     "bullet1:edit_row": {
-      "x": 0.5,
-      "y": 0.8746,
+      "x": 0.49782812499999995,
+      "y": 0.8946685857805257,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
-      "lineHeight": 59,
-      "bullet": true
+      "maxW": 0.88
     },
     "qr:qr": {
       "x": 0.0147,
@@ -223,14 +212,12 @@
       "size": 0.0868
     },
     "divider:rule": {
-      "y": 0.9331,
+      "y": 0.9433456047140649,
       "hidden": false,
       "letterSpacing": 0,
       "lineWidth": 4,
-      "x1": 0.1144,
-      "x2": 0.6895,
-      "noQrX1": 0.032,
-      "noQrX2": 0.5898
+      "x1": 0.1169,
+      "x2": 0.692
     },
     "footer:qr_caption": {
       "x": 0.1144,
@@ -239,38 +226,41 @@
       "hidden": false,
       "letterSpacing": 0,
       "font": "300 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "maxW": 0.606,
-      "noQrX": 0.032,
-      "lineHeight": 43
+      "maxW": 0.606
     },
     "footIntro:edit_row": {
-      "x": 0.1144,
-      "y": 0.9555095959595961,
+      "x": 0.1143609375,
+      "y": 0.9643545051558866,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.606,
-      "noQrX": 0.032,
-      "lineHeight": 43
+      "maxW": 0.606
     },
     "url:edit_row": {
-      "x": 0.1144,
-      "y": 0.969075595959596,
+      "x": 0.1143609375,
+      "y": 0.9779205051558866,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.606,
-      "noQrX": 0.032,
-      "lineHeight": 43
+      "maxW": 0.606
     },
-    "custom_1785160434867:text": {
-      "x": 0.498421875,
-      "y": 0.9060193711652849,
+    "custom_1786040875741:text": {
+      "x": 0.49809375,
+      "y": 0.7843955274343123,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "text": "5 km or 10 km options",
-      "font": "500 50px \"RigidSquareWeb\", sans-serif"
+      "text": "With special guest, Fred Fox, brother of Terry Fox",
+      "font": "italic 400 55px \"RigidSquareWeb\", sans-serif"
+    },
+    "custom_1786040961880:text": {
+      "x": 0.49462500000000004,
+      "y": 0.843568875579598,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "660 N Desert Breeze Blvd E, Chandler",
+      "font": "500 44px \"RigidSquareWeb\", sans-serif"
     }
   },
   "communityRunRed": {
@@ -285,7 +275,7 @@
     },
     "date:text": {
       "x": 0.5,
-      "y": 0.7530862745098029,
+      "y": 0.739528100188975,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -293,8 +283,8 @@
       "maxW": 0.7109
     },
     "location:text": {
-      "x": 0.5,
-      "y": 0.7958,
+      "x": 0.49765625,
+      "y": 0.8130572364165589,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -307,31 +297,49 @@
       "align": "group-center-left",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "500 71px \"RigidSquareWeb\", sans-serif",
-      "lineHeight": 77,
-      "bullet": true,
-      "includeBullets": true,
-      "maxItems": 3
+      "font": "700 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
+    },
+    "guest:edit_row": {
+      "x": 0.49950000000000006,
+      "y": 0.7657079964424321,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "italic 400 82px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.88
+    },
+    "location2:text": {
+      "x": 0.4992968750000001,
+      "y": 0.8361354301423027,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 77px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.5808
     },
     "t1:edit_row": {
-      "x": 0.5,
-      "y": 0.8268,
+      "x": 0.49984375,
+      "y": 0.8724874595730918,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
-      "lineHeight": 77,
-      "bullet": true
+      "maxW": 0.32
+    },
+    "t2:edit_row": {
+      "x": 0.49984375,
+      "y": 0.8875874595730919,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.32
     },
     "bullet1:edit_row": {
-      "x": 0.5,
-      "y": 0.8419,
+      "x": 0.49984375,
+      "y": 0.9026874595730918,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
-      "lineHeight": 77,
-      "bullet": true
+      "maxW": 0.76
     },
     "qr:qr": {
       "x": 0.0152,
@@ -341,14 +349,12 @@
       "size": 0.1005
     },
     "divider:rule": {
-      "y": 0.933,
+      "y": 0.9462044388745149,
       "hidden": false,
       "letterSpacing": 0,
       "lineWidth": 4,
-      "x1": 0.1313,
-      "x2": 0.6604,
-      "noQrX1": 0.034,
-      "noQrX2": 0.5443
+      "x1": 0.129753125,
+      "x2": 0.658853125
     },
     "footer:qr_caption": {
       "x": 0.1313,
@@ -357,27 +363,24 @@
       "hidden": false,
       "letterSpacing": 0,
       "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "maxW": 0.5417,
-      "noQrX": 0.034
+      "maxW": 0.5417
     },
     "footIntro:edit_row": {
-      "x": 0.1313,
-      "y": 0.954,
+      "x": 0.12858124999999998,
+      "y": 0.966618248706339,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
       "font": "400 67px \"RigidSquareWeb\", sans-serif",
-      "maxW": 0.5417,
-      "noQrX": 0.034
+      "maxW": 0.5417
     },
     "url:edit_row": {
-      "x": 0.1313,
-      "y": 0.9687,
+      "x": 0.12858124999999998,
+      "y": 0.981318248706339,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.5417,
-      "noQrX": 0.034
+      "maxW": 0.5417
     }
   },
   "londonFlyer": {

@@ -194,7 +194,7 @@
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "italic 400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "font": "italic 400 46px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "maxW": 0.88,
       "lineHeight": 50
     },
@@ -204,7 +204,7 @@
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "font": "400 46px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "maxW": 0.88
     },
     "t1:edit_row": {
@@ -220,7 +220,7 @@
     },
     "t2:edit_row": {
       "x": 0.5028,
-      "y": 0.885,
+      "y": 0.886,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -231,7 +231,18 @@
     },
     "bullet1:edit_row": {
       "x": 0.4978,
-      "y": 0.900,
+      "y": 0.902,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 45,
+      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "bullet2:edit_row": {
+      "x": 0.4978,
+      "y": 0.918,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
@@ -242,13 +253,13 @@
     },
     "qr:qr": {
       "x": 0.0152,
-      "y": 0.9191,
+      "y": 0.9240,
       "hidden": false,
       "letterSpacing": 0,
       "size": 0.0868
     },
     "divider:rule": {
-      "y": 0.942,
+      "y": 0.948,
       "hidden": false,
       "letterSpacing": 0,
       "lineWidth": 4,

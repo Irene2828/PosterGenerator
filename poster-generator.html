@@ -608,9 +608,10 @@
         </div>
 
         <div class="field">
-          <label>Highlights <span class="optional">(one per line, optional)</span></label>
-          <textarea id="f-bullets" placeholder="5 km, 10 km options
-Food truck will be present"></textarea>
+          <label>Highlights <span class="optional">(optional)</span></label>
+          <input type="text" id="f-b1" placeholder="Highlight line 1" maxlength="80">
+          <div style="height:8px"></div>
+          <input type="text" id="f-b2" placeholder="Highlight line 2" maxlength="80">
           <div class="adv-ctrls" data-key="bullets"></div>
         </div>
 
@@ -798,8 +799,6 @@ Food truck will be present"></textarea>
    describing where its layers sit -- the form and data never change.
    ========================================================================= */
 function getCopy(){
-  const bulletsRaw = document.getElementById('f-bullets').value.trim();
-  const bullets = bulletsRaw ? bulletsRaw.split('\n').map(s=>s.trim()).filter(Boolean) : [];
   const t1 = f('f-t1');
   const t2 = f('f-t2');
   const t3 = f('f-t3');
@@ -811,7 +810,8 @@ function getCopy(){
     location: f('f-location'),
     location2: f('f-location2'),
     schedule: schedule,
-    bullets: bullets,
+    b1: f('f-b1'),
+    b2: f('f-b2'),
     url: f('f-url'),
     email: f('f-email'),
     footIntro: f('f-footintro'),
@@ -820,7 +820,7 @@ function getCopy(){
   function f(id){ return document.getElementById(id).value.trim(); }
 }
 
-const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-bullets','f-url','f-email','f-footintro','f-qr-url'];
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
   return 'posterCopyDraft:' + tplKey;
@@ -837,7 +837,8 @@ function getTemplateDefaults(tplKey){
     'f-t1': defaults.t1 || '',
     'f-t2': defaults.t2 || '',
     'f-t3': defaults.t3 || '',
-    'f-bullets': (defaults.bullets || []).join('\n'),
+    'f-b1': defaults.b1 || '',
+    'f-b2': defaults.b2 || '',
     'f-url': defaults.url || '',
     'f-email': defaults.email || '',
     'f-footintro': defaults.footIntro || '',
@@ -959,7 +960,8 @@ const TEMPLATE_COPY = {
     t1: 'Registration opens: 09:00',
     t2: 'Run start: 10:00',
     t3: '',
-    bullets: ['Run / walk / scooter / wheelchair / stroller / dogs on leash', '1, 2, or 3 laps of course (3 laps = 5 km)'],
+    b1: 'Run / walk / scooter / wheelchair / stroller / dogs on leash',
+    b2: '1, 2, or 3 laps of course (3 laps = 5 km)',
     url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: '',
     footIntro: 'To register please visit:'
@@ -973,7 +975,8 @@ const TEMPLATE_COPY = {
     t1: 'Registration opens: 09:00',
     t2: 'Run start: 10:00',
     t3: '',
-    bullets: ['Run / walk / scooter / wheelchair / stroller / dogs on leash', '1, 2, or 3 laps of course (3 laps = 5 km)'],
+    b1: 'Run / walk / scooter / wheelchair / stroller / dogs on leash',
+    b2: '1, 2, or 3 laps of course (3 laps = 5 km)',
     url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: '',
     footIntro: 'To register please visit:'
@@ -1030,7 +1033,8 @@ const TEMPLATES = {
       { id:'location2', type:'text',   x:0.5000,y:0.8110, align:'center', font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800 },
       { id:'t1',       type:'edit_row', x:0.5000,y:0.8650, align:'center', field:'f-t1', maxW:0.88, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'t2',       type:'edit_row', x:0.5000,y:0.8800, align:'center', field:'f-t2', maxW:0.88, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8950, align:'center', field:'f-bullets', maxW:0.88, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8950, align:'center', field:'f-b1', maxW:0.88, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9100, align:'center', field:'f-b2', maxW:0.88, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9191, size:0.1005 },
       { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
       { id:'footer',   type:'qr_caption', x:0.1313,y:0.9540, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'700 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75, noQrX:0.0340 },
@@ -1060,13 +1064,14 @@ const TEMPLATES = {
       { id:'location', type:'text',   x:0.5000,y:0.8170, align:'center', font:'600 74px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8700, align:'center', font:'500 50px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:45, bullet:true, includeBullets:true, maxItems:3 },
       { id:'bullets',  type:'list',   x:0.5000,y:0.9000, align:'center', font:'500 50px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800, lineHeight:45, bullet:true, maxItems:2 },
-      { id:'guest',    type:'edit_row', x:0.5000,y:0.7850, align:'center', field:'f-guest', maxW:0.8800, lineHeight:50, font:'italic 400 44px "RigidSquareWeb", "Chakra Petch", sans-serif' },
-      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7850, align:'center', field:'f-guest', maxW:0.8800, lineHeight:50, font:'italic 400 46px "RigidSquareWeb", "Chakra Petch", sans-serif' },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 46px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800 },
       { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.8850, align:'center', field:'f-t2', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9000, align:'center', field:'f-bullets', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0147,y:0.9154, size:0.0868 },
-      { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9420, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'qr',       type:'qr',     x:0.0147,y:0.9240, size:0.0868 },
+      { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
       { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:43, noQrX:0.0320 },
       { id:'footIntro', type:'edit_row', x:0.1144,y:0.9533, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:43, noQrX:0.0320 },
       { id:'url',       type:'edit_row', x:0.1144,y:0.9669, align:'left', field:'f-url', maxW:0.6060, lineHeight:43, noQrX:0.0320 }
@@ -3134,6 +3139,19 @@ if (!localStorage.getItem('chandler_template_1_2_v8')) {
   localStorage.removeItem('posterLayerOverrides:communityRunRed');
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
   localStorage.setItem('chandler_template_1_2_v8', 'true');
+}
+// One-time migration: split highlights textarea into separate editable rows b1 & b2
+if (!localStorage.getItem('chandler_template_1_2_v9')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.removeItem('posterCopyDraft:communityRunRed');
+  localStorage.removeItem('posterLayerOverrides:communityRunLetter');
+  localStorage.removeItem('posterCopyDraft:communityRunLetter');
+  localStorage.setItem('chandler_template_1_2_v9', 'true');
+}
+// One-time migration: QR baseline align, divider closer, guest/location2 +2px, uniform bullet spacing
+if (!localStorage.getItem('chandler_template_1_2_v10')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunLetter');
+  localStorage.setItem('chandler_template_1_2_v10', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

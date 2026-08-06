@@ -194,8 +194,8 @@
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "italic 400 46px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "maxW": 0.88,
+      "font": "italic 400 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.95,
       "lineHeight": 50
     },
     "location2:text": {
@@ -204,8 +204,8 @@
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "font": "400 46px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "maxW": 0.88
+      "font": "400 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.95
     },
     "t1:edit_row": {
       "x": 0.5028,

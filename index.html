@@ -1064,8 +1064,8 @@ const TEMPLATES = {
       { id:'location', type:'text',   x:0.5000,y:0.8170, align:'center', font:'600 74px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8700, align:'center', font:'500 50px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:45, bullet:true, includeBullets:true, maxItems:3 },
       { id:'bullets',  type:'list',   x:0.5000,y:0.9000, align:'center', font:'500 50px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800, lineHeight:45, bullet:true, maxItems:2 },
-      { id:'guest',    type:'edit_row', x:0.5000,y:0.7850, align:'center', field:'f-guest', maxW:0.8800, lineHeight:50, font:'italic 400 46px "RigidSquareWeb", "Chakra Petch", sans-serif' },
-      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 46px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.8800 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7850, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", "Chakra Petch", sans-serif' },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.9500 },
       { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
@@ -3149,9 +3149,9 @@ if (!localStorage.getItem('chandler_template_1_2_v9')) {
   localStorage.setItem('chandler_template_1_2_v9', 'true');
 }
 // One-time migration: QR baseline align, divider closer, guest/location2 +2px, uniform bullet spacing
-if (!localStorage.getItem('chandler_template_1_2_v11')) {
+if (!localStorage.getItem('chandler_template_1_2_v12')) {
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
-  localStorage.setItem('chandler_template_1_2_v11', 'true');
+  localStorage.setItem('chandler_template_1_2_v12', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

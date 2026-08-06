@@ -179,25 +179,6 @@
       "letterSpacing": 0,
       "font": "400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
     },
-    "guest:edit_row": {
-      "x": 0.5,
-      "y": 0.785,
-      "align": "center",
-      "hidden": false,
-      "letterSpacing": 0,
-      "font": "italic 400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "maxW": 0.606,
-      "lineHeight": 50
-    },
-    "location2:text": {
-      "x": 0.5,
-      "y": 0.843,
-      "align": "center",
-      "hidden": false,
-      "letterSpacing": 0,
-      "maxW": 0.606,
-      "font": "400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
-    },
     "bullets:list": {
       "x": 0.5,
       "y": 0.8746,
@@ -207,38 +188,51 @@
       "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "maxW": 0.23
     },
-    "t1:edit_row": {
-      "x": 0.5028,
-      "y": 0.87,
+    "guest:edit_row": {
+      "x": 0.5,
+      "y": 0.785,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
-      "lineHeight": 43,
+      "font": "italic 400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.88,
+      "lineHeight": 50
+    },
+    "location2:text": {
+      "x": 0.5,
+      "y": 0.843,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
       "font": "400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "bullet": true
+      "maxW": 0.88
+    },
+    "t1:edit_row": {
+      "x": 0.4995109375,
+      "y": 0.8843812789799073,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.99
     },
     "t2:edit_row": {
-      "x": 0.5028,
-      "y": 0.884,
+      "x": 0.4995109375,
+      "y": 0.8983812789799073,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
-      "lineHeight": 43,
       "font": "400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "bullet": true
+      "maxW": 0.32
     },
     "bullet1:edit_row": {
-      "x": 0.4978,
-      "y": 0.898,
+      "x": 0.4945109375,
+      "y": 0.9123812789799073,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.76,
-      "lineHeight": 43,
       "font": "400 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
-      "bullet": true
+      "maxW": 0.76
     },
     "qr:qr": {
       "x": 0.0147,
@@ -279,24 +273,6 @@
       "hidden": false,
       "letterSpacing": 0,
       "maxW": 0.606
-    },
-    "custom_1786040875741:text": {
-      "x": 0.49809375,
-      "y": 0.7843955274343123,
-      "align": "center",
-      "hidden": true,
-      "letterSpacing": 0,
-      "text": "With special guest, Fred Fox, brother of Terry Fox",
-      "font": "italic 400 55px \"RigidSquareWeb\", sans-serif"
-    },
-    "custom_1786040961880:text": {
-      "x": 0.49462500000000004,
-      "y": 0.843568875579598,
-      "align": "center",
-      "hidden": true,
-      "letterSpacing": 0,
-      "text": "660 N Desert Breeze Blvd E, Chandler",
-      "font": "500 44px \"RigidSquareWeb\", sans-serif"
     }
   },
   "communityRunRed": {
@@ -355,33 +331,33 @@
     },
     "t1:edit_row": {
       "x": 0.5,
-      "y": 0.8725,
+      "y": 0.865,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
+      "maxW": 0.88,
       "lineHeight": 58,
       "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "bullet": true
     },
     "t2:edit_row": {
       "x": 0.5,
-      "y": 0.8876,
+      "y": 0.880,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.32,
+      "maxW": 0.88,
       "lineHeight": 58,
       "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "bullet": true
     },
     "bullet1:edit_row": {
       "x": 0.5,
-      "y": 0.9027,
+      "y": 0.895,
       "align": "center",
       "hidden": false,
       "letterSpacing": 0,
-      "maxW": 0.76,
+      "maxW": 0.88,
       "lineHeight": 58,
       "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
       "bullet": true

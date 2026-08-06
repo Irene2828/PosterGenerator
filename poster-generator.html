@@ -1070,7 +1070,7 @@ const TEMPLATES = {
       { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.88, lineHeight:45, font:'400 44px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0147,y:0.9240, size:0.0868 },
+      { id:'qr',       type:'qr',     x:0.0147,y:0.9170, size:0.0868 },
       { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
       { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:43, noQrX:0.0320 },
       { id:'footIntro', type:'edit_row', x:0.1144,y:0.9533, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:43, noQrX:0.0320 },
@@ -3149,9 +3149,9 @@ if (!localStorage.getItem('chandler_template_1_2_v9')) {
   localStorage.setItem('chandler_template_1_2_v9', 'true');
 }
 // One-time migration: QR baseline align, divider closer, guest/location2 +2px, uniform bullet spacing
-if (!localStorage.getItem('chandler_template_1_2_v10')) {
+if (!localStorage.getItem('chandler_template_1_2_v11')) {
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
-  localStorage.setItem('chandler_template_1_2_v10', 'true');
+  localStorage.setItem('chandler_template_1_2_v11', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

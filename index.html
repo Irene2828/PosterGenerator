@@ -965,15 +965,16 @@ const TEMPLATE_COPY = {
     footIntro: 'To register please visit:'
   },
   communityRunLetter: {
-    city: 'Twin Cities',
-    date: 'Sunday September 20 2026',
-    guest: '',
-    location: 'Father Hennepin Park, Minneapolis',
-    t1: 'Registration opens: 10:00',
-    t2: '',
+    city: 'Chandler',
+    date: 'Sunday January 31 2027',
+    guest: 'With special guest, Fred Fox, brother of Terry Fox',
+    location: 'Desert Breeze Park (Main Pavilions)',
+    location2: '660 N Desert Breeze Blvd E, Chandler',
+    t1: 'Registration opens: 09:00',
+    t2: 'Run start: 10:00',
     t3: '',
-    bullets: ['Fun run or walk', '5 km, 10 km options'],
-    url: 'mskcc.convio.net/goto/Terry-Fox-Minneapolis-2026',
+    bullets: ['Run / walk / scooter / wheelchair / stroller / dogs on leash', '1, 2, or 3 laps of course (3 laps = 5 km)'],
+    url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: '',
     footIntro: 'To register please visit:'
   },
@@ -1027,8 +1028,8 @@ const TEMPLATES = {
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8268, align:'group-center-left', font:'500 67px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:77, bullet:true, includeBullets:true, maxItems:3 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7730, align:'center', field:'f-guest', maxW:0.5808, lineHeight:70 },
       { id:'location2', type:'text',   x:0.5000,y:0.8110, align:'center', font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.5808 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:77, bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.8419, align:'center', field:'f-t2', maxW:0.32, lineHeight:77, bullet:true },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8268, align:'center', field:'f-t1', maxW:0.32, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8419, align:'center', field:'f-t2', maxW:0.32, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8570, align:'center', field:'f-bullets', maxW:0.76, lineHeight:58, font:'400 58px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9191, size:0.1005 },
       { id:'divider',  type:'rule',   x1:0.1313,x2:0.6604, y:0.9330, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
@@ -1059,8 +1060,11 @@ const TEMPLATES = {
       { id:'location', type:'text',   x:0.5000,y:0.8170, align:'center', font:'600 72px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.4800 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', lineHeight:59, bullet:true, includeBullets:true, maxItems:3 },
       { id:'bullets',  type:'list',   x:0.5000,y:0.8746, align:'group-center-left', font:'500 48px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.2300, lineHeight:59, bullet:true, maxItems:2 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8560, align:'center', field:'f-t1', maxW:0.32, lineHeight:59, bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8746, align:'center', field:'f-bullets', maxW:0.32, lineHeight:59, bullet:true },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7850, align:'center', field:'f-guest', maxW:0.6060, lineHeight:50 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.6060 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8560, align:'center', field:'f-t1', maxW:0.32, lineHeight:43, font:'400 42px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t2', maxW:0.32, lineHeight:43, font:'400 42px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.8840, align:'center', field:'f-bullets', maxW:0.76, lineHeight:43, font:'400 42px "RigidSquareWeb", "Chakra Petch", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0147,y:0.9154, size:0.0868 },
       { id:'divider',  type:'rule',   x1:0.1144,x2:0.6895, y:0.9331, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
       { id:'footer',   type:'qr_caption', x:0.1144,y:0.9533, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", "Chakra Petch", sans-serif', boldFont:'600 42px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:43, noQrX:0.0320 },
@@ -3099,6 +3103,14 @@ if (!localStorage.getItem('chandler_template1_v3')) {
   localStorage.removeItem('posterLayerOverrides:communityRunRed');
   localStorage.removeItem('posterCopyDraft:communityRunRed');
   localStorage.setItem('chandler_template1_v3', 'true');
+}
+// One-time migration: align template 1 and 2 styling, weights, fonts, and defaults.
+if (!localStorage.getItem('chandler_template_1_2_v4')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.removeItem('posterCopyDraft:communityRunRed');
+  localStorage.removeItem('posterLayerOverrides:communityRunLetter');
+  localStorage.removeItem('posterCopyDraft:communityRunLetter');
+  localStorage.setItem('chandler_template_1_2_v4', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

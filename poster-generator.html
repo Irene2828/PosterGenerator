@@ -1345,13 +1345,13 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     return;
   }
 
-  if (layer.type === 'schedule_list' && hasEditRowsFor(t, ['f-t1','f-t2','f-t3','f-bullets'])){
+  if (layer.type === 'schedule_list' && hasEditRowsFor(t, ['f-t1','f-t2','f-t3','f-bullets','f-b1','f-b2'])){
     ctx.globalAlpha = 1;
     clearTextShadow(ctx);
     return;
   }
 
-  if (layer.type === 'list' && hasEditRowsFor(t, ['f-bullets'])){
+  if (layer.type === 'list' && hasEditRowsFor(t, ['f-bullets','f-b1','f-b2'])){
     ctx.globalAlpha = 1;
     clearTextShadow(ctx);
     return;

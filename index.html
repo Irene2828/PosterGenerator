@@ -812,6 +812,7 @@ function getCopy(){
     schedule: schedule,
     b1: f('f-b1'),
     b2: f('f-b2'),
+    bullets: [f('f-b1'), f('f-b2')].filter(Boolean),
     url: f('f-url'),
     email: f('f-email'),
     footIntro: f('f-footintro'),
@@ -989,7 +990,8 @@ const TEMPLATE_COPY = {
     t1: 'Registration opens: 09:00',
     t2: 'Start: 10:00',
     t3: '',
-    bullets: ['Run/ walk / scooter/ wheelchair / stroller / dogs on leash', '1, 2, or 3 laps of the course'],
+    b1: 'Run/ walk / scooter/ wheelchair / stroller / dogs on leash',
+    b2: '1, 2, or 3 laps of the course',
     url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: 'TwinCitiesTerryFoxRun@outlook.com',
     footIntro: 'visit:'
@@ -1098,9 +1100,10 @@ const TEMPLATES = {
       { id:'date',      type:'wrap',   x:0.6300,y:0.3320, align:'left',   font:'600 56px "Chakra Petch", sans-serif', color:'ink', maxW:0.3200, lineHeight:56, shadow:greyTextShadow },
       { id:'location',  type:'wrap',   x:0.6300,y:0.4580, align:'left',   font:'600 28px "Chakra Petch", sans-serif', color:'ink', maxW:0.3200, lineHeight:32, shadow:greyTextShadow },
       { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px "Chakra Petch", sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow },
-      { id:'t1',        type:'edit_row', x:0.6300,y:0.5850, align:'left', field:'f-t1', maxW:0.3200, lineHeight:32 },
-      { id:'t2',        type:'edit_row', x:0.6300,y:0.6350, align:'left', field:'f-t2', maxW:0.3200, lineHeight:32 },
-      { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6850, align:'left', field:'f-bullets', maxW:0.3200, lineHeight:32 },
+      { id:'t1',        type:'edit_row', x:0.6300,y:0.5850, align:'left', field:'f-t1', maxW:0.3200, lineHeight:32, bullet:true },
+      { id:'t2',        type:'edit_row', x:0.6300,y:0.6200, align:'left', field:'f-t2', maxW:0.3200, lineHeight:32, bullet:true },
+      { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6700, align:'left', field:'f-b1', maxW:0.3200, lineHeight:32, bullet:true },
+      { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7600, align:'left', field:'f-b2', maxW:0.3200, lineHeight:32, bullet:true },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", "Chakra Petch", sans-serif', color:'ink', maxW:0.6741 },
       { id:'footer',    type:'social_footer', x:0.2537,y:0.9820, align:'left', font:'400 20px "Chakra Petch", sans-serif', boldFont:'700 20px "Chakra Petch", sans-serif', color:'ink', maxW:0.4685, lineHeight:18 },
       { id:'url',       type:'edit_row', x:0.2537,y:0.9820, align:'left', field:'f-url', prefix:'visit: ', maxW:0.4685, lineHeight:18 }
@@ -1202,8 +1205,8 @@ function styleSourceForEditRow(t, layer){
   const byId = id => (t.layers || []).find(item => item.id === id);
   if (['f-footintro','f-url','f-email'].includes(layer.field)) return byId('footer') || layer;
   if (layer.field === 'f-t1' || layer.field === 'f-t2' || layer.field === 'f-t3') return byId('schedule') || layer;
-  if (layer.field === 'f-bullets' && ['communityRunRed','communityRunLetter'].includes(t._key)) return byId('schedule') || layer;
-  if (layer.field === 'f-bullets') return byId('bullets') || byId('schedule') || layer;
+  if (['f-b1', 'f-b2', 'f-bullets'].includes(layer.field) && ['communityRunRed','communityRunLetter'].includes(t._key)) return byId('schedule') || layer;
+  if (['f-b1', 'f-b2', 'f-bullets'].includes(layer.field)) return byId('bullets') || byId('schedule') || layer;
   return byId((layer.field || '').replace(/^f-/, '')) || layer;
 }
 
@@ -2051,6 +2054,9 @@ function undoLastUserEdit(){
     if (radioNo) radioNo.checked = false;
     const qrSection = document.getElementById('qr-link-section');
     if (qrSection) qrSection.style.display = 'none';
+
+    localStorage.removeItem(overrideStorageKey(currentTpl));
+    applyLayerOverrides(currentTpl);
   }
   selectedAdminLayer = null;
   saveCopyDraft(currentTpl);
@@ -3152,6 +3158,12 @@ if (!localStorage.getItem('chandler_template_1_2_v9')) {
 if (!localStorage.getItem('chandler_template_1_2_v12')) {
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
   localStorage.setItem('chandler_template_1_2_v12', 'true');
+}
+// One-time migration: restore template 3 (socialTerryRun) bullet input fields mapping
+if (!localStorage.getItem('chandler_template_1_2_v15')) {
+  localStorage.removeItem('posterCopyDraft:socialTerryRun');
+  localStorage.removeItem('posterLayerOverrides:socialTerryRun');
+  localStorage.setItem('chandler_template_1_2_v15', 'true');
 }
 loadCopyDraft(currentTpl);
 Object.keys(TEMPLATES).forEach(k => drawThumb(k));

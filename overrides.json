@@ -69,22 +69,6 @@
         "color": "rgba(255,255,255,0.2)"
       }
     },
-    "t1:edit_row": {
-      "x": 0.63,
-      "y": 0.5516666666666681,
-      "align": "left",
-      "hidden": false,
-      "letterSpacing": 0,
-      "maxW": 0.32
-    },
-    "t2:edit_row": {
-      "x": 0.63,
-      "y": 0.578329629629631,
-      "align": "left",
-      "hidden": false,
-      "letterSpacing": 0,
-      "maxW": 0.32
-    },
     "bullets:list": {
       "x": 0.63,
       "y": 0.685,
@@ -98,22 +82,6 @@
         "blur": 4,
         "color": "rgba(255,255,255,0.2)"
       },
-      "maxW": 0.32
-    },
-    "bullet1:edit_row": {
-      "x": 0.63,
-      "y": 0.654629629629631,
-      "align": "left",
-      "hidden": false,
-      "letterSpacing": 0,
-      "maxW": 0.32
-    },
-    "bullet2:edit_row": {
-      "x": 0.63,
-      "y": 0.7323686595775474,
-      "align": "left",
-      "hidden": false,
-      "letterSpacing": 0,
       "maxW": 0.32
     },
     "guest:text": {

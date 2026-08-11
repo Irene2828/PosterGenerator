@@ -4512,6 +4512,9 @@ function initBgImages(){
         if (key === currentTpl) render();
         drawThumb(key);
       };
+      img.onerror = (e) => {
+        console.error("Failed to load template image:", t.src, e);
+      };
       img.src = t.src + (t.src.includes('?') ? '&' : '?') + 'v=terry-cutout-v2';
       bgImages[key] = img;
     }

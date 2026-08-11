@@ -1,3 +1,11 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "functions": {
+    "index.js": {
+      "includeFiles": "**"
+    },
+    "api/*.js": {
+      "includeFiles": "overrides.json"
+    }
+  }
 }

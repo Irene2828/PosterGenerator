@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Terry Fox Run poster and flyer generator tool",
   "private": true,
+  "main": "index.js",
   "type": "commonjs",
   "scripts": {
     "dev": "node local-server.js"

@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Terry Fox Run poster and flyer generator tool",
   "private": true,
+  "main": "local-server.js",
   "scripts": {
-    "build": "mkdir -p public && cp -r *.html *.png *.jpg *.pdf fonts overrides.json public/ 2>/dev/null || true",
+    "build": "mkdir -p public && cp -r *.html fonts overrides.json public/ 2>/dev/null || true; cp -r *.png *.jpg *.jpeg *.pdf public/ 2>/dev/null || true",
     "dev": "node local-server.js"
   }
 }

@@ -5,6 +5,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
+    "build": "echo 'Building static assets...'",
     "dev": "node local-server.js"
   }
 }

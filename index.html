@@ -4538,6 +4538,7 @@ function initBgImages(){
   Object.entries(TEMPLATES).forEach(([key,t])=>{
     t._key = key;
     if (t.kind === 'image'){
+      /* Temporarily disable template image loading to prevent Vercel payload issues
       const img = new Image();
       img.onload = () => {
         if (key === currentTpl) render();
@@ -4552,6 +4553,11 @@ function initBgImages(){
         if (key === currentTpl) render();
         drawThumb(key);
       }
+      */
+      
+      // Fallback: Trigger initial render for the colorful background block
+      if (key === currentTpl) render();
+      drawThumb(key);
     }
   });
 }

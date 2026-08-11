@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "server.js": {
+      "includeFiles": "{*.html,*.jpg,*.png,*.pdf,fonts/**,overrides.json}"
+    }
+  }
+}

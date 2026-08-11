@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const { tplKey, overrides } = JSON.parse(body);
-        const overridesPath = path.join(__dirname, 'overrides.json');
+        const overridesPath = path.join(__dirname, 'public', 'overrides.json');
         
         let existing = {};
         if (fs.existsSync(overridesPath)) {
@@ -53,7 +53,7 @@ const server = http.createServer((req, res) => {
   // Serve static files
   const pathname = new URL(req.url, `http://${req.headers.host || 'localhost'}`).pathname;
   let filePath = pathname === '/' ? '/index.html' : pathname;
-  filePath = path.join(__dirname, filePath);
+  filePath = path.join(__dirname, 'public', filePath);
   
   const ext = path.extname(filePath).toLowerCase();
   const mime = MIME_TYPES[ext] || 'application/octet-stream';

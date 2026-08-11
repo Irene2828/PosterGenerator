@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const token = process.env.GITHUB_TOKEN;
     const repoOwner = 'Irene2828';
     const repoName = 'PosterGenerator';
-    const filePath = 'overrides.json';
+    const filePath = 'public/overrides.json';
     
     if (token) {
       // 1. Get SHA of existing file from GitHub
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, method: 'github' });
     } else {
       // Fallback for local serverless running
-      const overridesPath = path.join(process.cwd(), 'overrides.json');
+      const overridesPath = path.join(process.cwd(), 'public', 'overrides.json');
       let existing = {};
       if (fs.existsSync(overridesPath)) {
         existing = JSON.parse(fs.readFileSync(overridesPath, 'utf8') || '{}');

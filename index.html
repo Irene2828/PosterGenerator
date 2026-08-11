@@ -12,70 +12,72 @@
     font-weight:300; font-style:normal;
     src: url('./fonts/fonnts.com-rigidsquare-light.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:400; font-style:normal;
     src: url('./fonts/fonnts.com-rigidsquare-regular.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
-    font-weight:500 600; font-style:normal;
+    font-weight:500; font-style:normal;
     src: url('./fonts/fonnts.com-rigidsquare-semibold.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
+  }
+  @font-face{
+    font-family:'RigidSquareWeb';
+    font-weight:600; font-style:normal;
+    src: url('./fonts/fonnts.com-rigidsquare-semibold.otf') format('opentype');
+    font-display:swap;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:700; font-style:normal;
     src: url('./fonts/fonnts.com-rigidsquare-bold.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:900; font-style:normal;
     src: url('./fonts/fonnts.com-rigidsquare-extrabold.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:300; font-style:italic;
     src: url('./fonts/fonnts.com-rigidsquare-lightitalic.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:400; font-style:italic;
     src: url('./fonts/fonnts.com-rigidsquare-italic.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
-    font-weight:500 600; font-style:italic;
+    font-weight:500; font-style:italic;
     src: url('./fonts/fonnts.com-rigidsquare-semibolditalic.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
+  }
+  @font-face{
+    font-family:'RigidSquareWeb';
+    font-weight:600; font-style:italic;
+    src: url('./fonts/fonnts.com-rigidsquare-semibolditalic.otf') format('opentype');
+    font-display:swap;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:700; font-style:italic;
     src: url('./fonts/fonnts.com-rigidsquare-bolditalic.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   @font-face{
     font-family:'RigidSquareWeb';
     font-weight:900; font-style:italic;
     src: url('./fonts/fonnts.com-rigidsquare-extrabolditalic.otf') format('opentype');
     font-display:swap;
-    unicode-range: U+0020, U+0030-0039, U+0041-005A, U+0061-007A, U+00C0-017F;
   }
   :root{
     --font-display:'RigidSquareWeb',sans-serif;
@@ -1434,27 +1436,44 @@
    One shared "copy" object drives every template. Add a new template by
    describing where its layers sit -- the form and data never change.
    ========================================================================= */
-function getCopy(){
-  const t1 = f('f-t1');
-  const t2 = f('f-t2');
-  const t3 = f('f-t3');
+function getDraftValues(tplKey) {
+  const targetKey = tplKey || currentTpl;
+  if (targetKey === currentTpl) {
+    const values = {};
+    COPY_FIELD_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) values[id] = el.value;
+    });
+    return values;
+  }
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(targetKey)) || 'null'); }
+  catch (e) { saved = null; }
+  return saved || getTemplateDefaults(targetKey);
+}
+
+function getCopy(tplKey){
+  const targetKey = tplKey || currentTpl;
+  const values = getDraftValues(targetKey);
+  const t1 = (values['f-t1'] || '').trim();
+  const t2 = (values['f-t2'] || '').trim();
+  const t3 = (values['f-t3'] || '').trim();
   const schedule = [t1, t2, t3].filter(Boolean).join('   \u2215   ');
   return {
-    city: f('f-city'),
-    date: f('f-date'),
-    guest: f('f-guest'),
-    location: f('f-location'),
-    location2: f('f-location2'),
+    city: (values['f-city'] || '').trim(),
+    date: (values['f-date'] || '').trim(),
+    guest: (values['f-guest'] || '').trim(),
+    location: (values['f-location'] || '').trim(),
+    location2: (values['f-location2'] || '').trim(),
     schedule: schedule,
-    b1: f('f-b1'),
-    b2: f('f-b2'),
-    bullets: [f('f-b1'), f('f-b2')].filter(Boolean),
-    url: f('f-url'),
-    email: f('f-email'),
-    footIntro: f('f-footintro'),
-    qrUrl: f('f-qr-url')
+    b1: (values['f-b1'] || '').trim(),
+    b2: (values['f-b2'] || '').trim(),
+    bullets: [(values['f-b1'] || '').trim(), (values['f-b2'] || '').trim()].filter(Boolean),
+    url: (values['f-url'] || '').trim(),
+    email: (values['f-email'] || '').trim(),
+    footIntro: (values['f-footintro'] || '').trim(),
+    qrUrl: (values['f-qr-url'] || '').trim()
   };
-  function f(id){ return document.getElementById(id).value.trim(); }
 }
 
 const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
@@ -2302,15 +2321,16 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
   canvasEl._renderId = (canvasEl._renderId || 0) + 1;
   const currentRenderId = canvasEl._renderId;
 
+  const tplKey = t._key || currentTpl;
+  const copy = getCopy(tplKey);
+
   if (t.draw) {
-    const copy = getCopy();
     t.draw(ctx, wPx, hPx, copy);
     if (cb) cb();
     return;
   }
 
   drawBackground(ctx, t, wPx, hPx);
-  const copy = getCopy();
   const qrLayer = (layersToDraw || []).find(l => l.type === 'qr');
   const drawTextLayers = (qrCanvas) => {
     if (canvasEl._renderId !== currentRenderId) return;
@@ -2318,7 +2338,7 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
     (layersToDraw || []).forEach(layer => { if (layer.type !== 'qr') drawLayer(ctx, t, layer, copy, wPx, hPx, null); });
     if (cb) cb();
   };
-  const qrUrl = qrUrlForTemplate();
+  const qrUrl = qrUrlForTemplate(tplKey);
   if (qrLayer && qrUrl){
     getQrCanvas(qrUrl, (qrCanvas) => drawTextLayers(qrCanvas));
   } else {
@@ -2412,19 +2432,30 @@ function isValidQrInput(value){
 const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
 const footerFields = ['f-footintro', 'f-url', 'f-email'];
 
-function qrUrlForTemplate(){
-  const t = TEMPLATES[currentTpl];
+function qrUrlForTemplate(tplKey = currentTpl){
+  const t = TEMPLATES[tplKey];
+  if (!t) return '';
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   if (!hasQrLayer) return '';
-  if (!shouldShowQr()) return '';
-  const value = document.getElementById('f-qr-url').value;
+  if (!shouldShowQr(tplKey)) return '';
+  const copy = getCopy(tplKey);
+  const value = copy.qrUrl;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
 }
 
-function shouldShowQr(){
-  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  if (!templateHasQrChoice()) return false;
-  return showQrRadio ? showQrRadio.value === 'yes' : true;
+function shouldShowQr(tplKey = currentTpl){
+  if (!templateHasQrChoice(tplKey)) return false;
+  if (tplKey === currentTpl) {
+    const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+    return showQrRadio ? showQrRadio.value === 'yes' : true;
+  }
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(tplKey)) || 'null'); }
+  catch (e) { saved = null; }
+  if (saved && saved['show-qr-radio'] !== undefined) {
+    return saved['show-qr-radio'] === 'yes';
+  }
+  return true;
 }
 
 function templateHasQrChoice(tplKey = currentTpl){
@@ -4517,6 +4548,10 @@ function initBgImages(){
       };
       img.src = t.src + (t.src.includes('?') ? '&' : '?') + 'v=terry-cutout-v2';
       bgImages[key] = img;
+      if (img.complete && img.naturalWidth > 0) {
+        if (key === currentTpl) render();
+        drawThumb(key);
+      }
     }
   });
 }
@@ -4563,15 +4598,12 @@ function drawThumb(key){
     if (existingLabel) card.insertBefore(c, existingLabel);
     else card.appendChild(c);
   }
-  const activeDraft = {};
-  COPY_FIELD_IDS.forEach(id => { activeDraft[id] = document.getElementById(id).value; });
   const t = TEMPLATES[key];
   const tw = t.w || 1122;
   const th = t.h || 1588;
   const targetW = 220;
   
   // Calculate a dynamic scale factor for every template
-  const scale = targetW / tw;
   const targetH = Math.round(220 * th / tw);
 
   c.width = targetW;
@@ -4583,16 +4615,12 @@ function drawThumb(key){
   ctx.fillStyle = getTemplateFallbackBg(t);
   ctx.fillRect(0, 0, targetW, targetH);
 
-  loadCopyDraft(key);
   const layersToDraw = t.socialLayers || t.layers || [];
   
-  // Multiply all text coordinates (x, y), font sizes, line heights, and padding by this scale factor 
-  // when rendering onto thumbnail canvases so text scales down proportionally regardless of template aspect ratio.
   const offscreen = document.createElement('canvas');
   renderNativeToCanvas(offscreen, t, tw, th, layersToDraw, () => {
     ctx.clearRect(0, 0, targetW, targetH);
     ctx.drawImage(offscreen, 0, 0, targetW, targetH);
-    COPY_FIELD_IDS.forEach(id => { document.getElementById(id).value = activeDraft[id] || ''; });
   });
 }
 // One-time local storage migration to clear old preselected Yes radios from drafts
@@ -5218,7 +5246,10 @@ if (document.fonts && document.fonts.ready){
     render();
     Object.keys(TEMPLATES).forEach(key => drawThumb(key));
   };
-  document.fonts.ready.then(redrawAll);
+  document.fonts.ready.then(redrawAll).catch(err => {
+    console.warn("Font loading ready caught error:", err);
+    redrawAll();
+  });
   document.fonts.addEventListener('loadingdone', redrawAll);
 }
 </script>

@@ -6,7 +6,6 @@
   "type": "commonjs",
   "scripts": {
     "dev": "node server.js",
-    "build": "echo 'No build step required'",
     "start": "node server.js"
   }
 }

@@ -1,9 +1,7 @@
 {
-  "cleanUrls": true,
+  "buildCommand": "mkdir -p public && cp -r *.html *.png *.jpg *.pdf fonts overrides.json public/ 2>/dev/null || true",
+  "outputDirectory": "public",
   "functions": {
-    "index.js": {
-      "includeFiles": "**"
-    },
     "api/*.js": {
       "includeFiles": "overrides.json"
     }

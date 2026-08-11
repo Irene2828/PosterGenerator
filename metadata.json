@@ -1,0 +1,8 @@
+{
+  "name": "Poster Generator",
+  "description": "Terry Fox Run poster and flyer generator application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

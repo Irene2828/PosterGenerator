@@ -1,0 +1,558 @@
+{
+  "socialTerryRun": {
+    "city:text": {
+      "x": 0.5,
+      "y": 0.03997777777777777,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 44px \"Chakra Petch\", sans-serif",
+      "maxW": 0.187
+    },
+    "staticSub:static": {
+      "x": 0.63,
+      "y": 0.238,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "For Cancer Research",
+      "font": "700 44px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.355
+    },
+    "date:wrap": {
+      "x": 0.63,
+      "y": 0.332,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 56px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.32
+    },
+    "location:wrap": {
+      "x": 0.63,
+      "y": 0.458,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 28px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.32
+    },
+    "schedule:schedule_list": {
+      "x": 0.63,
+      "y": 0.585,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 24px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      }
+    },
+    "bullets:list": {
+      "x": 0.63,
+      "y": 0.685,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 24px \"Chakra Petch\", sans-serif",
+      "shadow": {
+        "x": 0,
+        "y": 4,
+        "blur": 4,
+        "color": "rgba(255,255,255,0.2)"
+      },
+      "maxW": 0.32
+    },
+    "guest:text": {
+      "x": 0.5,
+      "y": 0.935,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "italic 400 32px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.6741
+    },
+    "footer:social_footer": {
+      "x": 0.2537,
+      "y": 0.982,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 20px \"Chakra Petch\", sans-serif",
+      "maxW": 0.4685
+    },
+    "url:edit_row": {
+      "x": 0.2537,
+      "y": 0.9664444444444451,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.4685
+    }
+  },
+  "communityRunLetter": {
+    "city:text": {
+      "x": 0.5102124183006536,
+      "y": 0.045074076838711626,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 112px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.25
+    },
+    "date:text": {
+      "x": 0.50028125,
+      "y": 0.7594474497681607,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 118px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.688
+    },
+    "location:text": {
+      "x": 0.5,
+      "y": 0.8239129153786707,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "600 74px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.88
+    },
+    "schedule:schedule_list": {
+      "x": 0.5,
+      "y": 0.856,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "lineHeight": 58
+    },
+    "bullets:list": {
+      "x": 0.5,
+      "y": 0.8746,
+      "align": "group-center-left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.23,
+      "lineHeight": 58
+    },
+    "guest:edit_row": {
+      "x": 0.5,
+      "y": 0.785,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "italic 400 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.95,
+      "lineHeight": 50
+    },
+    "location2:text": {
+      "x": 0.5,
+      "y": 0.843,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 48px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.95
+    },
+    "t1:edit_row": {
+      "x": 0.5028,
+      "y": 0.872,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 58,
+      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "t2:edit_row": {
+      "x": 0.5028,
+      "y": 0.888,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 58,
+      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "bullet1:edit_row": {
+      "x": 0.4978,
+      "y": 0.904,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 58,
+      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "bullet2:edit_row": {
+      "x": 0.4978,
+      "y": 0.92,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 58,
+      "font": "400 44px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "qr:qr": {
+      "x": 0.0152,
+      "y": 0.917,
+      "hidden": false,
+      "letterSpacing": 0,
+      "size": 0.0868
+    },
+    "divider:rule": {
+      "y": 0.948,
+      "hidden": false,
+      "letterSpacing": 0,
+      "lineWidth": 4,
+      "x1": 0.1169,
+      "x2": 0.692
+    },
+    "footer:qr_caption": {
+      "x": 0.1144,
+      "y": 0.962,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "300 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "boldFont": "600 42px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.606,
+      "lineHeight": 58
+    },
+    "footIntro:edit_row": {
+      "x": 0.1138,
+      "y": 0.962,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.606,
+      "lineHeight": 58
+    },
+    "url:edit_row": {
+      "x": 0.1138,
+      "y": 0.978,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.606,
+      "lineHeight": 58
+    }
+  },
+  "communityRunRed": {
+    "city:text": {
+      "x": 0.4994609375,
+      "y": 0.045074076838711626,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 198px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.289
+    },
+    "date:text": {
+      "x": 0.5,
+      "y": 0.7594474497681607,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 193px \"RigidSquareWeb\", sans-serif",
+      "maxW": 0.7109
+    },
+    "location:text": {
+      "x": 0.49765625,
+      "y": 0.8239129153786707,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 125px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.5808
+    },
+    "schedule:schedule_list": {
+      "x": 0.5,
+      "y": 0.856,
+      "align": "group-center-left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif"
+    },
+    "guest:edit_row": {
+      "x": 0.4995,
+      "y": 0.785,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "italic 400 82px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.88
+    },
+    "location2:text": {
+      "x": 0.499296875,
+      "y": 0.843,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "500 77px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.5808
+    },
+    "t1:edit_row": {
+      "x": 0.5,
+      "y": 0.87,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 72,
+      "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "t2:edit_row": {
+      "x": 0.5,
+      "y": 0.886,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 72,
+      "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "bullet1:edit_row": {
+      "x": 0.5,
+      "y": 0.902,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 72,
+      "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "bullet2:edit_row": {
+      "x": 0.5,
+      "y": 0.918,
+      "align": "center",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.88,
+      "lineHeight": 72,
+      "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "bullet": true
+    },
+    "qr:qr": {
+      "x": 0.0152,
+      "y": 0.917,
+      "hidden": false,
+      "letterSpacing": 0,
+      "size": 0.1005
+    },
+    "divider:rule": {
+      "y": 0.948,
+      "hidden": false,
+      "letterSpacing": 0,
+      "lineWidth": 4,
+      "x1": 0.129753125,
+      "x2": 0.658853125
+    },
+    "footer:qr_caption": {
+      "x": 0.1313,
+      "y": 0.9533,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 58px \"RigidSquareWeb\", \"Chakra Petch\", sans-serif",
+      "maxW": 0.5417
+    },
+    "footIntro:edit_row": {
+      "x": 0.12858125,
+      "y": 0.9643545051558866,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 67px \"RigidSquareWeb\", sans-serif",
+      "maxW": 0.5417
+    },
+    "url:edit_row": {
+      "x": 0.12858125,
+      "y": 0.9779205051558866,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.5417
+    }
+  },
+  "londonFlyer": {
+    "city:static": {
+      "x": 0.048,
+      "y": 0.095,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "TERRY FOX RUN Sussex",
+      "font": "900 116px \"RigidSquareWeb\", \"Roboto Condensed\", sans-serif",
+      "maxW": 0.39
+    },
+    "subtitle:static": {
+      "x": 0.048,
+      "y": 0.136,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 2,
+      "text": "For The Institute of Cancer Research",
+      "font": "700 92px \"RigidSquareWeb\", \"Roboto Condensed\", sans-serif",
+      "maxW": 0.39,
+      "scaleX": 0.43
+    },
+    "date:text": {
+      "x": 0.048,
+      "y": 0.235,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "900 76px \"RigidSquareWeb\", \"Roboto Condensed\", sans-serif",
+      "maxW": 0.39,
+      "scaleX": 0.64
+    },
+    "location:text": {
+      "x": 0.047883666992187504,
+      "y": 0.2765,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 50px \"Roboto Condensed\", sans-serif",
+      "maxW": 0.38
+    },
+    "schedule:schedule_list": {
+      "x": 0.048,
+      "y": 0.3075,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "400 50px \"Roboto Condensed\", sans-serif",
+      "maxItems": 2,
+      "lineHeight": 72
+    },
+    "t1:edit_row": {
+      "x": 0.048,
+      "y": 0.3075,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.38,
+      "lineHeight": 72
+    },
+    "t2:edit_row": {
+      "x": 0.048,
+      "y": 0.3385,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.38,
+      "lineHeight": 72
+    },
+    "t3:edit_row": {
+      "x": 0.048,
+      "y": 0.3695,
+      "align": "left",
+      "hidden": true,
+      "letterSpacing": 0,
+      "maxW": 0.38,
+      "lineHeight": 72
+    },
+    "guest:wrap": {
+      "x": 0.048,
+      "y": 0.385,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 54px \"Roboto Condensed\", sans-serif",
+      "maxW": 0.34,
+      "lineHeight": 58
+    },
+    "staticWho:static": {
+      "x": 0.048,
+      "y": 0.462,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "WHO WAS TERRY?",
+      "font": "900 76px \"RigidSquareWeb\", \"Roboto Condensed\", sans-serif",
+      "maxW": 0.38
+    },
+    "staticBio:wrap": {
+      "x": 0.04775,
+      "y": 0.507,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "text": "In 1977, 18-year-old Canadian Terry Fox was diagnosed with bone cancer, and his right leg was amputated in order to treat the cancer. Terry ran his Marathon of Hope in 1980 - a cross-Canada run on one good leg and one artificial leg to raise money for cancer research. After running an average of a marathon a day for 143 days in a row, totalling 3,339 miles, Terry ended his run because his cancer had returned. But his courage, determination, and compassion began a worldwide movement to eradicate cancer. Terry Fox passed away in 1981, and now millions of people in over 40 countries participate in his name to raise funds for cancer research.",
+      "font": "400 38px \"Roboto Condensed\", sans-serif",
+      "maxW": 0.394,
+      "lineHeight": 44
+    },
+    "bullets:list": {
+      "x": 0.1642,
+      "y": 0.748,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "700 51px \"Roboto Condensed\", sans-serif",
+      "maxW": 0.3,
+      "noQrX": 0.048,
+      "lineHeight": 58,
+      "maxItems": 2
+    },
+    "bullet1:edit_row": {
+      "x": 0.1642,
+      "y": 0.748,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "maxW": 0.3,
+      "noQrX": 0.048,
+      "bullet": false,
+      "lineHeight": 58
+    },
+    "qr:qr": {
+      "x": 0.048,
+      "y": 0.716,
+      "hidden": false,
+      "letterSpacing": 0,
+      "size": 0.0879
+    },
+    "footer:wrap": {
+      "x": 0.315,
+      "y": 0.9417339622641517,
+      "align": "left",
+      "hidden": false,
+      "letterSpacing": 0,
+      "font": "900 78px \"RigidSquareWeb\", \"Roboto Condensed\", sans-serif",
+      "maxW": 0.2
+    }
+  }
+}

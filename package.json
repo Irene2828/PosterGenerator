@@ -5,7 +5,6 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "build": "mkdir -p public && cp -r *.html *.jpg *.png *.pdf fonts public/ || true",
     "dev": "node server.js",
     "start": "node server.js"
   }

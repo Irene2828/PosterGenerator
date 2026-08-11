@@ -215,7 +215,7 @@
     padding:0;
     text-decoration:underline;
   }
-  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:10px 4px 26px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);}
+  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:12px 4px 12px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);}
   .visual-hint{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;}
   .poster-stage{position:relative;width:100%;max-width:500px;}
   canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 6px 16px rgba(0,0,0,.07);display:block;}
@@ -253,6 +253,14 @@
   }
   .preview-caption{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
   .preview-actions{width:100%;max-width:500px;margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:12px;}
+  .side-btn { position: absolute; top: 0; z-index: 50; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+  .left-side { left: -44px; }
+  .right-side { right: -44px; }
+  @media (max-width: 1100px) {
+    .left-side { left: 8px; top: 8px; }
+    .right-side { right: 8px; top: 8px; }
+  }
+
   .preview-icon{width:30px;height:30px;border:0;background:transparent;color:var(--muted);border-radius:50%;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.72;}
   .preview-icon:hover,.preview-icon:focus{opacity:1;color:var(--ink);outline:none;background:#F7F8FA;}
   .large-preview{position:fixed;inset:0;z-index:20000;background:rgba(255,255,255,.94);display:none;align-items:center;justify-content:center;padding:22px;}
@@ -1041,6 +1049,8 @@
       </div>
 	    <div class="canvas-shell">
 	      <div class="poster-stage" id="posterStage">
+	        <button type="button" class="preview-icon side-btn left-side" id="userUndoBtn" title="Undo last edit">↺</button>
+	        <button type="button" class="preview-icon side-btn right-side" id="largePreviewBtn" aria-label="Open large preview" title="Open large preview">⤢</button>
 	        <canvas id="posterCanvas" width="792" height="1224"></canvas>
 	        <div class="edit-overlay" id="editOverlay"></div>
 	        <div class="admin-guide v"></div>
@@ -1048,10 +1058,7 @@
 	        <div class="admin-guide selected-v" id="selectedGuideV"></div>
 	        <div class="admin-guide selected-h" id="selectedGuideH"></div>
 	      </div>
-	      <div class="preview-actions">
-	        <button type="button" class="preview-icon" id="largePreviewBtn" aria-label="Open large preview" title="Open large preview">⤢</button>
-	        <button type="button" class="subtle-undo" id="userUndoBtn">Undo last edit</button>
-	      </div>
+	      
 	    </div>
 	  </div>
 
@@ -1085,8 +1092,8 @@
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </span>
             </div>
+            <div class="qr-caption" style="margin-top: 7px;">Scan the QR code on the poster to test it before downloading.</div>
           </div>
-          <div class="qr-caption" style="margin-top: 6px;">Scan the QR code on the poster to test it before downloading.</div>
         </div>
 
 	      <div class="field">
@@ -1167,7 +1174,7 @@
           <div class="sidebar-head-actions">
             <button class="figma-btn primary header-save-btn" id="headerSaveBtn" onclick="saveCurrentTemplate()">
               <span class="save-btn-text">Save changes</span>
-              <svg class="save-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px; flex-shrink: 0;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              
             </button>
             <button class="sidebar-close-btn" onclick="toggleAdminMode(false)" title="Hide inspector">&times;</button>
           </div>
@@ -1387,16 +1394,12 @@
         </div>
       </div>
     </div>
-    <details class="property-group fine-adjustments">
-      <summary>Fine adjustments</summary>
-      <div class="settings-toggle-row">
-        <div class="settings-toggle-text">
-          <span>SHOW GUIDES</span>
-          <div class="settings-toggle-help">Helps you line up your text.</div>
-        </div>
-        <button class="switch-toggle" id="grid-toggle-btn" onclick="toggleGrid()" aria-label="Show Guides" aria-pressed="false"></button>
+    <div class="settings-toggle-row" style="padding: 16px; border-bottom: 1px solid var(--border); margin: 0;">
+      <div class="settings-toggle-text">
+        <span>SHOW GRID</span>
       </div>
-    </details>
+      <button class="switch-toggle" id="grid-toggle-btn" onclick="toggleGrid()" aria-label="Show Grid" aria-pressed="false"></button>
+    </div>
   </div>
   <div class="sidebar-section actions-section secondary-text-actions">
     <div class="admin-actions">
@@ -2656,7 +2659,7 @@ function pushUndoSnapshotFrom(copy, overrides){
 
 function updateUserUndoButton(){
   const btn = document.getElementById('userUndoBtn');
-  if (btn) btn.textContent = adminUndoStack.length ? 'Undo Last Edit' : 'Restore original text';
+  if (btn) btn.title = adminUndoStack.length ? 'Undo Last Edit' : 'Restore original text';
   const topUndo = document.getElementById('topUndoBtn');
   if (topUndo) topUndo.disabled = adminUndoStack.length === 0;
   const moveUndo = document.getElementById('moveUndoBtn');
@@ -3006,7 +3009,7 @@ function toggleGrid() {
   if (btn) {
     btn.classList.toggle('active', showGrid);
     btn.setAttribute('aria-pressed', showGrid ? 'true' : 'false');
-    btn.setAttribute('aria-label', showGrid ? 'Hide Guides' : 'Show Guides');
+    btn.setAttribute('aria-label', showGrid ? 'Hide Grid' : 'Show Grid');
   }
   updateAdminGuides();
   render();

@@ -5117,7 +5117,7 @@ function exportCurrentTemplateJSON() {
   output.select();
 }
 
-function exportTemplateJSON() {
+async function exportTemplateJSON() {
   syncCustomLayers();
   if (currentTpl !== 'custom') {
     exportCurrentTemplateJSON();

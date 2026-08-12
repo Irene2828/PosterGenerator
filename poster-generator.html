@@ -1757,10 +1757,10 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   }
   if (layer.field === 'f-url'){
     if (source.type === 'social_footer'){
-      drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /^visit:$/i);
+      drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, null);
       const urlText = rawText.replace(/^visit:\s*/i, '');
       const prefixWidth = /^visit:\s*/i.test(rawText) ? (() => {
-        ctx.font = boldFont;
+        ctx.font = regularFont;
         return ctx.measureText(rawText.match(/^visit:\s*/i)[0]).width;
       })() : 0;
       ctx.font = regularFont;
@@ -2019,7 +2019,7 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const regularFont = layer.font.replace(/\d+px/, px+'px');
     const boldFont = (layer.boldFont || layer.font).replace(/\d+px/, px+'px');
     const parts = [
-      { text:'visit: ', bold:true },
+      { text:'visit: ', bold:false },
       { text:copy.url, bold:false, underline:true }
     ];
     ctx.fillStyle = resolveColor(t, layer.color);

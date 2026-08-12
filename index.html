@@ -1184,7 +1184,7 @@
       <div id="step3FinishWrapper">
         <div class="column-intro">
           <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <p class="step-description">Choose your <b>download</b> format and add a QR code to your poster (if template supports it).</p>
+          <p class="step-description"><b>Choose</b> your <b>download format</b> and add a QR code to your poster (if template supports it).</p>
         </div>
 	      <div class="panel">
 
@@ -2062,10 +2062,10 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   }
   if (layer.field === 'f-url'){
     if (source.type === 'social_footer'){
-      drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /^visit:$/i);
+      drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, null);
       const urlText = rawText.replace(/^visit:\s*/i, '');
       const prefixWidth = /^visit:\s*/i.test(rawText) ? (() => {
-        ctx.font = boldFont;
+        ctx.font = regularFont;
         return ctx.measureText(rawText.match(/^visit:\s*/i)[0]).width;
       })() : 0;
       ctx.font = regularFont;
@@ -2324,7 +2324,7 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const regularFont = layer.font.replace(/\d+px/, px+'px');
     const boldFont = (layer.boldFont || layer.font).replace(/\d+px/, px+'px');
     const parts = [
-      { text:'visit: ', bold:true },
+      { text:'visit: ', bold:false },
       { text:copy.url, bold:false, underline:true }
     ];
     ctx.fillStyle = resolveColor(t, layer.color);
@@ -4059,8 +4059,9 @@ function deleteSelectedLayer(){
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   const t = TEMPLATES[currentTpl];
-  if (t && selectedAdminLayer.id.startsWith('custom_')) {
-    t.layers = t.layers.filter(l => l !== selectedAdminLayer);
+  if (t && selectedAdminLayer.id && String(selectedAdminLayer.id).startsWith('custom_')) {
+    if (t.layers) t.layers = t.layers.filter(l => l !== selectedAdminLayer);
+    if (t.socialLayers) t.socialLayers = t.socialLayers.filter(l => l !== selectedAdminLayer);
     selectedAdminLayer = null;
     saveLayerOverrides();
     render();
@@ -4424,8 +4425,13 @@ function updateEditOverlay(){
       closeBtn.style.fontWeight = 'bold';
       closeBtn.style.lineHeight = '1';
       closeBtn.style.zIndex = '1000';
+      closeBtn.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
       closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        e.preventDefault();
         deleteSelectedLayer();
       });
       if (selectedFrameBounds) {

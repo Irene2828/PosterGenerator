@@ -1,7 +1,7 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "mkdir -p public && cp -r *.html fonts overrides.json public/ 2>/dev/null || true; cp -r *.png *.jpg *.jpeg *.pdf public/ 2>/dev/null || true",
+  "buildCommand": "mkdir -p public && cp -r *.html fonts overrides.json public/ 2>/dev/null || true; cp *.png public/ 2>/dev/null || true; cp *.jpg public/ 2>/dev/null || true; cp *.jpeg public/ 2>/dev/null || true; cp *.pdf public/ 2>/dev/null || true",
   "outputDirectory": "public",
   "functions": {
     "api/*.js": {

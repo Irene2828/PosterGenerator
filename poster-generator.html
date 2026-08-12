@@ -889,7 +889,7 @@
       <div class="templates-col">
         <div class="column-intro">
           <div class="step-tag"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
-          <p class="step-description"><b>Pick</b> a poster <b>design</b> to get started.</p>
+          <p class="step-description"><b>Pick</b> a poster design to get started.</p>
         </div>
         <div class="templates" id="templatePicker"></div>
       </div>
@@ -898,7 +898,7 @@
       <div class="column-intro">
         <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEXT</div>
         <div class="poster-edit-help">
-          <p><b>Click</b> on the template to <b>change or remove the text</b> on it.</p>
+          <p><b>Edit</b> / remove the copy of the template.</p>
           <p>For styling changes (if needed) - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
         </div>
       </div>
@@ -922,7 +922,7 @@
       <div id="step3FinishWrapper">
         <div class="column-intro">
           <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <p class="step-description"><b>Choose</b> your <b>download format</b> and <b>add a QR code</b> to your poster (if template supports it).</p>
+          <p class="step-description">Choose your <b>download</b> format and add a QR code to your poster (if template supports it).</p>
         </div>
 	      <div class="panel">
 
@@ -1748,7 +1748,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   ctx.fillStyle = color;
 
   if (layer.field === 'f-footintro'){
-    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /visit:|e-mail:|QR code|property's|People|Culture/i);
+    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /e-mail:|QR code|property's|People|Culture/i);
     return;
   }
   if (layer.field === 'f-email'){
@@ -1990,10 +1990,10 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const lines = [];
     const measure = parts => parts.reduce((sum, part) => { ctx.font = part.bold ? boldFont : regularFont; return sum + ctx.measureText(part.text).width; }, 0);
     value.split('\n').forEach(rawLine => {
-      const tokens = rawLine.split(/(property's People & Culture office|QR code|visit:|e-mail:)/gi).filter(Boolean);
+      const tokens = rawLine.split(/(property's People & Culture office|QR code|e-mail:)/gi).filter(Boolean);
       const pieces = tokens.flatMap(token => token.split(/(\s+)/).filter(Boolean)).map(text => ({
         text,
-        bold: /property's People & Culture office|QR code|visit:|e-mail:/i.test(text)
+        bold: /property's People & Culture office|QR code|e-mail:/i.test(text)
       }));
       let current = [];
       pieces.forEach(piece => {
@@ -3824,7 +3824,7 @@ function updateEditOverlay(){
       closeBtn.style.zIndex = '1000';
       closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleSelectedLayer();
+        deleteSelectedLayer();
       });
       hot.appendChild(closeBtn);
     }

@@ -103,7 +103,7 @@
   }
   h2.section-title{font-size:15px;font-weight:600;margin:0 0 14px;}
   .column-intro {
-    min-height:76px;
+    height:120px;
     display:flex;
     flex-direction:column;
     justify-content:flex-start;
@@ -113,11 +113,23 @@
   }
   .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
   .step-index{display:inline-block;background:#E01A2B;color:#fff;border-radius:8px;padding:3px 8px;margin-right:6px;letter-spacing:.08em;}
-  .step-chip{display:inline-block;background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);color:#fff;border-radius:8px;padding:3px 7px;margin-right:5px;letter-spacing:.08em;}
-  .step-description{max-width:330px;margin:0 auto;color:#6B7280;font-family:var(--font-ui);font-size:13px;line-height:1.35;font-weight:400!important;text-align:center;}
-  .templates-col .step-description{max-width:185px;}
-  .step-description button{border:0;background:transparent;color:#0D8BFF;cursor:pointer;font:inherit;font-weight:600;padding:0;text-decoration:underline;}
-  .templates{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:24px;}
+  .step-chip{background:#1E293B;color:#F8FAFC;border-radius:4px;padding:2px 6px;margin-right:4px;font-size:9px;letter-spacing:1px;}
+  .step-description{font-size:12.5px;color:#4B5563;margin:0 0 12px;line-height:1.45;max-width:270px;text-align:center;}
+  .poster-edit-help{font-size:12.5px;color:#4B5563;margin:0 0 12px;line-height:1.45;max-width:400px;text-align:center;}
+  .poster-edit-help p{margin:0 0 4px;}
+  .poster-edit-help button{
+    background:none;border:none;color:#E01A2B;font-weight:600;padding:0;font-size:12.5px;
+    text-decoration:underline;cursor:pointer;font-family:inherit;
+  }
+  .poster-edit-help button:hover{color:#C81423;}
+  .templates{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    max-height:680px;
+    overflow-y:auto;
+    padding-right:4px;
+  }
   .tpl-card{
     flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
     border:2px solid var(--border);background:var(--panel);
@@ -1128,7 +1140,7 @@
       <div class="templates-col">
         <div class="column-intro">
         <div class="step-tag"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
-          <p class="step-description"><b>Pick</b> a poster <b>design</b> to get started.</p>
+          <p class="step-description"><b>Pick</b> a poster design to get started.</p>
         </div>
         <div class="templates" id="templatePicker"></div>
       </div>
@@ -1137,7 +1149,7 @@
       <div class="column-intro">
         <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEXT</div>
         <div class="poster-edit-help">
-          <p><b>Click</b> on the template to <b>change or remove the text</b> on it.</p>
+          <p><b>Edit</b> / remove the copy of the template.</p>
           <p>For styling changes (if needed) - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
         </div>
       </div>
@@ -1172,7 +1184,7 @@
       <div id="step3FinishWrapper">
         <div class="column-intro">
           <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <p class="step-description"><b>Choose</b> your <b>download format</b> and <b>add a QR code</b> to your poster (if template supports it).</p>
+          <p class="step-description">Choose your <b>download</b> format and add a QR code to your poster (if template supports it).</p>
         </div>
 	      <div class="panel">
 
@@ -2041,7 +2053,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   ctx.fillStyle = color;
 
   if (layer.field === 'f-footintro'){
-    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /visit:|e-mail:|QR code|property's|People|Culture/i);
+    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /e-mail:|QR code|property's|People|Culture/i);
     return;
   }
   if (layer.field === 'f-email'){
@@ -2283,10 +2295,10 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const lines = [];
     const measure = parts => parts.reduce((sum, part) => { ctx.font = part.bold ? boldFont : regularFont; return sum + ctx.measureText(part.text).width; }, 0);
     value.split('\n').forEach(rawLine => {
-      const tokens = rawLine.split(/(property's People & Culture office|QR code|visit:|e-mail:)/gi).filter(Boolean);
+      const tokens = rawLine.split(/(property's People & Culture office|QR code|e-mail:)/gi).filter(Boolean);
       const pieces = tokens.flatMap(token => token.split(/(\s+)/).filter(Boolean)).map(text => ({
         text,
-        bold: /property's People & Culture office|QR code|visit:|e-mail:/i.test(text)
+        bold: /property's People & Culture office|QR code|e-mail:/i.test(text)
       }));
       let current = [];
       pieces.forEach(piece => {
@@ -3064,6 +3076,7 @@ async function restoreOriginalTemplate(){
   
   // Revert template definitions to code defaults
   TEMPLATES[currentTpl] = JSON.parse(JSON.stringify(ORIGINAL_TEMPLATES[currentTpl]));
+  TEMPLATES[currentTpl]._key = currentTpl;
   
   const defaults = getTemplateDefaults(currentTpl);
   COPY_FIELD_IDS.forEach(id => {
@@ -4413,7 +4426,7 @@ function updateEditOverlay(){
       closeBtn.style.zIndex = '1000';
       closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleSelectedLayer();
+        deleteSelectedLayer();
       });
       if (selectedFrameBounds) {
         closeBtn.style.top = (selectedFrameBounds.top - 8) + 'px';

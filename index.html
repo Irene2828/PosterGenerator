@@ -3060,7 +3060,7 @@ async function restoreOriginalTemplate(){
   const confirmed = await customConfirm("Are you sure you want to restore the original text and layout coordinates?<br><br>This will clear your custom edits for this template.");
   if (!confirmed) return;
   
-  saveUndoSnapshot();
+  pushUndoSnapshot();
   
   // Revert template definitions to code defaults
   TEMPLATES[currentTpl] = JSON.parse(JSON.stringify(ORIGINAL_TEMPLATES[currentTpl]));

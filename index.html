@@ -103,20 +103,19 @@
   }
   h2.section-title{font-size:15px;font-weight:600;margin:0 0 14px;}
   .column-intro {
-    height:120px;
     display:flex;
     flex-direction:column;
     justify-content:flex-start;
     align-items:center;
     text-align:center;
-    margin-bottom:8px;
+    margin-bottom:4px;
   }
-  .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
+  .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 4px;letter-spacing:1.5px;line-height:1.35;}
   .step-index{display:inline-block;background:#E01A2B;color:#fff;border-radius:8px;padding:3px 8px;margin-right:6px;letter-spacing:.08em;}
   .step-chip{background:#1E293B;color:#F8FAFC;border-radius:4px;padding:2px 6px;margin-right:4px;font-size:9px;letter-spacing:1px;}
-  .step-description{font-size:12.5px;color:#4B5563;margin:0 0 12px;line-height:1.45;max-width:270px;text-align:center;}
-  .poster-edit-help{font-size:12.5px;color:#4B5563;margin:0 0 12px;line-height:1.45;max-width:400px;text-align:center;}
-  .poster-edit-help p{margin:0 0 4px;}
+  .step-description{font-size:12.5px;color:#4B5563;margin:0 0 6px;line-height:1.45;max-width:270px;text-align:center;}
+  .poster-edit-help{font-size:12.5px;color:#4B5563;margin:0 0 6px;line-height:1.45;max-width:400px;text-align:center;}
+  .poster-edit-help p{margin:0 0 2px;}
   .poster-edit-help button{
     background:none;border:none;color:#E01A2B;font-weight:600;padding:0;font-size:12.5px;
     text-decoration:underline;cursor:pointer;font-family:inherit;
@@ -126,9 +125,6 @@
     display:flex;
     flex-direction:column;
     gap:16px;
-    max-height:680px;
-    overflow-y:auto;
-    padding-right:4px;
   }
   .tpl-card{
     flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
@@ -4403,28 +4399,30 @@ function updateEditOverlay(){
       editOverlay.appendChild(frame);
     }
 
+    editOverlay.appendChild(hot);
+
     if (selectedAdminLayer === layer && isAdminMode) {
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.className = 'hotspot-close-btn';
       closeBtn.innerHTML = '&times;';
       closeBtn.style.position = 'absolute';
-      closeBtn.style.top = '-8px';
-      closeBtn.style.right = '-8px';
-      closeBtn.style.width = '18px';
-      closeBtn.style.height = '18px';
+      closeBtn.style.width = '20px';
+      closeBtn.style.height = '20px';
       closeBtn.style.borderRadius = '50%';
       closeBtn.style.background = '#FF3B30';
       closeBtn.style.color = '#FFFFFF';
-      closeBtn.style.border = 'none';
+      closeBtn.style.border = '2px solid #FFFFFF';
+      closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
       closeBtn.style.cursor = 'pointer';
       closeBtn.style.display = 'flex';
       closeBtn.style.alignItems = 'center';
       closeBtn.style.justifyContent = 'center';
-      closeBtn.style.fontSize = '12px';
+      closeBtn.style.fontSize = '14px';
       closeBtn.style.fontWeight = 'bold';
       closeBtn.style.lineHeight = '1';
-      closeBtn.style.zIndex = '1000';
+      closeBtn.style.zIndex = '99999';
+      closeBtn.style.pointerEvents = 'auto';
       closeBtn.addEventListener('mousedown', (e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -4435,16 +4433,16 @@ function updateEditOverlay(){
         deleteSelectedLayer();
       });
       if (selectedFrameBounds) {
-        closeBtn.style.top = (selectedFrameBounds.top - 8) + 'px';
-        closeBtn.style.left = (selectedFrameBounds.left + selectedFrameBounds.width - 8) + 'px';
+        closeBtn.style.top = (selectedFrameBounds.top - 10) + 'px';
+        closeBtn.style.left = (selectedFrameBounds.left + selectedFrameBounds.width - 10) + 'px';
         closeBtn.style.right = 'auto';
         editOverlay.appendChild(closeBtn);
       } else {
+        closeBtn.style.top = '-10px';
+        closeBtn.style.right = '-10px';
         hot.appendChild(closeBtn);
       }
     }
-
-    editOverlay.appendChild(hot);
   });
 
   if (false && selectedAdminLayer && isAdminMode && selectedAdminLayers.length > 1) {

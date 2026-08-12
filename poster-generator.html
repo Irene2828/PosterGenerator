@@ -3569,8 +3569,9 @@ function deleteSelectedLayer(){
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
   const t = TEMPLATES[currentTpl];
-  if (t && selectedAdminLayer.id.startsWith('custom_')) {
-    t.layers = t.layers.filter(l => l !== selectedAdminLayer);
+  if (t && selectedAdminLayer.id && String(selectedAdminLayer.id).startsWith('custom_')) {
+    if (t.layers) t.layers = t.layers.filter(l => l !== selectedAdminLayer);
+    if (t.socialLayers) t.socialLayers = t.socialLayers.filter(l => l !== selectedAdminLayer);
     selectedAdminLayer = null;
     saveLayerOverrides();
     render();
@@ -3800,36 +3801,43 @@ function updateEditOverlay(){
       });
     });
 
+    editOverlay.appendChild(hot);
+
     if (selectedAdminLayer === layer && isAdminMode) {
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.className = 'hotspot-close-btn';
       closeBtn.innerHTML = '&times;';
       closeBtn.style.position = 'absolute';
-      closeBtn.style.top = '-8px';
-      closeBtn.style.right = '-8px';
-      closeBtn.style.width = '18px';
-      closeBtn.style.height = '18px';
+      closeBtn.style.top = '-10px';
+      closeBtn.style.right = '-10px';
+      closeBtn.style.width = '20px';
+      closeBtn.style.height = '20px';
       closeBtn.style.borderRadius = '50%';
       closeBtn.style.background = '#FF3B30';
       closeBtn.style.color = '#FFFFFF';
-      closeBtn.style.border = 'none';
+      closeBtn.style.border = '2px solid #FFFFFF';
+      closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
       closeBtn.style.cursor = 'pointer';
       closeBtn.style.display = 'flex';
       closeBtn.style.alignItems = 'center';
       closeBtn.style.justifyContent = 'center';
-      closeBtn.style.fontSize = '12px';
+      closeBtn.style.fontSize = '14px';
       closeBtn.style.fontWeight = 'bold';
       closeBtn.style.lineHeight = '1';
-      closeBtn.style.zIndex = '1000';
+      closeBtn.style.zIndex = '99999';
+      closeBtn.style.pointerEvents = 'auto';
+      closeBtn.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+      });
       closeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        e.preventDefault();
         deleteSelectedLayer();
       });
-      hot.appendChild(closeBtn);
+      editOverlay.appendChild(closeBtn);
     }
-
-    editOverlay.appendChild(hot);
   });
 
   if (false && selectedAdminLayer && isAdminMode && selectedAdminLayers.length > 1) {

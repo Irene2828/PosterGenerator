@@ -863,8 +863,8 @@
       <div class="column-intro">
         <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEXT</div>
         <div class="poster-edit-help">
-          <p>Click on the template to change or remove the text on it.</p>
-          <p>For styling changes - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
+          <p><b>Click</b> on the template to <b>change or remove the text</b> on it.</p>
+          <p>For styling changes (if needed) - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
         </div>
       </div>
 	    <div class="canvas-shell">
@@ -887,7 +887,7 @@
       <div id="step3FinishWrapper">
         <div class="column-intro">
           <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <p class="step-description">Add a QR code and choose your download format.</p>
+          <p class="step-description">Choose your download format and add a QR code to your poster (if template supports it).</p>
         </div>
 	      <div class="panel">
 
@@ -925,7 +925,7 @@
 	        </select>
 	      </div>
 
-	      <div style="text-align: center; margin-top: 20px; margin-bottom: 10px; font-family: var(--font-ui); font-size: 10px; color: #6B7280;">
+	      <div style="text-align: center; margin-top: 40px; margin-bottom: 10px; font-family: var(--font-ui); font-size: 11px; color: #6B7280;">
 	        * Scan the QR code on the poster to test it before downloading
 	      </div>
 	      <button class="btn btn-primary" id="downloadBtn">Download poster</button>
@@ -1589,6 +1589,8 @@ const TEMPLATES = {
     socialLayers: []
   },
 };
+
+const ORIGINAL_TEMPLATES = JSON.parse(JSON.stringify(TEMPLATES));
 
 const bgImages = {};
 let currentTpl = 'communityRunRed';

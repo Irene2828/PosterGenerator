@@ -1547,6 +1547,41 @@
 </div>
 
 <script>
+window.onerror = function(message, source, lineno, colno, error) {
+  const div = document.createElement('div');
+  div.style.position = 'fixed';
+  div.style.top = '0';
+  div.style.left = '0';
+  div.style.right = '0';
+  div.style.background = '#991B1B';
+  div.style.color = '#FFF';
+  div.style.padding = '20px';
+  div.style.zIndex = '999999';
+  div.style.fontFamily = 'monospace';
+  div.style.fontSize = '14px';
+  div.style.overflow = 'auto';
+  div.style.maxHeight = '50vh';
+  div.innerHTML = `<strong>JS Error:</strong> \${message}<br><small>at \${source}:\${lineno}:\${colno}</small><br><pre>\${error ? error.stack : ''}</pre>`;
+  document.body.appendChild(div);
+  return false;
+};
+window.onunhandledrejection = function(event) {
+  const div = document.createElement('div');
+  div.style.position = 'fixed';
+  div.style.top = '0';
+  div.style.left = '0';
+  div.style.right = '0';
+  div.style.background = '#7C2D12';
+  div.style.color = '#FFF';
+  div.style.padding = '20px';
+  div.style.zIndex = '999999';
+  div.style.fontFamily = 'monospace';
+  div.style.fontSize = '14px';
+  div.style.overflow = 'auto';
+  div.style.maxHeight = '50vh';
+  div.innerHTML = `<strong>Unhandled Rejection:</strong> \${event.reason}<br><pre>\${event.reason ? event.reason.stack : ''}</pre>`;
+  document.body.appendChild(div);
+};
 
 /* =========================================================================
    DATA MODEL

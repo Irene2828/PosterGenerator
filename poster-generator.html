@@ -694,8 +694,9 @@
     min-width: 60px !important;
   }
   #prop-nudge-step {
-    width: 60px !important;
-    min-width: 60px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    text-align: center;
   }
   .move-side-controls {
     display:flex;
@@ -1084,7 +1085,7 @@
             <div class="figma-col full-width">
               <label>Move By</label>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <input type="number" id="prop-nudge-step" min="1" step="1" value="1">
+                <input type="number" id="prop-nudge-step" min="1" step="1" value="32">
                 <span class="px-suffix" style="margin-right: 6px; font-family: var(--font-ui); font-size: 11px; color: #6B7280; font-weight: 600;">px</span>
                 <button class="top-undo-btn move-undo-btn" id="moveUndoBtn" onclick="undoLastUserEdit()" title="Undo last move" aria-label="Undo last move" disabled>↺</button>
               </div>
@@ -1464,9 +1465,9 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.4995,y:0.0451, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
-      { id:'date',     type:'text',   x:0.5000,y:0.7406, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
-      { id:'guest',    type:'edit_row', x:0.4995,y:0.7662, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
+      { id:'city',     type:'text',   x:0.4995,y:0.0514, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
+      { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
+      { id:'guest',    type:'edit_row', x:0.4995,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.4977,y:0.8239, align:'center', font:'700 125px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
       { id:'location2', type:'text',   x:0.4993,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
@@ -1503,11 +1504,12 @@ const TEMPLATES = {
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 74px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:4 },
       { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8783, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
-      { id:'bullets',  type:'list',   x:0.5000,y:0.8957, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8783, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.89566, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.91302, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8834, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'bullets',  type:'list',   x:0.5000,y:0.9008, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8834, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.9008, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9181, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9355, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0868 },
       { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
       { id:'footer',   type:'qr_caption', x:0.1270,y:0.9734, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:55, noQrX:0.0450 },

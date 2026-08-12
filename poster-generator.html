@@ -1287,7 +1287,7 @@ window.onerror = function(message, source, lineno, colno, error) {
   div.style.fontSize = '14px';
   div.style.overflow = 'auto';
   div.style.maxHeight = '50vh';
-  div.innerHTML = `<strong>JS Error:</strong> \${message}<br><small>at \${source}:\${lineno}:\${colno}</small><br><pre>\${error ? error.stack : ''}</pre>`;
+  div.innerHTML = `<strong>JS Error:</strong> ${message}<br><small>at ${source}:${lineno}:${colno}</small><br><pre>${error ? error.stack : ''}</pre>`;
   document.body.appendChild(div);
   return false;
 };
@@ -1305,7 +1305,7 @@ window.onunhandledrejection = function(event) {
   div.style.fontSize = '14px';
   div.style.overflow = 'auto';
   div.style.maxHeight = '50vh';
-  div.innerHTML = `<strong>Unhandled Rejection:</strong> \${event.reason}<br><pre>\${event.reason ? event.reason.stack : ''}</pre>`;
+  div.innerHTML = `<strong>Unhandled Rejection:</strong> ${event.reason}<br><pre>${event.reason ? event.reason.stack : ''}</pre>`;
   document.body.appendChild(div);
 };
 
@@ -1725,7 +1725,7 @@ function styleSourceForEditRow(t, layer){
 function drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, boldPattern){
   let cursor = x;
   text.split(/(\s+)/).filter(Boolean).forEach(part => {
-    ctx.font = boldPattern.test(part) ? boldFont : regularFont;
+    ctx.font = (boldPattern && boldPattern.test(part)) ? boldFont : regularFont;
     ctx.fillStyle = color;
     ctx.fillText(part, cursor, y);
     cursor += ctx.measureText(part).width;

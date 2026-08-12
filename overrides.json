@@ -113,7 +113,7 @@
   },
   "communityRunLetter": {
     "city:text": {
-      "x": 0.5102124183006536,
+      "x": 0.5,
       "y": 0.045074076838711626,
       "align": "center",
       "hidden": false,
@@ -122,7 +122,7 @@
       "maxW": 0.25
     },
     "date:text": {
-      "x": 0.50028125,
+      "x": 0.5,
       "y": 0.7594474497681607,
       "align": "center",
       "hidden": false,
@@ -178,7 +178,7 @@
       "maxW": 0.95
     },
     "t1:edit_row": {
-      "x": 0.5028,
+      "x": 0.5,
       "y": 0.872,
       "align": "center",
       "hidden": false,
@@ -189,7 +189,7 @@
       "bullet": true
     },
     "t2:edit_row": {
-      "x": 0.5028,
+      "x": 0.5,
       "y": 0.888,
       "align": "center",
       "hidden": false,
@@ -200,7 +200,7 @@
       "bullet": true
     },
     "bullet1:edit_row": {
-      "x": 0.4978,
+      "x": 0.5,
       "y": 0.904,
       "align": "center",
       "hidden": false,
@@ -211,7 +211,7 @@
       "bullet": true
     },
     "bullet2:edit_row": {
-      "x": 0.4978,
+      "x": 0.5,
       "y": 0.92,
       "align": "center",
       "hidden": false,
@@ -233,12 +233,12 @@
       "hidden": false,
       "letterSpacing": 0,
       "lineWidth": 4,
-      "x1": 0.1169,
+      "x1": 0.1270,
       "x2": 0.692
     },
     "footer:qr_caption": {
-      "x": 0.1144,
-      "y": 0.962,
+      "x": 0.1270,
+      "y": 0.967,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
@@ -248,8 +248,8 @@
       "lineHeight": 58
     },
     "footIntro:edit_row": {
-      "x": 0.1138,
-      "y": 0.962,
+      "x": 0.1270,
+      "y": 0.967,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
@@ -257,8 +257,8 @@
       "lineHeight": 58
     },
     "url:edit_row": {
-      "x": 0.1138,
-      "y": 0.978,
+      "x": 0.1270,
+      "y": 0.983,
       "align": "left",
       "hidden": false,
       "letterSpacing": 0,
@@ -266,6 +266,7 @@
       "lineHeight": 58
     }
   },
+
   "communityRunRed": {
     "city:text": {
       "x": 0.4994609375,

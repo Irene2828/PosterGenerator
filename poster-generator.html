@@ -111,11 +111,11 @@
   }
   .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
   .step-chip{display:inline-block;background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);color:#fff;border-radius:8px;padding:3px 7px;margin-right:5px;letter-spacing:.08em;}
-  .step-description{max-width:330px;margin:0 auto;color:#6B7280;font-family:var(--font-ui);font-size:11px;line-height:1.35;font-weight:500;}
+  .step-description{max-width:330px;margin:0 auto;color:#6B7280;font-family:var(--font-ui);font-size:13px;line-height:1.35;font-weight:500;}
   .templates-col .step-description,
   .options-col .step-description{max-width:185px;}
   .step-description button{border:0;background:transparent;color:#0D8BFF;cursor:pointer;font:inherit;font-weight:700;padding:0;text-decoration:underline;}
-  .templates{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .templates{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:24px;}
   .tpl-card{
     flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
     border:2px solid var(--border);background:var(--panel);
@@ -148,7 +148,7 @@
     .options-col .step-description{max-width:none!important;}
     .poster-edit-help{margin:0 0 12px;text-align:left;max-width:none;}
   }
-  .panel{background:#FFFFFF;border:1px solid var(--border);border-radius:14px;padding:10px 26px 26px;}
+  .panel{background:#FFFFFF;border:1px solid var(--border);border-radius:14px;padding:20px 26px 26px;}
   .copy-fields-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
   .field{margin-bottom:18px;}
   .field label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;color:#800000;}
@@ -179,7 +179,7 @@
   .preview-col{position:static;}
   .poster-edit-help {
     color:#6B7280;
-    font-size:11px;
+    font-size:13px;
     line-height:1.35;
     margin:0 auto 12px;
     max-width:540px;
@@ -201,7 +201,7 @@
     padding:0;
     text-decoration:underline;
   }
-  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:10px 4px 26px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);}
+  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:24px 4px 26px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);}
   .visual-hint{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;}
   .poster-stage{position:relative;width:100%;max-width:500px;}
   canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 6px 16px rgba(0,0,0,.07);display:block;}
@@ -325,7 +325,7 @@
     width: 100%;
     max-height: 100%;
     height: auto;
-    background: #FFFFFF;
+    background: #F3F4F6;
     color: #1F2937;
     border: 1px solid #E5E7EB;
     border-radius: 14px;
@@ -346,7 +346,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #FFFFFF;
+    background: #F3F4F6;
     border-bottom: 1px solid #E5E7EB;
     padding: 12px 14px;
     display: flex;
@@ -682,16 +682,16 @@
     justify-content:start;
   }
   .nudge-step-row {
-    flex: 0 0 84px;
+    flex: 1;
     margin: 0;
   }
   .nudge-step-row .figma-col {
-    flex: 0 0 84px;
-    width: 84px;
+    flex: 1;
+    width: auto;
   }
   .nudge-step-row input {
-    width: 84px;
-    min-width: 0;
+    width: 60px;
+    min-width: 60px;
   }
   .move-side-controls {
     display:flex;
@@ -858,7 +858,8 @@
       <div class="column-intro">
         <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEXT</div>
         <div class="poster-edit-help">
-          <p>Click text on the poster to change it. Hold <strong>Shift</strong> to select multiple items. For size and other text options, use the <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
+          <p>Click on the template to change or remove the text on it.</p>
+          <p>For styling changes - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
         </div>
       </div>
 	    <div class="canvas-shell">
@@ -908,7 +909,6 @@
               </span>
             </div>
           </div>
-          <div class="qr-caption" style="margin-top: 6px;">Scan the QR code on the poster to test it before downloading.</div>
         </div>
 
 	      <div class="field">
@@ -921,7 +921,9 @@
 	      </div>
 
 	      <button class="btn btn-primary" id="downloadBtn">Download poster</button>
-
+	      <div style="text-align: center; margin-top: 10px; font-family: var(--font-ui); font-size: 10px; color: #6B7280;">
+	        * Scan the QR code on the poster to test it before downloading.
+	      </div>
 	      </div>
 
 	      <div class="copy-fields-hidden" aria-hidden="true">
@@ -997,18 +999,21 @@
         
         <div class="sidebar-scroll-area">
   
-  <div class="sidebar-section actions-section">
-    <div class="admin-actions">
-      <div class="top-delete-actions" id="top-delete-actions">
-        <div class="figma-row">
-          <button class="figma-btn" id="delete-selected-line-btn" onclick="deleteSelectedLayer()" disabled>Delete selected text</button>
+  <div class="sidebar-section">
+    <div class="property-group secondary-text-actions" style="margin-top: 10px;">
+      <div class="editor-subhead" style="margin-bottom: 10px;">Actions</div>
+      <div class="admin-actions">
+        <button class="figma-btn" onclick="addNewTextRow()">+ Add text</button>
+        <div class="top-delete-actions" id="top-delete-actions">
+          <div class="figma-row">
+            <button class="figma-btn" id="delete-selected-line-btn" onclick="deleteSelectedLayer()" disabled>Delete selected text</button>
+          </div>
+          <button class="top-undo-btn" id="topUndoBtn" onclick="undoLastUserEdit()" title="Undo last edit" aria-label="Undo last edit" disabled>↺</button>
         </div>
-        <button class="top-undo-btn" id="topUndoBtn" onclick="undoLastUserEdit()" title="Undo last edit" aria-label="Undo last edit" disabled>↺</button>
+        <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
       </div>
-      <button class="figma-btn" onclick="addNewTextRow()">+ Add text</button>
-      <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
+      <div id="adminSaveStatus" class="save-status"></div>
     </div>
-    <div id="adminSaveStatus" class="save-status"></div>
   </div>
 
   <div id="noLayerSelected" class="no-selection-msg">
@@ -1074,10 +1079,13 @@
           <div class="figma-row nudge-step-row">
             <div class="figma-col full-width">
               <label>Move By</label>
-              <input type="number" id="prop-nudge-step" min="1" step="1" value="1">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="number" id="prop-nudge-step" min="1" step="1" value="1">
+                <span class="px-suffix" style="margin-right: 6px; font-family: var(--font-ui); font-size: 11px; color: #6B7280; font-weight: 600;">px</span>
+                <button class="top-undo-btn move-undo-btn" id="moveUndoBtn" onclick="undoLastUserEdit()" title="Undo last move" aria-label="Undo last move" disabled>↺</button>
+              </div>
             </div>
           </div>
-          <button class="top-undo-btn move-undo-btn" id="moveUndoBtn" onclick="undoLastUserEdit()" title="Undo last move" aria-label="Undo last move" disabled>↺</button>
         </div>
       </div>
       <div class="figma-row" id="prop-group-container">
@@ -1255,7 +1263,7 @@ function getCopy(){
 const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
-  return 'posterCopyDraft:' + tplKey;
+  return 'posterCopyDraft:global';
 }
 
 function getTemplateDefaults(tplKey){
@@ -1453,8 +1461,8 @@ const TEMPLATES = {
     edgeColor: '#E63E30',
     layers: [
       { id:'city',     type:'text',   x:0.4995,y:0.0451, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
-      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
-      { id:'guest',    type:'edit_row', x:0.4995,y:0.7850, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
+      { id:'date',     type:'text',   x:0.5000,y:0.7406, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
+      { id:'guest',    type:'edit_row', x:0.4995,y:0.7662, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.4977,y:0.8239, align:'center', font:'700 125px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
       { id:'location2', type:'text',   x:0.4993,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
@@ -1486,22 +1494,21 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5102,y:0.0451, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
-      { id:'date',     type:'text',   x:0.5003,y:0.7594, align:'center', font:'700 118px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
-      { id:'guest',    type:'edit_row', x:0.5000,y:0.7850, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
-      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 74px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0451, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
+      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 74px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:4 },
       { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8783, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
       { id:'bullets',  type:'list',   x:0.5000,y:0.8957, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
-      { id:'t1',       type:'edit_row', x:0.5028,y:0.8783, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5028,y:0.89566, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.4978,y:0.91302, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet2',  type:'edit_row', x:0.4978,y:0.93038, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8783, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.89566, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.91302, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0868 },
-      { id:'divider',  type:'rule',   x1:0.1169,x2:0.6920, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
-      { id:'footer',   type:'qr_caption', x:0.1275,y:0.9683, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:55, noQrX:0.0450 },
-      { id:'footIntro', type:'edit_row', x:0.1268,y:0.9683, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:55, noQrX:0.0450 },
-      { id:'url',       type:'edit_row', x:0.1268,y:0.98566, align:'left', field:'f-url', maxW:0.6060, lineHeight:55, noQrX:0.0450 }
+      { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0320, noQrX2:0.5898 },
+      { id:'footer',   type:'qr_caption', x:0.1270,y:0.9734, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:55, noQrX:0.0450 },
+      { id:'footIntro', type:'edit_row', x:0.1270,y:0.9734, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:55, noQrX:0.0450 },
+      { id:'url',       type:'edit_row', x:0.1270,y:0.9907, align:'left', field:'f-url', maxW:0.6060, lineHeight:55, noQrX:0.0450 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
@@ -4219,6 +4226,12 @@ if (!localStorage.getItem('chandler_template_1_2_v18')) {
 if (!localStorage.getItem('chandler_template_1_2_v19')) {
   localStorage.removeItem('posterLayerOverrides:communityRunLetter');
   localStorage.setItem('chandler_template_1_2_v19', 'true');
+}
+// One-time migration: force coordinate shift and font size updates to refresh
+if (!localStorage.getItem('chandler_template_1_2_v21')) {
+  localStorage.removeItem('posterLayerOverrides:communityRunRed');
+  localStorage.removeItem('posterLayerOverrides:communityRunLetter');
+  localStorage.setItem('chandler_template_1_2_v21', 'true');
 }
 Object.values(TEMPLATES).forEach(normalizeTemplateFonts);
 loadCopyDraft(currentTpl);

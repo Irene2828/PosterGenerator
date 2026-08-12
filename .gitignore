@@ -1,8 +1,4 @@
 .vercel
 dist/
 public/
-*.png
-*.jpg
-*.jpeg
 *.pdf
-*.webp

@@ -1076,6 +1076,42 @@
     color:#991B1B;
   }
   #qrHidden{position:absolute;left:-9999px;top:-9999px;}
+  /* Custom Modal Styles */
+  .custom-modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999;
+    opacity: 0; transition: opacity 0.2s ease;
+    backdrop-filter: blur(2px);
+  }
+  .custom-modal-overlay.visible { opacity: 1; }
+  .custom-modal-box {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+    width: 90%; max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    font-family: var(--font-ui); color: var(--text);
+    transform: translateY(20px); transition: transform 0.2s ease;
+  }
+  .custom-modal-overlay.visible .custom-modal-box { transform: translateY(0); }
+  .custom-modal-msg { font-size: 15px; margin-bottom: 20px; line-height: 1.4; color: var(--text); }
+  .custom-modal-input {
+    width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 20px;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: var(--panel); color: var(--text); font-family: var(--font-ui);
+    font-size: 14px;
+  }
+  .custom-modal-input:focus { border-color: #E01A2B; outline: none; }
+  .custom-modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+  .custom-modal-btn {
+    padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--panel); color: var(--text); cursor: pointer; font-weight: 600;
+    font-size: 14px; font-family: var(--font-ui); transition: all 0.15s ease;
+  }
+  .custom-modal-btn:hover { background: var(--border); }
+  .custom-modal-btn.primary { background: #E01A2B; color: #fff; border-color: #E01A2B; }
+  .custom-modal-btn.primary:hover { background: #C81423; }
 </style>
 </head>
 <body>
@@ -2985,8 +3021,9 @@ function undoLastUserEdit(){
   updateUserUndoButton();
 }
 
-function restoreOriginalTemplate(){
-  if (!confirm("Are you sure you want to restore the original text and layout coordinates? This will clear your custom edits for this template.")) return;
+async function restoreOriginalTemplate(){
+  const confirmed = await customConfirm("Are you sure you want to restore the original text and layout coordinates?<br><br>This will clear your custom edits for this template.");
+  if (!confirmed) return;
   
   saveUndoSnapshot();
   
@@ -3992,13 +4029,13 @@ function deleteSelectedLayer(){
   updateTopLineActionState();
 }
 
-function addNewTextRow() {
+async function addNewTextRow() {
   const t = TEMPLATES[currentTpl];
   if (!t) return;
-  pushUndoSnapshot();
   
-  const text = prompt("Enter text for the new row:", "New Text Row");
+  const text = await customPrompt("Enter text for the new row:", "New Text Row");
   if (text === null) return;
+  pushUndoSnapshot();
   
   const id = 'custom_' + Date.now();
   const newLayer = {
@@ -5052,7 +5089,7 @@ function exportTemplateJSON() {
     return;
   }
   if (!TEMPLATES.custom) {
-    alert("Please upload a custom background first.");
+    await customAlert("Please upload a custom background first.");
     return;
   }
   
@@ -5250,10 +5287,10 @@ function canvasToPdfDataUrl(canvasEl){
   return URL.createObjectURL(blob);
 }
 
-document.getElementById('downloadBtn').addEventListener('click', ()=>{
+document.getElementById('downloadBtn').addEventListener('click', async ()=>{
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
   if (templateHasQrChoice() && !showQrRadio) {
-    alert("Please select whether to include the QR Code on the poster first.");
+    await customAlert("Please select whether to include the QR Code on the poster first.");
     const qrField = document.querySelector('input[name="show-qr-radio"]').closest('.field');
     if (qrField) {
       qrField.style.transition = 'background-color 0.3s ease';
@@ -5356,6 +5393,95 @@ if (document.fonts && document.fonts.ready){
     redrawAll();
   });
   document.fonts.addEventListener('loadingdone', redrawAll);
+}
+// --- Custom Modal Utilities ---
+function createModalDOM(html) {
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('visible'), 10);
+  return overlay;
+}
+
+function removeModalDOM(overlay) {
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.remove(), 250);
+}
+
+function customAlert(message) {
+  return new Promise(resolve => {
+    const html = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-msg">${message}</div>
+        <div class="custom-modal-actions">
+          <button class="custom-modal-btn primary" id="modalOkBtn">OK</button>
+        </div>
+      </div>
+    `;
+    const overlay = createModalDOM(html);
+    overlay.querySelector('#modalOkBtn').addEventListener('click', () => {
+      removeModalDOM(overlay);
+      resolve();
+    });
+  });
+}
+
+function customConfirm(message) {
+  return new Promise(resolve => {
+    const html = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-msg">${message}</div>
+        <div class="custom-modal-actions">
+          <button class="custom-modal-btn" id="modalCancelBtn">Cancel</button>
+          <button class="custom-modal-btn primary" id="modalOkBtn">OK</button>
+        </div>
+      </div>
+    `;
+    const overlay = createModalDOM(html);
+    overlay.querySelector('#modalCancelBtn').addEventListener('click', () => {
+      removeModalDOM(overlay);
+      resolve(false);
+    });
+    overlay.querySelector('#modalOkBtn').addEventListener('click', () => {
+      removeModalDOM(overlay);
+      resolve(true);
+    });
+  });
+}
+
+function customPrompt(message, defaultValue = '') {
+  return new Promise(resolve => {
+    const html = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-msg">${message}</div>
+        <input type="text" class="custom-modal-input" id="modalInput" value="${defaultValue}">
+        <div class="custom-modal-actions">
+          <button class="custom-modal-btn" id="modalCancelBtn">Cancel</button>
+          <button class="custom-modal-btn primary" id="modalOkBtn">OK</button>
+        </div>
+      </div>
+    `;
+    const overlay = createModalDOM(html);
+    const input = overlay.querySelector('#modalInput');
+    input.focus();
+    input.select();
+    
+    overlay.querySelector('#modalCancelBtn').addEventListener('click', () => {
+      removeModalDOM(overlay);
+      resolve(null);
+    });
+    overlay.querySelector('#modalOkBtn').addEventListener('click', () => {
+      removeModalDOM(overlay);
+      resolve(input.value);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        removeModalDOM(overlay);
+        resolve(input.value);
+      }
+    });
+  });
 }
 </script>
 </body>

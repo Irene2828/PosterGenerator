@@ -127,6 +127,7 @@
     display:flex;
     flex-direction:column;
     gap:16px;
+    align-items:center;
   }
   .tpl-card{
     flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
@@ -155,7 +156,7 @@
     background:#fff;
   }
   .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
-  .tpl-name{font-size:13px;text-align:center;padding:8px 6px;font-weight:500;}
+  .tpl-name{font-size:13px;text-align:center;padding:8px 6px;font-weight:500;font-family:var(--font-ui);}
   .grid{display:grid;grid-template-columns:205px 1fr 340px;gap:24px;align-items:start;}
   .templates-col{padding-top:0;}
   @media (max-width:900px){
@@ -1138,7 +1139,7 @@
       <div class="templates-col">
         <div class="column-intro">
         <div class="step-tag"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
-          <p class="step-description"><b>Pick</b> a poster design to get started.</p>
+          <p class="step-description"><b>Pick</b> a poster design.</p>
         </div>
         <div class="templates" id="templatePicker"></div>
       </div>
@@ -1148,18 +1149,18 @@
         <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEXT</div>
         <div class="poster-edit-help">
           <p><b>Edit</b> / remove the copy of the template.</p>
-          <p>For styling changes (if needed) - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
+          <p style="margin-top: 12px;">For styling changes (if needed) - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
         </div>
       </div>
 	    <div class="canvas-shell">
 	      <div class="poster-stage" id="posterStage">
           <div class="poster-actions-stack">
             <div class="action-item">
-              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↺</button>
+              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
               <span class="action-label">restore</span>
             </div>
             <div class="action-item">
-              <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↶</button>
+              <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
               <span class="action-label">undo</span>
             </div>
             <div class="action-item">
@@ -1182,7 +1183,10 @@
       <div id="step3FinishWrapper">
         <div class="column-intro">
           <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <p class="step-description"><b>Choose</b> your <b>download format</b> and add a QR code to your poster (if template supports it).</p>
+          <div class="poster-edit-help">
+            <p><b>Choose</b> your <b>download format</b>.</p>
+            <p style="margin-top: 12px;">Add a QR code to your poster (if template supports).</p>
+          </div>
         </div>
 	      <div class="panel">
 
@@ -1864,8 +1868,8 @@ const TEMPLATES = {
     name: 'poster 8.5 X 11',
     kind: 'image',
     focal: { x: 0.5, y: 0.5 },
-    w: 2448,
-    h: 3168,
+    w: 2550,
+    h: 3300,
     src: "./template_8x11_clean.jpg",
     ink: '#FFFFFF',
     accent: '#202945',
@@ -1888,6 +1892,76 @@ const TEMPLATES = {
       { id:'footer',   type:'qr_caption', x:0.1270,y:0.9734, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:55, noQrX:0.0450 },
       { id:'footIntro', type:'edit_row', x:0.1270,y:0.9734, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:55, noQrX:0.0450 },
       { id:'url',       type:'edit_row', x:0.1270,y:0.9907, align:'left', field:'f-url', maxW:0.6060, lineHeight:55, noQrX:0.0450 }
+    ],
+    socialLayers: [
+      { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
+    ]
+  },
+
+  communityRunA3: {
+    name: 'poster A3',
+    kind: 'image',
+    focal: { x: 0.5, y: 0.42 },
+    stretch: true,
+    w: 3508,
+    h: 4960,
+    src: "./11x18_clean.jpg",
+    ink: '#FFFFFF',
+    accent: '#202945',
+    qrBg: '#FFFFFF',
+    edgeColor: '#E63E30',
+    layers: [
+      { id:'city',     type:'text',   x:0.5000,y:0.0514, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
+      { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005 },
+      { id:'divider',  type:'rule',   x1:0.1300,x2:0.6589, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
+      { id:'footer',   type:'qr_caption', x:0.1300,y:0.9533, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', boldFont:'700 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75, noQrX:0.0340 },
+      { id:'footIntro', type:'edit_row', x:0.1300,y:0.9644, align:'left', field:'f-footintro', maxW:0.5417, lineHeight:75, noQrX:0.0340 },
+      { id:'url',       type:'edit_row', x:0.1300,y:0.9779, align:'left', field:'f-url', maxW:0.5417, lineHeight:75, noQrX:0.0340 }
+    ],
+    socialLayers: [
+      { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
+      { id:'date', type:'text', x:0.5, y:0.90, align:'center', font:'700 46px "RigidSquareWeb", sans-serif', color:'ink' }
+    ]
+  },
+
+  communityRunA4: {
+    name: 'poster A4',
+    kind: 'image',
+    focal: { x: 0.5, y: 0.5 },
+    stretch: true,
+    w: 2480,
+    h: 3508,
+    src: "./template_8x11_clean.jpg",
+    ink: '#FFFFFF',
+    accent: '#202945',
+    qrBg: '#FFFFFF',
+    edgeColor: '#E63E30',
+    layers: [
+      { id:'city',     type:'text',   x:0.5000,y:0.0451, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
+      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8834, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'bullets',  type:'list',   x:0.5000,y:0.9008, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8834, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.9008, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9181, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9355, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0868 },
+      { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0450, noQrX2:0.5898 },
+      { id:'footer',   type:'qr_caption', x:0.1270,y:0.9650, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:55, noQrX:0.0450 },
+      { id:'footIntro', type:'edit_row', x:0.1270,y:0.9650, align:'left', field:'f-footintro', maxW:0.6060, lineHeight:55, noQrX:0.0450 },
+      { id:'url',       type:'edit_row', x:0.1270,y:0.9823, align:'left', field:'f-url', maxW:0.6060, lineHeight:55, noQrX:0.0450 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
@@ -1990,7 +2064,11 @@ function wrapLines(ctx, text, maxWidth, font){
   return lines;
 }
 
-function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}) {
+function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}, stretch = false) {
+  if (stretch) {
+    ctx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dW, dH);
+    return;
+  }
   const srcW = img.width, srcH = img.height;
   const srcRatio = srcW / srcH;
   const dstRatio = dW / dH;
@@ -2113,7 +2191,7 @@ function drawBackground(ctx, t, w, h){
   if (t.kind === 'image'){
     const img = bgImages[t._key];
     if (img && img.complete && img.naturalWidth > 0) {
-      drawCover(ctx, img, 0, 0, w, h, t.focal || {x:0.5, y:0.5});
+      drawCover(ctx, img, 0, 0, w, h, t.focal || {x:0.5, y:0.5}, t.stretch || false);
     }
   } else if (t.bg1 && t.bg2) {
     const grad = ctx.createLinearGradient(0,0,0,h);
@@ -2382,6 +2460,11 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     ctx.moveTo(x1*w, layer.y*h);
     ctx.lineTo(x2*w, layer.y*h);
     ctx.stroke();
+  }
+
+  if (layer.type === 'rect'){
+    ctx.fillStyle = resolveColor(t, layer.color);
+    ctx.fillRect(layer.x*w, layer.y*h, layer.w*w, layer.h*h);
   }
 
   if (layer.type === 'qr'){

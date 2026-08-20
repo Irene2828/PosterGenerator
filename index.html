@@ -172,10 +172,13 @@
     .templates-col .step-description,
     .options-col .step-description{max-width:none!important;}
     .poster-edit-help{margin:0 0 12px;text-align:left;max-width:none;}
+    .templates-col .panel {
+      padding: 16px 0 !important;
+    }
     .templates {
       flex-direction: row;
       overflow-x: auto;
-      padding-bottom: 12px;
+      padding: 0 16px 12px;
       justify-content: flex-start;
       align-items: stretch;
       -webkit-overflow-scrolling: touch;
@@ -1175,7 +1178,9 @@
         <div class="step-tag"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
           <p class="step-description"><b>Pick</b> a poster design.</p>
         </div>
-        <div class="templates" id="templatePicker"></div>
+        <div class="panel" style="padding-top:24px; padding-bottom: 24px;">
+          <div class="templates" id="templatePicker"></div>
+        </div>
       </div>
 
 	  <div class="preview-col">

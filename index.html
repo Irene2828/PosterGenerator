@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Poster Generator</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <style>
@@ -102,6 +103,9 @@
     text-align:center;
   }
   h2.section-title{font-size:15px;font-weight:600;margin:0 0 14px;}
+  .mobile-warning {
+    display: none;
+  }
   .column-intro {
     height:90px;
     display:flex;
@@ -168,6 +172,27 @@
     .templates-col .step-description,
     .options-col .step-description{max-width:none!important;}
     .poster-edit-help{margin:0 0 12px;text-align:left;max-width:none;}
+    .templates {
+      flex-direction: row;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      justify-content: flex-start;
+      align-items: stretch;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tpl-card {
+      flex: 0 0 auto;
+    }
+    .mobile-warning {
+      display: block;
+      background: #FFF3CD;
+      color: #856404;
+      padding: 12px 24px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 1px solid #FFEEBA;
+    }
   }
   .panel{background:#FFFFFF;border:1px solid var(--border);border-radius:14px;padding:20px 26px 26px;}
   .copy-fields-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
@@ -1136,6 +1161,9 @@
     <h1>Poster Generator</h1>
     <div class="sub">multi-city event poster tool</div>
   </div>
+</div>
+<div class="mobile-warning">
+  For proper editor view, please use the desktop version of the tool.
 </div>
 <div class="wrap">
 

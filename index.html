@@ -218,12 +218,17 @@
   .poster-edit-help button {
     border:0;
     background:transparent;
-    color:#0D8BFF;
+    color:#152B50;
     cursor:pointer;
     font:inherit;
-    font-weight:600;
+    font-weight:600!important;
     padding:0;
     text-decoration:underline;
+    transition:color 0.2s;
+  }
+  .poster-edit-help button:hover {
+    color:#0D8BFF;
+    text-decoration:none;
   }
   .canvas-shell{background:#FFFFFF;border-radius:16px;padding:24px 4px 12px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);}
   .visual-hint{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;}
@@ -1191,12 +1196,12 @@
 
         <!-- QR CODE OPTIONS -->
         <div class="field" id="qr-options-section">
-          <label style="color: #111827; font-weight: bold;">Include QR Code on poster?</label>
+          <label style="color: #152B50; font-weight: bold;">Include QR Code on poster?</label>
           <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
-            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #111827; font-size: 14px;">
+            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 14px;">
               <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
             </label>
-            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #111827; font-size: 14px;">
+            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 14px;">
               <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
             </label>
           </div>
@@ -1204,7 +1209,7 @@
 
         <div id="qr-link-section" style="margin-top: 12px; margin-bottom: 12px; display: none;">
           <div class="field">
-            <label style="color: #111827;">Type the link for the QR code here</label>
+            <label style="color: #152B50;">Type the link for the QR code here</label>
             <div class="qr-input-wrap" id="qrInputWrap">
               <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="saveCopyDraft(); render();">
               <span class="qr-check-badge" title="Valid link">
@@ -1215,7 +1220,7 @@
         </div>
 
 	      <div class="field">
-	        <label style="color: #111827;">Save format</label>
+	        <label style="color: #152B50;">Save format</label>
 	        <select id="f-format">
 	          <option value="png">PNG</option>
 	          <option value="pdf">PDF</option>

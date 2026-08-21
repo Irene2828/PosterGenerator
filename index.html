@@ -1913,7 +1913,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0514, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0440, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
@@ -1947,7 +1947,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0451, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0440, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
       { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
@@ -1982,7 +1982,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0514, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0440, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
@@ -2017,7 +2017,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0451, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0440, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
       { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
@@ -2226,8 +2226,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
       return;
     }
     const text = rawText.replace(/^visit:\s*/i, '');
-    ctx.font = regularFont;
-    drawTextLine(ctx, text, x, y, layer);
+    drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, null);
     return;
   }
 

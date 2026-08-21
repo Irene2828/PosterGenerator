@@ -307,6 +307,10 @@
     gap: 16px;
     align-items: center;
   }
+  .poster-actions-stack.right {
+    left: auto;
+    right: -48px;
+  }
   .action-item {
     display: flex;
     flex-direction: column;
@@ -1166,6 +1170,24 @@
     .step-description, .poster-edit-help, .poster-edit-help p { font-size: 13.75px; }
     .field label { font-size: 15.4px; }
   }
+  .large-preview-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .large-preview-overlay.open { display: flex; }
+  .large-preview-content { display: flex; justify-content: center; align-items: center; }
+  .large-preview-content img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+  .close-preview-btn {
+    position: absolute; top: 20px; right: 24px;
+    background: none; border: none; color: #fff;
+    font-size: 40px; cursor: pointer; line-height: 1;
+  }
 </style>
 </head>
 <body>
@@ -1211,6 +1233,8 @@
               <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
               <span class="action-label">undo</span>
             </div>
+          </div>
+          <div class="poster-actions-stack right">
             <div class="action-item">
               <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
               <span class="action-label">zoom in</span>
@@ -1427,9 +1451,7 @@
                 <input type="number" id="prop-nudge-step" min="1" step="1" value="32">
                 <span class="px-suffix">px</span>
               </div>
-              <button class="top-undo-btn move-undo-btn" id="moveUndoBtn" onclick="undoLastUserEdit()" title="Undo last move" aria-label="Undo last move" disabled style="align-self: flex-start; width: auto; padding: 0 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; min-height: 28px;">
-                <span style="font-size: 14px;">↺</span> <span style="font-family: sans-serif; font-weight: 500;">Undo</span>
-              </button>
+              <button class="top-undo-btn move-undo-btn" id="moveUndoBtn" onclick="undoLastUserEdit()" title="Undo last move" aria-label="Undo last move" disabled>↺</button>
             </div>
           </div>
         </div>
@@ -5675,5 +5697,11 @@ function customPrompt(message, defaultValue = '') {
   });
 }
 </script>
+<div id="largePreview" class="large-preview-overlay" aria-hidden="true" onclick="if(event.target===this) closeLargePreview()">
+  <button type="button" class="close-preview-btn" onclick="closeLargePreview()">×</button>
+  <div class="large-preview-content">
+    <img id="largePreviewImg" src="" alt="Large Preview" />
+  </div>
+</div>
 </body>
 </html>

@@ -1537,7 +1537,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.4995,y:0.0514, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
+      { id:'city',     type:'text',   x:0.4995,y:0.0577, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2890 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
       { id:'guest',    type:'edit_row', x:0.4995,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.4977,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
@@ -1547,11 +1547,11 @@ const TEMPLATES = {
       { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005 },
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005, pad:0 },
       { id:'divider',  type:'rule',   x1:0.1298,x2:0.6589, y:0.9480, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
-      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9533, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', boldFont:'700 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:75, noQrX:0.0340 },
-      { id:'footIntro', type:'edit_row', x:0.1286,y:0.9644, align:'left', field:'f-footintro', maxW:0.5417, lineHeight:75, noQrX:0.0340 },
-      { id:'url',       type:'edit_row', x:0.1286,y:0.9779, align:'left', field:'f-url', maxW:0.5417, lineHeight:75, noQrX:0.0340 }
+      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9533, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
+      { id:'footIntro', type:'edit_row', x:0.1286,y:0.9533, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
+      { id:'url',       type:'edit_row', x:0.1286,y:0.9693, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
@@ -1571,7 +1571,7 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0451, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0401, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.2500 },
       { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
@@ -1736,7 +1736,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   const source = styleSourceForEditRow(t, layer);
   const rawText = getLayerEditValue(layer).trim();
   if (!rawText) return;
-  const sourceFont = layer.font || source.font || '500 24px sans-serif';
+  const sourceFont = (layer.fixedFont || source.fixedFont) ? source.font : (layer.font || source.font || '500 24px sans-serif');
   const px = Math.round(parseInt(sourceFont.match(/(\d+)px/)[1],10) * scale);
   const regularFont = sourceFont.replace(/\d+px/, px+'px');
   const boldFont = (source.boldFont || sourceFont).replace(/\d+px/, px+'px');

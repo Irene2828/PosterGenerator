@@ -515,12 +515,26 @@
     background: transparent;
     border: none;
     color: #6B7280;
-    font-size: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-display);
     cursor: pointer;
-    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
   }
   .sidebar-close-btn:hover {
     color: #111827;
+    background: #E5E7EB;
+  }
+  .sidebar-close-btn .x-icon {
+    font-size: 18px;
+    font-weight: normal;
+    line-height: 1;
+    margin-left: 2px;
   }
   .sidebar-head-actions {
     display:flex;
@@ -1369,7 +1383,10 @@
               <span class="save-btn-text">Save changes</span>
               
             </button>
-            <button class="sidebar-close-btn" onclick="toggleAdminMode(false)" title="Hide inspector">&times;</button>
+            <button class="sidebar-close-btn" onclick="toggleAdminMode(false)" title="Hide inspector">
+              <span>Close Editor</span>
+              <span class="x-icon">&times;</span>
+            </button>
           </div>
         </div>
         

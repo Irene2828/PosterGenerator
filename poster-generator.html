@@ -2598,7 +2598,8 @@ function applyLayerOverrides(tplKey){
 function editableLayersForTemplate(t){
   const hasRowEditors = (t.layers || []).some(layer => layer.type === 'edit_row');
   return (t.layers || []).filter(layer => {
-    if (isAdminMode && ['qr','rule'].includes(layer.type)) return !layer.hidden;
+    if (layer.type === 'qr') return !layer.hidden;
+    if (isAdminMode && ['rule'].includes(layer.type)) return !layer.hidden;
     if (hasRowEditors && ['schedule_list','qr_caption','list','social_footer'].includes(layer.type)) return false;
     return ['text','wrap','list','schedule_list','qr_caption','social_footer','static','edit_row'].includes(layer.type)
       && (!layer.hidden || isAdminMode);
@@ -3770,7 +3771,7 @@ function updateEditOverlay(){
     const hot = document.createElement('button');
     hot.type = 'button';
     const overlayAlign = geometry.align || layer.align || 'center';
-    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode ? ' admin-draggable' : '');
+    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '');
     hot.classList.toggle('selected', selectedAdminLayers.includes(layer) || selectedAdminLayer === layer);
     hot.title = 'Edit ' + layer.id;
     if (layer.type === 'edit_row') hot.style.zIndex = '4';
@@ -3782,7 +3783,7 @@ function updateEditOverlay(){
       hot.style.transform = overlayAlign === 'center' ? 'translateX(-50%)' : overlayAlign === 'right' ? 'translateX(-100%)' : 'none';
     }
     hot.addEventListener('pointerdown', e => {
-      if (!isAdminMode) return;
+      if (!isAdminMode && layer.type !== 'qr') return;
       prepareLayerDrag(e, layer);
     });
     hot.addEventListener('contextmenu', e => {

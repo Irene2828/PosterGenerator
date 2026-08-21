@@ -1762,6 +1762,13 @@ function saveCopyDraft(tplKey = currentTpl){
     const el = document.getElementById(id);
     if (el) draft[id] = el.value;
   });
+  
+  // Save footIntro separately per template to avoid pollution
+  if (draft['f-footintro'] !== undefined) {
+    localStorage.setItem('posterCopyDraft_footIntro:' + tplKey, draft['f-footintro']);
+    delete draft['f-footintro'];
+  }
+  
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
   if (showQrRadio) draft['show-qr-radio'] = showQrRadio.value;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
@@ -1771,7 +1778,18 @@ function loadCopyDraft(tplKey){
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(draftStorageKey(tplKey)) || 'null'); }
   catch (e) { saved = null; }
-  const values = saved || getTemplateDefaults(tplKey);
+  const values = Object.assign({}, saved || getTemplateDefaults(tplKey));
+  
+  // Load template-specific footIntro
+  const savedFootIntro = localStorage.getItem('posterCopyDraft_footIntro:' + tplKey);
+  if (savedFootIntro !== null) {
+    values['f-footintro'] = savedFootIntro;
+  } else if (saved) {
+    // If there is a global draft but no template-specific footIntro saved yet,
+    // use the template's default footIntro!
+    values['f-footintro'] = getTemplateDefaults(tplKey)['f-footintro'];
+  }
+  
   COPY_FIELD_IDS.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
@@ -4692,7 +4710,7 @@ function updateEditOverlay(){
   isRebuildingOverlay = false;
 }
 
-function startLayerDrag(e, layer){
+function startLayerDrag(e, layer, currentTarget){
   e.preventDefault();
   const draggingExistingMultiSelection = selectedAdminLayers.length > 1 && selectedAdminLayers.includes(layer);
   if (!draggingExistingMultiSelection) selectAdminLayer(layer);
@@ -4746,7 +4764,7 @@ function startLayerDrag(e, layer){
     window.removeEventListener('pointerup', onUp);
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
     if (moved) {
-      e.currentTarget.dataset.dragged = 'true';
+      if (currentTarget) currentTarget.dataset.dragged = 'true';
       saveLayerOverrides();
     }
   };
@@ -4758,13 +4776,14 @@ function prepareLayerDrag(e, layer){
   const startX = e.clientX;
   const startY = e.clientY;
   let started = false;
+  const currentTarget = e.currentTarget;
   const onMove = moveEvent => {
     if (started) return;
     if (Math.abs(moveEvent.clientX - startX) + Math.abs(moveEvent.clientY - startY) < 4) return;
     started = true;
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('pointerup', onUp);
-    startLayerDrag(e, layer);
+    startLayerDrag(e, layer, currentTarget);
   };
   const onUp = () => {
     window.removeEventListener('pointermove', onMove);

@@ -219,6 +219,7 @@
   .poster-stage.admin-guides .admin-guide.v,
   .poster-stage.admin-guides .admin-guide.h{display:block;}
   .edit-hotspot.align-left{transform:translate(0,-76%);}
+  .edit-hotspot.qr-hotspot{transform:none!important;}
   .edit-hotspot.align-right{transform:translate(-100%,-76%);}
   .edit-hotspot:hover{border-color:rgba(13,139,255,.9);background:rgba(13,139,255,.08);}
   .visual-editor{
@@ -3789,7 +3790,7 @@ function updateEditOverlay(){
     const hot = document.createElement('button');
     hot.type = 'button';
     const overlayAlign = geometry.align || layer.align || 'center';
-    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '');
+    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '') + (layer.type === 'qr' ? ' qr-hotspot' : '');
     hot.classList.toggle('selected', selectedAdminLayers.includes(layer) || selectedAdminLayer === layer);
     hot.title = 'Edit ' + layer.id;
     if (layer.type === 'edit_row') hot.style.zIndex = '4';

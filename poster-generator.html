@@ -2123,6 +2123,18 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const x = layer.x * w, y = layer.y * h;
     const pad = (layer.pad ?? 18) * s;
     const showQr = shouldShowQr();
+    const origT = (typeof ORIGINAL_TEMPLATES !== 'undefined') ? ORIGINAL_TEMPLATES[t._key || currentTpl] : null;
+    if (origT) {
+      const origLayer = (origT.layers || []).find(l => l.id === layer.id && l.type === 'qr');
+      if (origLayer && (Math.abs(origLayer.x - layer.x) > 0.0001 || Math.abs(origLayer.y - layer.y) > 0.0001)) {
+        const origSize = origLayer.size * w;
+        const origX = origLayer.x * w;
+        const origY = origLayer.y * h;
+        const origPad = (origLayer.pad ?? 18) * s;
+        ctx.fillStyle = t.edgeColor || '#E63E30';
+        ctx.fillRect(origX - origPad - 2, origY - origPad - 2, origSize + origPad * 2 + 4, origSize + origPad * 2 + 4);
+      }
+    }
     ctx.fillStyle = showQr ? t.qrBg : (t.edgeColor || t.qrBg || '#FFFFFF');
     ctx.fillRect(x-pad, y-pad, size+pad*2, size+pad*2);
     if (showQr && qrCanvas) ctx.drawImage(qrCanvas, x, y, size, size);

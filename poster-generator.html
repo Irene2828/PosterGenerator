@@ -1788,13 +1788,22 @@ function styleSourceForEditRow(t, layer){
   return byId((layer.field || '').replace(/^f-/, '')) || layer;
 }
 
-function drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, boldPattern){
+function drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, boldPattern, letterSpacing){
+  const spacing = letterSpacing || 0;
   let cursor = x;
   text.split(/(\s+)/).filter(Boolean).forEach(part => {
     ctx.font = (boldPattern && boldPattern.test(part)) ? boldFont : regularFont;
     ctx.fillStyle = color;
-    ctx.fillText(part, cursor, y);
-    cursor += ctx.measureText(part).width;
+    if (!spacing) {
+      ctx.fillText(part, cursor, y);
+      cursor += ctx.measureText(part).width;
+    } else {
+      Array.from(part).forEach((char, index) => {
+        if (index) cursor += spacing;
+        ctx.fillText(char, cursor, y);
+        cursor += ctx.measureText(char).width;
+      });
+    }
   });
 }
 
@@ -1814,13 +1823,14 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   let y = layer.y * h;
   ctx.textAlign = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'left');
   ctx.fillStyle = color;
+  const spacing = (layer.letterSpacing || 0) * scale;
 
   if (layer.field === 'f-footintro'){
-    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /e-mail:|QR code|property's|People|Culture/i);
+    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /e-mail:|QR code|property's|People|Culture/i, spacing);
     return;
   }
   if (layer.field === 'f-email'){
-    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /^e-mail:/i);
+    drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, /^e-mail:/i, spacing);
     return;
   }
   if (layer.field === 'f-url'){
@@ -1832,7 +1842,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
       const boxWidth = (source.maxW || 0.4685) * w;
       const finalX = startX + (boxWidth - textWidth) / 2;
       
-      drawRichTextLine(ctx, urlText, finalX, y, regularFont, boldFont, color, null);
+      drawRichTextLine(ctx, urlText, finalX, y, regularFont, boldFont, color, null, spacing);
       
       ctx.beginPath();
       ctx.lineWidth = Math.max(1, 1 * scale);
@@ -2001,17 +2011,6 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const maxWidth = layer.maxW ? layer.maxW * w : w;
     const lineHeight = layer.lineHeight ? layer.lineHeight * s : px * 1.2;
     
-    if (layer.maxW){
-      let size = px;
-      const paragraphs = rawText.split('\n').map(p => prefix + p);
-      const fitScaleX = layer.scaleX || 1;
-      while (size > 12*s){
-        let fits = true;
-        paragraphs.forEach(p => { if (ctx.measureText(p).width * fitScaleX > maxWidth) fits = false; });
-        if (fits) break;
-        size -= 1; ctx.font = font.replace(/[\d.]+px/, size+'px');
-      }
-    }
     const paragraphs = rawText.split('\n').map(p => prefix + p);
     paragraphs.forEach(p => {
       wrapLines(ctx, p, maxWidth / (layer.scaleX || 1), ctx.font).forEach(line => {
@@ -2939,7 +2938,7 @@ function selectAdminLayer(layer, additive = false){
     const textVal = getLayerEditValue(layer);
     
     let isShrunk = false;
-    if ((layer.type === 'text' || layer.type === 'static') && maxW && textVal && layer.id !== 'city') {
+    if ((layer.type === 'text' || layer.type === 'static') && maxW && textVal) {
       const dummyCanvas = document.createElement('canvas');
       const dummyCtx = dummyCanvas.getContext('2d');
       dummyCtx.font = fontStr;
@@ -3279,6 +3278,26 @@ function updateSelectedLayerTypography() {
         l.boldFont = `700 ${size}px ${RIGID_FONT_FAMILY}`;
       }
     });
+  }
+  
+  // Auto-expand maxW if new font size would cause auto-shrink
+  const targetLayer = selectedAdminLayer;
+  if (targetLayer.maxW && ['text', 'static', 'wrap'].includes(targetLayer.type)) {
+    const t2 = TEMPLATES[currentTpl];
+    const designW = t2 ? (t2.w || 3300) : 3300;
+    const maxWidthPx = targetLayer.maxW * designW;
+    const measureCanvas = document.createElement('canvas');
+    const measureCtx = measureCanvas.getContext('2d');
+    measureCtx.font = newFont;
+    const textVal = getLayerEditValue(targetLayer) || '';
+    const lines = textVal.split('\n');
+    const widest = Math.max(...lines.map(line => measureCtx.measureText(line).width * (targetLayer.scaleX || 1)), 0);
+    if (widest > maxWidthPx) {
+      const newMaxW = Math.min(0.95, (widest + 20) / designW);
+      allMatchingLayers.forEach(l => { l.maxW = newMaxW; });
+      const maxWInput = document.getElementById('prop-maxW');
+      if (maxWInput) maxWInput.value = String(Math.round(newMaxW * designW));
+    }
   }
   
   const editor = document.querySelector('.visual-editor');
@@ -4911,7 +4930,7 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
       londonFlyer: 'LondonFlyer'
     };
     const tplName = tplNameMap[currentTpl] || 'Poster';
-    const base = `${year}_${city}_TRF_${tplName}`;
+    const base = `${year}_${city}_TFR_${tplName}`;
     if (format === 'jpeg') {
       downloadBlob(canvasToJpeg300Blob(out), base + '.jpg');
     } else if (format === 'pdf') {

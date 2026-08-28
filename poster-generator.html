@@ -109,12 +109,12 @@
     text-align:center;
     margin-bottom:8px;
   }
-  .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 7px;letter-spacing:1.5px;line-height:1.35;}
-  .step-chip{display:inline-block;background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);color:#fff;border-radius:8px;padding:3px 7px;margin-right:5px;letter-spacing:.08em;}
-  .step-description, .poster-edit-help{font-size:12.5px;color:#4B5563;margin:0 auto 6px;line-height:1.45;text-align:center;}
+  .step-tag{display:block;text-align:center;background:transparent;color:#666;font-size:10.5px;font-weight:700;text-transform:uppercase;margin:0 0 7px;letter-spacing:1.5px;line-height:1.35;}
+  .step-chip{display:inline-block;background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);color:#fff;border-radius:8px;padding:3px 7px;margin-right:5px;letter-spacing:.08em;font-size:11px;}
+  .step-description, .poster-edit-help{font-size:13px;color:#4B5563;margin:0 auto 6px;line-height:1.45;text-align:center;}
   .step-description{max-width:280px;}
   .poster-edit-help{max-width:320px;}
-  .poster-edit-help p{margin:0 0 2px;font-size:12.5px;color:#4B5563;line-height:1.45;}
+  .poster-edit-help p{margin:0 0 2px;font-size:13px;color:#4B5563;line-height:1.45;}
   .step-description button{border:0;background:transparent;color:#0D8BFF;cursor:pointer;font:inherit;font-weight:700;padding:0;text-decoration:underline;}
   .templates{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:24px;}
   .tpl-card{
@@ -136,9 +136,10 @@
     box-shadow:0 0 0 2px rgba(13,139,255,.08);
   }
   .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
-  .tpl-name{font-size:13px;text-align:center;padding:8px 6px;font-weight:500;}
+  .tpl-name{font-size:13.5px;text-align:center;padding:8px 6px;font-weight:500;}
   .grid{display:grid;grid-template-columns:205px 1fr 340px;gap:24px;align-items:start;}
   .templates-col{padding-top:0;}
+
   @media (max-width:900px){
     .grid{grid-template-columns:1fr;gap:24px;}
     .templates-col{padding-top:0;}
@@ -152,7 +153,7 @@
   .panel{background:#FFFFFF;border:1px solid var(--border);border-radius:14px;padding:20px 26px 26px;}
   .copy-fields-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
   .field{margin-bottom:18px;}
-  .field label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;color:#800000;}
+  .field label{display:block;font-size:15px;font-weight:600;margin-bottom:7px;color:#800000;}
   .field .optional{font-weight:400;color:var(--muted);}
   .field input[type=text], .field textarea, .field select{
     width:100%;background:var(--bg);border:1.5px solid var(--border-strong);border-radius:10px;
@@ -412,6 +413,25 @@
     line-height: 1;
     margin-left: 2px;
   }
+  .sidebar-collapse-btn {
+    background: transparent;
+    border: none;
+    color: #6B7280;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .sidebar-collapse-btn:hover {
+    background: #E5E7EB;
+    color: #374151;
+  }
   .sidebar-head-actions {
     display:flex;
     align-items:center;
@@ -430,8 +450,8 @@
     align-items:center;
     justify-content:center;
     gap:6px;
-    background: #0B132B;
-    border: 1px solid #0B132B;
+    background: var(--blue);
+    border: 1px solid var(--blue);
     color: #FFFFFF;
     font-weight: 600;
     border-radius: 6px;
@@ -439,8 +459,8 @@
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   }
   .header-save-btn:hover {
-    background: #152B50;
-    border-color: #152B50;
+    background: #0076eb;
+    border-color: #0076eb;
     color: #FFFFFF;
   }
   .header-save-btn::after {
@@ -454,8 +474,8 @@
     mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8A2 2 0 0 1 21 8.8V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'/%3E%3Cpath d='M17 21v-7H7v7'/%3E%3Cpath d='M7 3v5h8'/%3E%3C/svg%3E") center / contain no-repeat;
   }
   .header-save-btn.saved-success {
-    background: #177245 !important;
-    border-color: #177245 !important;
+    background: var(--blue) !important;
+    border-color: var(--blue) !important;
     color: #FFFFFF !important;
   }
   .header-save-btn.saved-success::after {
@@ -552,12 +572,13 @@
     background: #E5E7EB;
   }
   .figma-btn.primary {
-    background: #18A0FB;
-    border-color: #18A0FB;
+    background: var(--blue);
+    border-color: var(--blue);
     color: #FFFFFF;
   }
   .figma-btn.primary:hover {
-    background: #0D8DE3;
+    background: #0076eb;
+    border-color: #0076eb;
   }
   .figma-btn.danger {
     background: #E01A2B;
@@ -913,10 +934,10 @@
 
 	  <div class="preview-col">
       <div class="column-intro">
-        <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEXT</div>
+        <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEMPLATE</div>
         <div class="poster-edit-help">
-          <p><b>Edit</b> / remove the copy of the template.</p>
-          <p>For styling changes (if needed) - use full <button type="button" onclick="toggleAdminMode(true)">Editor Mode</button>.</p>
+          <p>Edit or remove the text lines directly on the poster.</p>
+          <p style="margin-top: 12px;">For more text or layout edits - use <button type="button" onclick="toggleAdminMode(true)" style="color: var(--blue) !important; font-weight: 600;">Full Editor</button>.</p>
         </div>
       </div>
 	    <div class="canvas-shell">
@@ -960,7 +981,7 @@
           <div class="field">
             <label style="color: #111827;">Type the link for the QR code here</label>
             <div class="qr-input-wrap" id="qrInputWrap">
-              <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="saveCopyDraft(); render();">
+              <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
               <span class="qr-check-badge" title="Valid link">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </span>
@@ -1219,6 +1240,16 @@
             <option value="700">Bold</option>
             <option value="900">ExtraBold</option>
             <option value="italic">Italic</option>
+          </select>
+        </div>
+      </div>
+      <div class="figma-row">
+        <div class="figma-col full-width">
+          <label>Text Case</label>
+          <select id="prop-text-case" onchange="updateSelectedLayerTextCase(this.value)">
+            <option value="none">Default (As typed)</option>
+            <option value="uppercase">Uppercase (ALL CAPS)</option>
+            <option value="lowercase">Lowercase (all lowercase)</option>
           </select>
         </div>
       </div>
@@ -1540,7 +1571,7 @@ const TEMPLATE_COPY = {
     b2: '1, 2, or 3 laps of the course',
     url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: 'TwinCitiesTerryFoxRun@outlook.com',
-    footIntro: 'visit:'
+    footIntro: ''
   },
   londonFlyer: {
     city: 'Sussex',
@@ -1651,7 +1682,7 @@ const TEMPLATES = {
       { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7600, align:'left', field:'f-b2', maxW:0.3200, lineHeight:32, bullet:true },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
       { id:'footer',    type:'social_footer', x:0.2537,y:0.9820, align:'left', font:'400 20px sans-serif', boldFont:'700 20px sans-serif', color:'ink', maxW:0.4685, lineHeight:18 },
-      { id:'url',       type:'edit_row', x:0.2537,y:0.9820, align:'left', field:'f-url', prefix:'visit: ', maxW:0.4685, lineHeight:18 }
+      { id:'url',       type:'edit_row', x:0.2537,y:0.9820, align:'left', field:'f-url', prefix:'', maxW:0.4685, lineHeight:18 }
     ],
     socialLayers: [
       { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 44px sans-serif', color:'ink', maxW:0.1870 },
@@ -1794,19 +1825,20 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
   }
   if (layer.field === 'f-url'){
     if (source.type === 'social_footer'){
-      drawRichTextLine(ctx, rawText, x, y, regularFont, boldFont, color, null);
       const urlText = rawText.replace(/^visit:\s*/i, '');
-      const prefixWidth = /^visit:\s*/i.test(rawText) ? (() => {
-        ctx.font = regularFont;
-        return ctx.measureText(rawText.match(/^visit:\s*/i)[0]).width;
-      })() : 0;
       ctx.font = regularFont;
-      const width = ctx.measureText(urlText).width;
+      const textWidth = ctx.measureText(urlText).width;
+      const startX = source.x * w;
+      const boxWidth = (source.maxW || 0.4685) * w;
+      const finalX = startX + (boxWidth - textWidth) / 2;
+      
+      drawRichTextLine(ctx, urlText, finalX, y, regularFont, boldFont, color, null);
+      
       ctx.beginPath();
       ctx.lineWidth = Math.max(1, 1 * scale);
       ctx.strokeStyle = color;
-      ctx.moveTo(x + prefixWidth, y + 3 * scale);
-      ctx.lineTo(x + prefixWidth + width, y + 3 * scale);
+      ctx.moveTo(finalX, y + 3 * scale);
+      ctx.lineTo(finalX + textWidth, y + 3 * scale);
       ctx.stroke();
       return;
     }
@@ -2055,28 +2087,23 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const px = Math.round(parseInt(layer.font.match(/(\d+)px/)[1],10) * s);
     const regularFont = layer.font.replace(/\d+px/, px+'px');
     const boldFont = (layer.boldFont || layer.font).replace(/\d+px/, px+'px');
-    const parts = [
-      { text:'visit: ', bold:false },
-      { text:copy.url, bold:false, underline:true }
-    ];
+    ctx.font = regularFont;
+    const textWidth = ctx.measureText(copy.url).width;
+    const startX = layer.x * w;
+    const boxWidth = (layer.maxW || 0.4685) * w;
+    const x = startX + (boxWidth - textWidth) / 2;
+    const y = layer.y * h;
+    
     ctx.fillStyle = resolveColor(t, layer.color);
     ctx.textAlign = 'left';
-    let x = layer.x * w;
-    const y = layer.y * h;
-    parts.forEach(part => {
-      ctx.font = part.bold ? boldFont : regularFont;
-      ctx.fillText(part.text, x, y);
-      const width = ctx.measureText(part.text).width;
-      if (part.underline){
-        ctx.beginPath();
-        ctx.lineWidth = Math.max(1, 1 * s);
-        ctx.strokeStyle = resolveColor(t, layer.color);
-        ctx.moveTo(x, y + 3 * s);
-        ctx.lineTo(x + width, y + 3 * s);
-        ctx.stroke();
-      }
-      x += width;
-    });
+    ctx.fillText(copy.url, x, y);
+    
+    ctx.beginPath();
+    ctx.lineWidth = Math.max(1, 1 * s);
+    ctx.strokeStyle = resolveColor(t, layer.color);
+    ctx.moveTo(x, y + 3 * s);
+    ctx.lineTo(x + textWidth, y + 3 * s);
+    ctx.stroke();
   }
 
   if (layer.type === 'list'){
@@ -2572,7 +2599,7 @@ function saveLayerOverrides(){
   const t = TEMPLATES[currentTpl];
   if (!t) return;
   const overrides = {};
-  (t.layers || []).forEach(layer => {
+  ((t.layers || []).concat(t.socialLayers || [])).forEach(layer => {
     overrides[layer.id + ':' + layer.type] = {
       x: layer.x,
       y: layer.y,
@@ -2598,7 +2625,8 @@ function saveLayerOverrides(){
       group: layer.group,
       autoLayout: layer.autoLayout,
       layoutRule: layer.layoutRule,
-      groupAlign: layer.groupAlign
+      groupAlign: layer.groupAlign,
+      textCase: layer.textCase
     };
   });
   localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(overrides));
@@ -2615,10 +2643,10 @@ function applyLayerOverrides(tplKey){
   
   const merged = Object.assign({}, globalOverrides[tplKey] || {}, localOverrides);
   
-  (t.layers || []).forEach(layer => {
+  ((t.layers || []).concat(t.socialLayers || [])).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
     normalizeLayerFonts(layer);
@@ -2638,33 +2666,48 @@ function editableLayersForTemplate(t){
 }
 
 function getLayerEditValue(layer){
-  if (layer.text !== undefined) return layer.text;
-  const copy = getCopy();
-  if (layer.type === 'edit_row'){
-    const field = document.getElementById(layer.field);
-    if (!field) return '';
-    const value = field.value.trim();
-    if (layer.row !== undefined){
-      return value.split('\n')[layer.row] || '';
+  let val = '';
+  if (layer.text !== undefined) {
+    val = layer.text;
+  } else {
+    const copy = getCopy();
+    if (layer.type === 'edit_row'){
+      const field = document.getElementById(layer.field);
+      if (!field) val = '';
+      else {
+        const value = field.value.trim();
+        if (layer.row !== undefined){
+          val = value.split('\n')[layer.row] || '';
+        } else {
+          val = layer.prefix && value ? layer.prefix + value : value;
+        }
+      }
+    } else if (layer.id === 'schedule') {
+      const scheduleLines = (copy.schedule || '').split('   \u2215   ').map(v => v.trim()).filter(Boolean);
+      val = (layer.includeBullets ? scheduleLines.concat(copy.bullets || []) : scheduleLines).slice(0, layer.maxItems || 4).join('\n');
+    } else if (layer.id === 'bullets') {
+      val = (document.getElementById('f-bullets').value || copy.bullets.join('\n')).trim();
+    } else if (layer.id === 'footer') {
+      const email = document.getElementById('f-email').value.trim();
+      val = [
+        copy.footIntro,
+        document.getElementById('f-url').value.trim(),
+        email ? 'e-mail: ' + email : ''
+      ].filter(Boolean).join('\n');
+    } else if (layer.type === 'static') {
+      val = layer.text || '';
+    } else {
+      const field = document.getElementById('f-' + layer.id);
+      val = field ? field.value || copy[layer.id] || '' : '';
     }
-    return layer.prefix && value ? layer.prefix + value : value;
   }
-  if (layer.id === 'schedule') {
-    const scheduleLines = (copy.schedule || '').split('   \u2215   ').map(v => v.trim()).filter(Boolean);
-    return (layer.includeBullets ? scheduleLines.concat(copy.bullets || []) : scheduleLines).slice(0, layer.maxItems || 4).join('\n');
+
+  if (layer.textCase === 'uppercase') {
+    return val.toUpperCase();
+  } else if (layer.textCase === 'lowercase') {
+    return val.toLowerCase();
   }
-  if (layer.id === 'bullets') return (document.getElementById('f-bullets').value || copy.bullets.join('\n')).trim();
-  if (layer.id === 'footer') {
-    const email = document.getElementById('f-email').value.trim();
-    return [
-      copy.footIntro,
-      document.getElementById('f-url').value.trim(),
-      email ? 'e-mail: ' + email : ''
-    ].filter(Boolean).join('\n');
-  }
-  if (layer.type === 'static') return layer.text || '';
-  const field = document.getElementById('f-' + layer.id);
-  return field ? field.value || copy[layer.id] || '' : '';
+  return val;
 }
 
 function commitLayerEdit(layer, value, trackUndo = true){
@@ -2896,7 +2939,7 @@ function selectAdminLayer(layer, additive = false){
     const textVal = getLayerEditValue(layer);
     
     let isShrunk = false;
-    if ((layer.type === 'text' || layer.type === 'static') && maxW && textVal) {
+    if ((layer.type === 'text' || layer.type === 'static') && maxW && textVal && layer.id !== 'city') {
       const dummyCanvas = document.createElement('canvas');
       const dummyCtx = dummyCanvas.getContext('2d');
       dummyCtx.font = fontStr;
@@ -3024,6 +3067,12 @@ function selectAdminLayer(layer, additive = false){
     const sizeMatch = fontStr.match(/(\d+)px/);
     document.getElementById('prop-font-size').value = sizeMatch ? parseInt(sizeMatch[1]) : 28;
     
+    // Set text case
+    const caseSelect = document.getElementById('prop-text-case');
+    if (caseSelect) {
+      caseSelect.value = layer.textCase || 'none';
+    }
+    
     // 3b. Bullet Toggle
     const bulletContainer = document.getElementById('prop-bullet-container');
     const bulletSelect = document.getElementById('prop-bullet-style');
@@ -3094,6 +3143,16 @@ function updateSelectedLayerProp(key, value) {
     return;
   }
   
+  const t = TEMPLATES[currentTpl];
+  const allMatchingLayers = [];
+  if (t) {
+    (t.layers || []).concat(t.socialLayers || []).forEach(l => {
+      if (l.id === activeLayer.id && l.type === activeLayer.type) {
+        allMatchingLayers.push(l);
+      }
+    });
+  }
+
   const group = layersMovedWith(selectedAdminLayer);
   if (group.length > 1) {
     if (key === 'x') {
@@ -3109,10 +3168,10 @@ function updateSelectedLayerProp(key, value) {
       if (source) source[key] = value;
       group.forEach(l => delete l[key]);
     } else {
-      selectedAdminLayer[key] = value;
+      allMatchingLayers.forEach(l => { l[key] = value; });
     }
   } else {
-    selectedAdminLayer[key] = value;
+    allMatchingLayers.forEach(l => { l[key] = value; });
   }
   
   const editor = document.querySelector('.visual-editor');
@@ -3153,6 +3212,28 @@ function updateSelectedLineSpacing(value) {
   updateTopLineActionState();
 }
 
+function updateSelectedLayerTextCase(value) {
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  
+  const allMatchingLayers = [];
+  const t = TEMPLATES[currentTpl];
+  if (t) {
+    (t.layers || []).concat(t.socialLayers || []).forEach(l => {
+      if (l.id === selectedAdminLayer.id && l.type === selectedAdminLayer.type) {
+        allMatchingLayers.push(l);
+      }
+    });
+  }
+  
+  allMatchingLayers.forEach(l => {
+    l.textCase = value;
+  });
+  
+  saveLayerOverrides();
+  render();
+}
+
 function updateSelectedLayerTypography() {
   if (!selectedAdminLayer) return;
   pushUndoSnapshot();
@@ -3167,6 +3248,16 @@ function updateSelectedLayerTypography() {
   const fontWeight = weightVal === 'italic' ? '400 ' : `${weightVal || '400'} `;
   const newFont = `${fontStyle}${fontWeight}${size}px ${RIGID_FONT_FAMILY}`;
   
+  const allMatchingLayers = [];
+  const t = TEMPLATES[currentTpl];
+  if (t) {
+    (t.layers || []).concat(t.socialLayers || []).forEach(l => {
+      if (l.id === selectedAdminLayer.id && l.type === selectedAdminLayer.type) {
+        allMatchingLayers.push(l);
+      }
+    });
+  }
+
   const group = layersMovedWith(selectedAdminLayer);
   if (group.length > 1) {
     const t = TEMPLATES[currentTpl];
@@ -3182,10 +3273,12 @@ function updateSelectedLayerTypography() {
       delete l.boldFont;
     });
   } else {
-    selectedAdminLayer.font = newFont;
-    if (selectedAdminLayer.boldFont) {
-      selectedAdminLayer.boldFont = `700 ${size}px ${RIGID_FONT_FAMILY}`;
-    }
+    allMatchingLayers.forEach(l => {
+      l.font = newFont;
+      if (l.boldFont) {
+        l.boldFont = `700 ${size}px ${RIGID_FONT_FAMILY}`;
+      }
+    });
   }
   
   const editor = document.querySelector('.visual-editor');
@@ -3793,11 +3886,13 @@ function updateEditOverlay(){
       : layer.type === 'qr_caption' ? 3
       : layer.type === 'list' ? (layer.maxItems || 2)
       : layer.type === 'wrap' ? estimatedOverlayLineCount(layer, width, fontPx)
+      : ['text', 'static'].includes(layer.type) ? estimatedOverlayLineCount(layer, width, fontPx)
       : 1;
     const editRowVisualHeight = Math.max(14, fontPx * 1.18);
+    const perLineHeight = (layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY : fontPx * 1.2;
     const height = layer.type === 'edit_row'
       ? Math.max(14, editRowVisualHeight * editRowLineCount)
-      : geometry.height || Math.max(24, ((layer.lineHeight || source.lineHeight) ? (layer.lineHeight || source.lineHeight) * fit * scaleY * lineCount : fontPx * 1.4));
+      : geometry.height || Math.max(24, perLineHeight * lineCount);
     const visualTop = layer.type === 'edit_row' ? top - (fontPx * 0.9) : top;
     const hot = document.createElement('button');
     hot.type = 'button';
@@ -4404,6 +4499,25 @@ function toggleAdminMode(val) {
   });
 }
 
+function toggleSidebarCollapse() {
+  const sidebar = document.getElementById('figmaSidebar');
+  if (!sidebar) return;
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  document.body.classList.toggle('sidebar-collapsed-active', isCollapsed);
+  const icon = sidebar.querySelector('.collapse-icon');
+  const text = sidebar.querySelector('.collapse-text');
+  
+  if (isCollapsed) {
+    if (icon) icon.textContent = '+';
+    if (text) text.textContent = 'Show';
+    sidebar.querySelectorAll('.sidebar-head-actions').forEach(el => el.style.display = 'none');
+  } else {
+    if (icon) icon.textContent = '−';
+    if (text) text.textContent = 'Hide';
+    sidebar.querySelectorAll('.sidebar-head-actions').forEach(el => el.style.display = '');
+  }
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.shiftKey && e.code === 'KeyA') {
     e.preventDefault();
@@ -4784,7 +4898,20 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
   const format = document.getElementById('f-format').value;
   const out = document.createElement('canvas');
   renderToCanvas(out, currentTpl, size.w, size.h, () => {
-    const base = 'terry-fox-poster';
+    const copyData = getCopy(currentTpl);
+    const yearMatch = (copyData.date || '').match(/\b(20\d{2})\b/);
+    const year = yearMatch ? yearMatch[1] : '2026';
+    const city = (copyData.city || '').replace(/\s+/g, '');
+    const tplNameMap = {
+      communityRunRed: 'Poster11x17',
+      communityRunLetter: 'Poster8.5x11',
+      communityRunA3: 'PosterA3',
+      communityRunA4: 'PosterA4',
+      socialTerryRun: 'FacebookPosterGraphic',
+      londonFlyer: 'LondonFlyer'
+    };
+    const tplName = tplNameMap[currentTpl] || 'Poster';
+    const base = `${year}_${city}_TRF_${tplName}`;
     if (format === 'jpeg') {
       downloadBlob(canvasToJpeg300Blob(out), base + '.jpg');
     } else if (format === 'pdf') {

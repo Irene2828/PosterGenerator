@@ -5900,10 +5900,14 @@ function loginWithGoogle() {
   });
 }
 
-window.firebaseAuth.onAuthStateChanged(user => {
-  currentUser = user;
-  renderAuthUI();
-});
+if (window.firebaseAuth) {
+  window.firebaseAuth.onAuthStateChanged(user => {
+    currentUser = user;
+    renderAuthUI();
+  });
+} else {
+  console.warn("Firebase Auth is not available. Cloud Drafts disabled.");
+}
 
 async function saveDraftToCloud() {
   if (!currentUser) return alert('Please login first.');

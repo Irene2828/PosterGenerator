@@ -6114,6 +6114,8 @@ function renderDraftsDropdown() {
   }
   list.innerHTML = '';
   userDrafts.forEach(draft => {
+    const timeMs = draft.updatedAt && draft.updatedAt.toMillis ? draft.updatedAt.toMillis() : Date.now();
+    const dateStr = new Date(timeMs).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const item = document.createElement('div');
     item.style.cssText = `padding: 8px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: #111827; font-size: 13px; display: flex; flex-direction: column; gap: 4px;`;
     item.onmouseover = () => item.style.background = '#F3F4F6';

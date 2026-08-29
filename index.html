@@ -5995,7 +5995,7 @@ async function showDraftsModal() {
     });
   } catch (e) {
     console.error(e);
-    overlay.querySelector('#draftsListContainer').innerHTML = \`<div style="color: red; padding: 20px;">Error loading drafts: \${e.message}</div>\`;
+    overlay.querySelector('#draftsListContainer').innerHTML = `<div style="color: red; padding: 20px;">Error loading drafts: ${e.message}</div>`;
   }
 }
 

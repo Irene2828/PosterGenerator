@@ -959,7 +959,6 @@
 	      <div class="preview-actions">
 	        <button type="button" class="preview-icon" id="largePreviewBtn" aria-label="Open large preview" title="Open large preview">⤢</button>
 	        <button type="button" class="subtle-undo" id="userUndoBtn">Undo last edit</button>
-	        <button type="button" class="preview-icon" id="saveCloudBtn" style="display:none; font-size:16px; margin-left: 8px;" title="Save to Cloud">💾</button>
 	      </div>
 	    </div>
 	  </div>
@@ -5128,36 +5127,35 @@ let currentDraftName = null;
 function renderAuthUI() {
   const container = document.getElementById('authUiContainer');
   if (!container) return;
-  const saveBtn = document.getElementById('saveCloudBtnWrapper') || document.getElementById('saveCloudBtn');
 
   if (currentUser) {
     container.innerHTML = `
-      <div style="font-size: 13px; font-weight: 500; display:flex; align-items:center; gap:8px; color:white;">
-        <img src="${currentUser.photoURL}" style="width:24px; height:24px; border-radius:50%;" onerror="this.style.display='none'">
-        ${currentUser.displayName ? currentUser.displayName.split(' ')[0] : 'Admin'}
-      </div>
+
       <div class="drafts-dropdown-wrapper" style="position:relative; display:flex; align-items:center; height:100%; padding: 10px 0;">
-        <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer; display:flex; align-items:center; gap:6px;">
+        <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 600; cursor:pointer; display:flex; align-items:center; gap:6px;">
           <span style="font-size:16px;">☰</span> My Drafts
         </button>
         <div id="draftsDropdown" style="display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #E5E7EB; border-radius:8px; width:220px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:8px; z-index:999999; flex-direction:column; gap:4px; margin-top:-4px;">
           <div id="draftsDropdownList" style="max-height: 300px; overflow-y: auto;"></div>
         </div>
       </div>
-      <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer;" onclick="saveDraftToCloud(true)">Save as New Draft</button>
-      <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer;" onclick="window.firebaseAuth.signOut()">Log Out</button>
+      <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="saveDraftToCloud(true)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        Save to Drafts
+      </button>
+      <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 600; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="window.firebaseAuth.signOut()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Log Out
+      </button>
     `;
     const wrapper = container.querySelector('.drafts-dropdown-wrapper');
     const dropdown = container.querySelector('#draftsDropdown');
     wrapper.addEventListener('mouseenter', () => dropdown.style.display = 'flex');
     wrapper.addEventListener('mouseleave', () => dropdown.style.display = 'none');
-    
-    if (saveBtn) saveBtn.style.display = 'block';
   } else {
     container.innerHTML = `
       <button class="btn btn-primary" onclick="loginWithGoogle()" style="padding: 6px 12px; font-size:12px;">Admin Login</button>
     `;
-    if (saveBtn) saveBtn.style.display = 'none';
   }
 }
 

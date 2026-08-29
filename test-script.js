@@ -40,27 +40,44 @@ window.onunhandledrejection = function(event) {
    One shared "copy" object drives every template. Add a new template by
    describing where its layers sit -- the form and data never change.
    ========================================================================= */
-function getCopy(){
-  const t1 = f('f-t1');
-  const t2 = f('f-t2');
-  const t3 = f('f-t3');
+function getDraftValues(tplKey) {
+  const targetKey = tplKey || currentTpl;
+  if (targetKey === currentTpl) {
+    const values = {};
+    COPY_FIELD_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) values[id] = el.value;
+    });
+    return values;
+  }
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(targetKey)) || 'null'); }
+  catch (e) { saved = null; }
+  return saved || getTemplateDefaults(targetKey);
+}
+
+function getCopy(tplKey){
+  const targetKey = tplKey || currentTpl;
+  const values = getDraftValues(targetKey);
+  const t1 = (values['f-t1'] || '').trim();
+  const t2 = (values['f-t2'] || '').trim();
+  const t3 = (values['f-t3'] || '').trim();
   const schedule = [t1, t2, t3].filter(Boolean).join('   \u2215   ');
   return {
-    city: f('f-city'),
-    date: f('f-date'),
-    guest: f('f-guest'),
-    location: f('f-location'),
-    location2: f('f-location2'),
+    city: (values['f-city'] || '').trim(),
+    date: (values['f-date'] || '').trim(),
+    guest: (values['f-guest'] || '').trim(),
+    location: (values['f-location'] || '').trim(),
+    location2: (values['f-location2'] || '').trim(),
     schedule: schedule,
-    b1: f('f-b1'),
-    b2: f('f-b2'),
-    bullets: [f('f-b1'), f('f-b2')].filter(Boolean),
-    url: f('f-url'),
-    email: f('f-email'),
-    footIntro: f('f-footintro'),
-    qrUrl: f('f-qr-url')
+    b1: (values['f-b1'] || '').trim(),
+    b2: (values['f-b2'] || '').trim(),
+    bullets: [(values['f-b1'] || '').trim(), (values['f-b2'] || '').trim()].filter(Boolean),
+    url: (values['f-url'] || '').trim(),
+    email: (values['f-email'] || '').trim(),
+    footIntro: (values['f-footintro'] || '').trim(),
+    qrUrl: (values['f-qr-url'] || '').trim()
   };
-  function f(id){ return document.getElementById(id).value.trim(); }
 }
 
 const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
@@ -281,21 +298,21 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.4995,y:0.0566, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0566, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
-      { id:'guest',    type:'edit_row', x:0.4995,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
-      { id:'location', type:'text',   x:0.4977,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
-      { id:'location2', type:'text',   x:0.4993,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
       { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005, pad:0 },
-      { id:'divider',  type:'rule',   x1:0.1298,x2:0.6589, y:0.9533, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
-      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9679, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'footIntro', type:'edit_row', x:0.1286,y:0.9679, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'url',       type:'edit_row', x:0.1286,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005 },
+      { id:'divider',  type:'rule',   x1:0.1300,x2:0.6589, y:0.9533, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
+      { id:'footer',   type:'qr_caption', x:0.1300,y:0.9679, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
+      { id:'footIntro', type:'edit_row', x:0.1300,y:0.9679, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
+      { id:'url',       type:'edit_row', x:0.1300,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
@@ -307,9 +324,44 @@ const TEMPLATES = {
     name: 'poster 8.5 X 11',
     kind: 'image',
     focal: { x: 0.5, y: 0.5 },
-    w: 2448,
-    h: 3168,
+    w: 2550,
+    h: 3300,
     src: "./template_8x11_clean.jpg",
+    ink: '#FFFFFF',
+    accent: '#202945',
+    qrBg: '#FFFFFF',
+    edgeColor: '#E63E30',
+    layers: [
+      { id:'city',     type:'text',   x:0.5000,y:0.0392, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
+      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8834, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'bullets',  type:'list',   x:0.5000,y:0.9008, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8834, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.9008, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9181, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9355, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0868 },
+      { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9527, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0450, noQrX2:0.5898 },
+      { id:'footer',   type:'qr_caption', x:0.1270,y:0.9709, align:'left', referenceStyle:true, font:'400 44px "RigidSquareWeb", sans-serif', boldFont:'700 44px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:56, noQrX:0.0450 },
+      { id:'footIntro', type:'edit_row', x:0.1270,y:0.9709, align:'left', field:'f-footintro', font:'400 44px "RigidSquareWeb", sans-serif', boldFont:'700 44px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:56, noQrX:0.0450 },
+      { id:'url',       type:'edit_row', x:0.1270,y:0.9879, align:'left', field:'f-url', font:'400 44px "RigidSquareWeb", sans-serif', boldFont:'700 44px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:56, noQrX:0.0450 }
+    ],
+    socialLayers: [
+      { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
+    ]
+  },
+
+  communityRunA3: {
+    name: 'poster A3',
+    kind: 'image',
+    focal: { x: 0.5, y: 0.42 },
+    stretch: true,
+    w: 3508,
+    h: 4960,
+    src: "./11x18_clean.jpg",
     ink: '#FFFFFF',
     accent: '#202945',
     qrBg: '#FFFFFF',
@@ -330,6 +382,42 @@ const TEMPLATES = {
       { id:'footer',   type:'qr_caption', x:0.1300,y:0.9675, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
       { id:'footIntro', type:'edit_row', x:0.1300,y:0.9675, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
       { id:'url',       type:'edit_row', x:0.1300,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
+    ],
+    socialLayers: [
+      { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
+      { id:'date', type:'text', x:0.5, y:0.90, align:'center', font:'700 46px "RigidSquareWeb", sans-serif', color:'ink' }
+    ]
+  },
+
+  communityRunA4: {
+    name: 'poster A4',
+    kind: 'image',
+    focal: { x: 0.5, y: 0.5 },
+    stretch: true,
+    w: 2480,
+    h: 3508,
+    src: "./template_8x11_clean.jpg",
+    ink: '#FFFFFF',
+    accent: '#202945',
+    qrBg: '#FFFFFF',
+    edgeColor: '#E63E30',
+    layers: [
+      { id:'city',     type:'text',   x:0.5000,y:0.0440, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
+      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
+      { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
+      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8834, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
+      { id:'bullets',  type:'list',   x:0.5000,y:0.9008, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8834, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.9008, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9181, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9355, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0953 },
+      { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9521, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0450, noQrX2:0.5898 },
+      { id:'footer',   type:'qr_caption', x:0.1270,y:0.9703, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:61, noQrX:0.0450 },
+      { id:'footIntro', type:'edit_row', x:0.1270,y:0.9703, align:'left', field:'f-footintro', font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:61, noQrX:0.0450 },
+      { id:'url',       type:'edit_row', x:0.1270,y:0.9877, align:'left', field:'f-url', font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:61, noQrX:0.0450 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
@@ -432,7 +520,11 @@ function wrapLines(ctx, text, maxWidth, font){
   return lines;
 }
 
-function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}) {
+function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}, stretch = false) {
+  if (stretch) {
+    ctx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dW, dH);
+    return;
+  }
   const srcW = img.width, srcH = img.height;
   const srcRatio = srcW / srcH;
   const dstRatio = dW / dH;
@@ -485,7 +577,7 @@ function drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, boldPat
 }
 
 function drawEditRow(ctx, t, layer, copy, w, h, scale){
-  const source = styleSourceForEditRow(t, layer);
+  const source = styleSourceForLayer(layer) || layer;
   const rawText = getLayerEditValue(layer).trim();
   if (!rawText) return;
   const sourceFont = (layer.fixedFont || source.fixedFont) ? source.font : (layer.font || source.font || '500 24px sans-serif');
@@ -530,8 +622,7 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
       return;
     }
     const text = rawText.replace(/^visit:\s*/i, '');
-    ctx.font = regularFont;
-    drawTextLine(ctx, text, x, y, layer);
+    drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, null, spacing);
     return;
   }
 
@@ -566,7 +657,7 @@ function drawBackground(ctx, t, w, h){
   if (t.kind === 'image'){
     const img = bgImages[t._key];
     if (img && img.complete && img.naturalWidth > 0) {
-      drawCover(ctx, img, 0, 0, w, h, t.focal || {x:0.5, y:0.5});
+      drawCover(ctx, img, 0, 0, w, h, t.focal || {x:0.5, y:0.5}, t.stretch || false);
     }
   } else if (t.bg1 && t.bg2) {
     const grad = ctx.createLinearGradient(0,0,0,h);
@@ -821,6 +912,11 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     ctx.stroke();
   }
 
+  if (layer.type === 'rect'){
+    ctx.fillStyle = resolveColor(t, layer.color);
+    ctx.fillRect(layer.x*w, layer.y*h, layer.w*w, layer.h*h);
+  }
+
   if (layer.type === 'qr'){
     const size = layer.size * w;
     const x = layer.x * w, y = layer.y * h;
@@ -934,15 +1030,16 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
   canvasEl._renderId = (canvasEl._renderId || 0) + 1;
   const currentRenderId = canvasEl._renderId;
 
+  const tplKey = t._key || currentTpl;
+  const copy = getCopy(tplKey);
+
   if (t.draw) {
-    const copy = getCopy();
     t.draw(ctx, wPx, hPx, copy);
     if (cb) cb();
     return;
   }
 
   drawBackground(ctx, t, wPx, hPx);
-  const copy = getCopy();
   const qrLayer = (layersToDraw || []).find(l => l.type === 'qr');
   const drawTextLayers = (qrCanvas) => {
     if (canvasEl._renderId !== currentRenderId) return;
@@ -950,7 +1047,7 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
     (layersToDraw || []).forEach(layer => { if (layer.type !== 'qr') drawLayer(ctx, t, layer, copy, wPx, hPx, null); });
     if (cb) cb();
   };
-  const qrUrl = qrUrlForTemplate();
+  const qrUrl = qrUrlForTemplate(tplKey);
   if (qrLayer && qrUrl){
     getQrCanvas(qrUrl, (qrCanvas) => drawTextLayers(qrCanvas));
   } else {
@@ -1044,19 +1141,30 @@ function isValidQrInput(value){
 const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
 const footerFields = ['f-footintro', 'f-url', 'f-email'];
 
-function qrUrlForTemplate(){
-  const t = TEMPLATES[currentTpl];
+function qrUrlForTemplate(tplKey = currentTpl){
+  const t = TEMPLATES[tplKey];
+  if (!t) return '';
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   if (!hasQrLayer) return '';
-  if (!shouldShowQr()) return '';
-  const value = document.getElementById('f-qr-url').value;
+  if (!shouldShowQr(tplKey)) return '';
+  const copy = getCopy(tplKey);
+  const value = copy.qrUrl;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
 }
 
-function shouldShowQr(){
-  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-  if (!templateHasQrChoice()) return false;
-  return showQrRadio ? showQrRadio.value === 'yes' : true;
+function shouldShowQr(tplKey = currentTpl){
+  if (!templateHasQrChoice(tplKey)) return false;
+  if (tplKey === currentTpl) {
+    const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+    return showQrRadio ? showQrRadio.value === 'yes' : true;
+  }
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(tplKey)) || 'null'); }
+  catch (e) { saved = null; }
+  if (saved && saved['show-qr-radio'] !== undefined) {
+    return saved['show-qr-radio'] === 'yes';
+  }
+  return true;
 }
 
 function templateHasQrChoice(tplKey = currentTpl){
@@ -1150,7 +1258,8 @@ let lastQrStatusText = '';
 let adminUndoStack = [];
 let isRestoringUndo = false;
 let activeEditingLayer = null;
-let isAdminMode = true;
+let isAdminMode = false;
+let editScope = 'block';
 let groupSeedLayer = null;
 let nextGroupId = 1;
 let isRebuildingOverlay = false;
@@ -1187,14 +1296,22 @@ function styleSourceForLayer(layer){
   return layer?.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
 }
 
+function isTextEditableLayer(layer){
+  return layer && !layer.hidden && !['qr','rule'].includes(layer.type);
+}
+
+function spacingRowsFromLayers(layers){
+  return (layers || []).filter(isTextEditableLayer);
+}
+
 function editRowsFromLayers(layers){
-  return (layers || []).filter(layer => layer && !layer.hidden && layer.type === 'edit_row');
+  return spacingRowsFromLayers(layers);
 }
 
 function readSpecificLayerProperty(layer, kind){
   const source = styleSourceForLayer(layer) || layer;
   if (kind === 'letterSpacing') return { letterSpacing: layer.letterSpacing ?? source.letterSpacing ?? 0 };
-  if (kind === 'lineSpacing') return { lineHeight: layer.lineHeight ?? source.lineHeight ?? 0 };
+  if (kind === 'lineSpacing') return { lineHeight: numericLineHeightForLayer(layer, 24) };
   if (kind === 'textStyle') {
     return {
       font: rigidFontString(layer.font || source.font),
@@ -1212,7 +1329,7 @@ function readSpecificLayerProperty(layer, kind){
 function applySpecificLayerProperty(layer, kind, props){
   if (kind === 'letterSpacing') layer.letterSpacing = props.letterSpacing ?? 0;
   if (kind === 'lineSpacing') {
-    const value = props.lineHeight ?? 0;
+    const value = readPositiveSpacing(props.lineHeight, numericLineHeightForLayer(layer, 24));
     applyLineSpacingToLayer(layer, value);
   }
   if (kind === 'textStyle') {
@@ -1248,7 +1365,7 @@ function pushUndoSnapshotFrom(copy, overrides){
 
 function updateUserUndoButton(){
   const btn = document.getElementById('userUndoBtn');
-  if (btn) btn.textContent = adminUndoStack.length ? 'Undo Last Edit' : 'Restore original text';
+  if (btn) btn.disabled = adminUndoStack.length === 0;
   const topUndo = document.getElementById('topUndoBtn');
   if (topUndo) topUndo.disabled = adminUndoStack.length === 0;
   const moveUndo = document.getElementById('moveUndoBtn');
@@ -1271,6 +1388,54 @@ function readNumericInput(value, fallback = 0){
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function readPositiveSpacing(value, fallback = 1){
+  return Math.max(1, Math.round(readNumericInput(value, fallback)));
+}
+
+function fontSizeFromFont(fontStr, fallback = 28){
+  const match = String(fontStr || '').match(/(\d+(?:\.\d+)?)px/);
+  return match ? parseFloat(match[1]) : fallback;
+}
+
+function numericLineHeightForLayer(layer, fallback = 24){
+  const source = styleSourceForLayer(layer) || layer || {};
+  const fontPx = fontSizeFromFont(layer?.font || source.font, fallback);
+  const defaultHeight = Math.round(fontPx * 1.2) || fallback;
+  return readPositiveSpacing(layer?.lineHeight ?? source.lineHeight ?? defaultHeight, defaultHeight);
+}
+
+function resetSelectedField(key){
+  if (!selectedAdminLayer) return;
+  pushUndoSnapshot();
+  const activeLayer = selectedAdminLayer;
+  const preservedSelection = [...selectedAdminLayers];
+  const rows = selectedRowsForSpacing();
+  const targets = rows.length ? rows : [selectedAdminLayer];
+  targets.forEach(layer => {
+    const source = styleSourceForLayer(layer) || layer;
+    if (key === 'maxW') {
+      layer.maxW = source && source !== layer && source.maxW !== undefined ? source.maxW : 0.5;
+    } else if (key === 'lineHeight') {
+      applyLineSpacingToLayer(layer, Math.round(fontSizeFromFont(layer.font || source.font, 24) * 1.2));
+    } else if (key === 'letterSpacing') {
+      layer.letterSpacing = source && source !== layer && source.letterSpacing !== undefined ? source.letterSpacing : 0;
+    } else if (key === 'font') {
+      const fontSize = fontSizeFromFont(source.font || layer.font, 28);
+      layer.font = rigidFontString(source.font || `400 ${fontSize}px ${RIGID_FONT_FAMILY}`);
+      if (layer.boldFont || source.boldFont) {
+        layer.boldFont = rigidFontString(source.boldFont || `700 ${fontSize}px ${RIGID_FONT_FAMILY}`);
+      }
+    }
+  });
+  saveLayerOverrides();
+  render(() => updateEditOverlay());
+  selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
+  selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
+  updateAdminGuides();
+  selectAdminLayer(selectedAdminLayer);
+  updateTopLineActionState();
+}
+
 function saveLayerOverrides(){
   const t = TEMPLATES[currentTpl];
   if (!t) return;
@@ -1281,6 +1446,7 @@ function saveLayerOverrides(){
       y: layer.y,
       align: layer.align,
       hidden: !!layer.hidden,
+      alpha: layer.alpha,
       letterSpacing: layer.letterSpacing || 0,
       text: layer.text,
       font: layer.font,
@@ -1322,7 +1488,7 @@ function applyLayerOverrides(tplKey){
   ((t.layers || []).concat(t.socialLayers || [])).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
+    ['x','y','align','hidden','alpha','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
     normalizeLayerFonts(layer);
@@ -1443,38 +1609,55 @@ function commitLayerEdit(layer, value, trackUndo = true){
 }
 
 function undoLastUserEdit(){
+  if (adminUndoStack.length === 0) return;
   const snapshot = adminUndoStack.pop();
   isRestoringUndo = true;
-  if (snapshot){
-    currentTpl = snapshot.tpl;
-    COPY_FIELD_IDS.forEach(id => {
-      const field = document.getElementById(id);
-      if (field && snapshot.copy[id] !== undefined) field.value = snapshot.copy[id];
-    });
-    localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
-    applyLayerOverrides(currentTpl);
-  } else {
-    const defaults = getTemplateDefaults(currentTpl);
-    COPY_FIELD_IDS.forEach(id => {
-      const field = document.getElementById(id);
-      if (field) field.value = defaults[id] || '';
-    });
-    const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
-    const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
-    if (radioYes) radioYes.checked = false;
-    if (radioNo) radioNo.checked = false;
-    const qrSection = document.getElementById('qr-link-section');
-    if (qrSection) qrSection.style.display = 'none';
-
-    localStorage.removeItem(overrideStorageKey(currentTpl));
-    applyLayerOverrides(currentTpl);
-  }
+  currentTpl = snapshot.tpl;
+  COPY_FIELD_IDS.forEach(id => {
+    const field = document.getElementById(id);
+    if (field && snapshot.copy[id] !== undefined) field.value = snapshot.copy[id];
+  });
+  localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
+  applyLayerOverrides(currentTpl);
   selectedAdminLayer = null;
   saveCopyDraft(currentTpl);
   refreshActive();
   updateAdminGuides();
   render();
   isRestoringUndo = false;
+  updateUserUndoButton();
+}
+
+async function restoreOriginalTemplate(){
+  const confirmed = await customConfirm("Are you sure you want to restore the original text and layout coordinates?<br><br>This will clear your custom edits for this template.");
+  if (!confirmed) return;
+  
+  pushUndoSnapshot();
+  
+  // Revert template definitions to code defaults
+  TEMPLATES[currentTpl] = JSON.parse(JSON.stringify(ORIGINAL_TEMPLATES[currentTpl]));
+  TEMPLATES[currentTpl]._key = currentTpl;
+  
+  const defaults = getTemplateDefaults(currentTpl);
+  COPY_FIELD_IDS.forEach(id => {
+    const field = document.getElementById(id);
+    if (field) field.value = defaults[id] || '';
+  });
+  const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
+  const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
+  if (radioYes) radioYes.checked = false;
+  if (radioNo) radioNo.checked = false;
+  const qrSection = document.getElementById('qr-link-section');
+  if (qrSection) qrSection.style.display = 'none';
+
+  localStorage.removeItem(overrideStorageKey(currentTpl));
+  applyLayerOverrides(currentTpl);
+  
+  selectedAdminLayer = null;
+  saveCopyDraft(currentTpl);
+  refreshActive();
+  updateAdminGuides();
+  render();
   updateUserUndoButton();
   updateTopLineActionState();
 }
@@ -1484,10 +1667,12 @@ function openVisualEditor(layer, rect){
   const existing = editOverlay.querySelector('.visual-editor');
   if (existing) existing.remove();
   activeEditingLayer = layer;
-  render(() => mountVisualEditor(layer, rect));
+  render(() => mountVisualEditor(layer, rect || displayBoundsForLayer(layer)));
 }
 
 function mountVisualEditor(layer, rect){
+  rect = rect || displayBoundsForLayer(layer);
+  if (!rect) return;
   const currentValue = getLayerEditValue(layer);
   const editRowMultiLine = layer.type === 'edit_row' && (currentValue.indexOf('\n') !== -1 || currentValue.length > 34);
   const useTextarea = editRowMultiLine || (layer.type !== 'text' && layer.id !== 'date') || currentValue.length > 34;
@@ -1564,14 +1749,83 @@ function toggleGrid() {
   if (btn) {
     btn.classList.toggle('active', showGrid);
     btn.setAttribute('aria-pressed', showGrid ? 'true' : 'false');
-    btn.setAttribute('aria-label', showGrid ? 'Hide Guides' : 'Show Guides');
+    btn.setAttribute('aria-label', showGrid ? 'Hide Grid' : 'Show Grid');
   }
   updateAdminGuides();
   render();
 }
 
+function setEditScope(scope){
+  editScope = scope === 'line' ? 'line' : 'block';
+  if (editScope === 'block' && selectedAdminLayer) {
+    selectedAdminLayers = [selectedAdminLayer];
+  }
+  updateEditScopeUi();
+  updateSelectedTextSummary();
+  updateSidebarScopeVisibility();
+  updateEditOverlay();
+}
+
+function updateEditScopeUi(){
+  document.getElementById('edit-scope-block')?.classList.toggle('active', editScope === 'block');
+  document.getElementById('edit-scope-line')?.classList.toggle('active', editScope === 'line');
+  document.querySelector('.poster-stage')?.classList.toggle('line-editing', editScope === 'line');
+}
+
+function displayNameForLayer(layer){
+  if (!layer) return 'selected text';
+  if (layer.field) return layer.field.replace(/^f-/, '').replace(/[-_]+/g, ' ');
+  return (layer.id || layer.type || 'selected text').replace(/[-_]+/g, ' ');
+}
+
+function previewTextForLayer(layer){
+  if (!layer) return '';
+  const source = styleSourceForLayer(layer) || layer;
+  const text = (getLayerEditValue(layer) || layer.text || source.text || '').trim().replace(/\s+/g, ' ');
+  return text.length > 120 ? text.slice(0, 117) + '...' : text;
+}
+
+function updateSelectedTextSummary(){
+  const summary = document.getElementById('selectedTextSummary');
+  const preview = document.getElementById('selectedTextPreview');
+  if (!summary || !preview) return;
+  updateEditScopeUi();
+  if (!selectedAdminLayer) {
+    summary.textContent = 'No text selected';
+    preview.textContent = '';
+    return;
+  }
+  const selectedTextLayers = editRowsFromLayers(selectedAdminLayers);
+  const count = selectedTextLayers.length || 1;
+  if (editScope === 'line' && count > 1) {
+    summary.textContent = `${count} lines selected`;
+  } else if (editScope === 'line') {
+    summary.textContent = `1 line selected`;
+  } else {
+    summary.textContent = `Text block selected`;
+  }
+  preview.textContent = count > 1
+    ? selectedTextLayers.map(previewTextForLayer).filter(Boolean).slice(0, 3).join(' / ')
+    : previewTextForLayer(selectedAdminLayer);
+}
+
+function updateSidebarScopeVisibility(){
+  const selectedRows = editRowsFromLayers(selectedAdminLayers);
+  const hasMultiLineSelection = editScope === 'line' && selectedRows.length > 1;
+  const isLineScope = editScope === 'line';
+  document.querySelectorAll('.block-only-control').forEach(el => {
+    el.style.display = isLineScope ? 'none' : '';
+  });
+  document.querySelectorAll('.line-only-control').forEach(el => {
+    el.style.display = isLineScope ? '' : 'none';
+  });
+  const groupHelp = document.getElementById('group-help');
+  if (groupHelp) groupHelp.style.display = isLineScope && hasMultiLineSelection ? 'block' : 'none';
+  const autoLayoutOptions = document.getElementById('autolayout-options');
+  if (autoLayoutOptions) autoLayoutOptions.style.display = hasMultiLineSelection ? 'block' : 'none';
+}
+
 function selectAdminLayer(layer, additive = false){
-  if (!isAdminMode) return;
   selectedAdminLayer = layer;
   if (!layer) {
     selectedAdminLayers = [];
@@ -1594,6 +1848,8 @@ function selectAdminLayer(layer, additive = false){
     if (tools) tools.style.display = 'none';
     if (noSelection) noSelection.style.display = 'block';
     if (topDeleteActions) topDeleteActions.style.display = 'flex';
+    updateSelectedTextSummary();
+    updateSidebarScopeVisibility();
     updateTopLineActionState();
     return;
   }
@@ -1601,6 +1857,8 @@ function selectAdminLayer(layer, additive = false){
   if (tools) tools.style.display = 'block';
   if (noSelection) noSelection.style.display = 'none';
   if (topDeleteActions) topDeleteActions.style.display = 'flex';
+  updateSelectedTextSummary();
+  updateSidebarScopeVisibility();
   updateTopLineActionState();
   
   // Show warning if text is auto-shrunk
@@ -1633,22 +1891,26 @@ function selectAdminLayer(layer, additive = false){
   if (maxWInput) {
     const t = TEMPLATES[currentTpl];
     const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-    const currentMaxW = layer.maxW || source.maxW || 0;
-    maxWInput.value = currentMaxW ? (currentMaxW * 100).toFixed(1) : '';
+    const designW = t.w || W;
+    const currentMaxW = layer.maxW || source.maxW || 0.5;
+    const widthPx = Math.max(1, Math.round(currentMaxW * designW));
+    maxWInput.value = String(widthPx);
+    maxWInput.placeholder = String(widthPx);
   }
 
   const lineSpacingInput = document.getElementById('prop-line-spacing');
   if (lineSpacingInput) {
     const t = TEMPLATES[currentTpl];
     const selectedRows = selectedRowsForSpacing();
-    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-    let currentLineHeight = layer.lineHeight || source.lineHeight || 0;
+    let currentLineHeight = numericLineHeightForLayer(layer, 24);
     if (selectedRows.length > 1) {
       const sorted = [...selectedRows].sort((a, b) => (a.y || 0) - (b.y || 0));
       const designH = t.h || H;
       currentLineHeight = Math.round(((sorted[1].y || 0) - (sorted[0].y || 0)) * designH) || currentLineHeight;
     }
-    lineSpacingInput.value = currentLineHeight ? String(Math.round(currentLineHeight)) : '';
+    const spacingPx = readPositiveSpacing(currentLineHeight, 1);
+    lineSpacingInput.value = String(spacingPx);
+    lineSpacingInput.placeholder = String(spacingPx);
   }
 
   const autoLayoutOptions = document.getElementById('autolayout-options');
@@ -1659,10 +1921,10 @@ function selectAdminLayer(layer, additive = false){
   const groupHelp = document.getElementById('group-help');
   const group = selectedGroupLayers();
   const hasMultiSelection = selectedAdminLayers.length > 1;
-  if (groupContainer) groupContainer.style.display = hasMultiSelection ? 'flex' : 'none';
-  if (autoLayoutOptions) autoLayoutOptions.style.display = hasMultiSelection && group.length > 1 ? 'block' : 'none';
+  if (groupContainer) groupContainer.style.display = 'none';
+  if (autoLayoutOptions) autoLayoutOptions.style.display = 'none';
   if (group.length > 1) {
-    gapContainer.style.display = 'flex';
+    if (gapContainer) gapContainer.style.display = 'flex';
     const sorted = [...group].sort((a, b) => a.y - b.y);
     const t = TEMPLATES[currentTpl];
     const designH = t.h || H;
@@ -1680,20 +1942,20 @@ function selectAdminLayer(layer, additive = false){
 
   if (groupBtn) {
     groupBtn.textContent = group.length > 1
-      ? (selectedAdminLayer.group && group.every(l => l.group === selectedAdminLayer.group) ? 'Ungroup' : 'Group Selected Rows')
+      ? (selectedAdminLayer.group && group.every(l => l.group === selectedAdminLayer.group) ? 'Stop adjusting together' : 'Adjust selected lines together')
       : groupSeedLayer && groupSeedLayer !== layer
-        ? 'Group With Previous'
-        : 'Group With Selected';
+        ? 'Adjust with previous line'
+        : 'Adjust selected lines together';
   }
   if (groupHelp) {
-    groupHelp.style.display = hasMultiSelection ? 'block' : 'none';
+    groupHelp.style.display = 'none';
     groupHelp.textContent = group.length > 1
       ? (selectedAdminLayer.group && group.every(l => l.group === selectedAdminLayer.group)
-        ? 'Use spacing, alignment, and centering rules below.'
-        : 'Shift-click rows, then group them.')
+        ? 'Spacing and alignment will apply to these selected lines.'
+        : 'Selected lines can be adjusted together.')
       : groupSeedLayer && groupSeedLayer !== layer
-        ? 'Click Group With Previous.'
-        : 'Shift-click to select more rows.';
+        ? 'Adjust with the previous selected line.'
+        : 'Switch to One line mode to adjust individual lines.';
   }
   document.querySelectorAll('[id^="group-align-"]').forEach(btn => btn.classList.remove('active'));
   const groupAlign = layer.groupAlign || layer.align || 'center';
@@ -1753,12 +2015,13 @@ function selectAdminLayer(layer, additive = false){
     const bulletContainer = document.getElementById('prop-bullet-container');
     const bulletSelect = document.getElementById('prop-bullet-style');
     const supportsBullet = ['text', 'wrap', 'list', 'schedule_list', 'edit_row'].includes(layer.type);
-    if (supportsBullet) {
+    const textForBullet = getLayerEditValue(layer) || '';
+    const defaultBullet = layer.field === 'f-bullets';
+    const sourceStyle = layer.bulletStyle || source.bulletStyle;
+    const isListLike = ['list', 'schedule_list'].includes(layer.type) || defaultBullet || !!sourceStyle || layer.bullet === true || source.bullet === true;
+    const bulletMeaningful = supportsBullet && (isListLike || textForBullet.includes('\n') || textForBullet.trim().length >= 20);
+    if (bulletMeaningful) {
       bulletContainer.style.display = 'flex';
-      const t = TEMPLATES[currentTpl];
-      const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-      const defaultBullet = layer.field === 'f-bullets';
-      const sourceStyle = layer.bulletStyle || source.bulletStyle;
       bulletSelect.value = sourceStyle || ((layer.bullet !== undefined ? layer.bullet : defaultBullet) ? 'dot' : 'none');
     } else {
       bulletContainer.style.display = 'none';
@@ -1793,6 +2056,7 @@ function selectAdminLayer(layer, additive = false){
   }
   
   updateAdminGuides();
+  updateSidebarScopeVisibility();
   if (!isRebuildingOverlay) updateEditOverlay();
 }
 
@@ -1810,12 +2074,14 @@ function updateSelectedLayerProp(key, value) {
       if (source && source !== layer) source.letterSpacing = value;
     });
     saveLayerOverrides();
-    render();
     selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
     selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-    updateAdminGuides();
-    updateEditOverlay();
-    updateTopLineActionState();
+    render(() => {
+      updateSelectedTextSummary();
+      updateAdminGuides();
+      updateTopLineActionState();
+      updateEditOverlay();
+    });
     return;
   }
   
@@ -1859,7 +2125,12 @@ function updateSelectedLayerProp(key, value) {
   }
   
   saveLayerOverrides();
-  render();
+  render(() => {
+    updateSelectedTextSummary();
+    updateAdminGuides();
+    updateTopLineActionState();
+    updateEditOverlay();
+  });
 }
 
 function updateSelectedLineSpacing(value) {
@@ -1869,23 +2140,31 @@ function updateSelectedLineSpacing(value) {
   const preservedSelection = [...selectedAdminLayers];
   const rows = selectedRowsForSpacing();
   const targets = rows.length ? rows : [selectedAdminLayer];
-  targets.forEach(layer => applyLineSpacingToLayer(layer, value));
+  const spacingValue = readPositiveSpacing(value, numericLineHeightForLayer(selectedAdminLayer, 24));
+  targets.forEach(layer => applyLineSpacingToLayer(layer, spacingValue));
 
   if (targets.length > 1) {
-    applySpacingToSelectedRows(targets, value);
+    applySpacingToSelectedRows(targets, spacingValue);
     const gapInput = document.getElementById('prop-gap');
     const groupLineInput = document.getElementById('prop-group-line-spacing');
-    if (gapInput) gapInput.value = String(value);
-    if (groupLineInput) groupLineInput.value = String(value);
+    if (gapInput) gapInput.value = String(spacingValue);
+    if (groupLineInput) groupLineInput.value = String(spacingValue);
+  }
+  const lineSpacingInput = document.getElementById('prop-line-spacing');
+  if (lineSpacingInput) {
+    lineSpacingInput.value = String(spacingValue);
+    lineSpacingInput.placeholder = String(spacingValue);
   }
 
   saveLayerOverrides();
-  render();
   selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
   selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-  updateAdminGuides();
-  updateEditOverlay();
-  updateTopLineActionState();
+  render(() => {
+    updateSelectedTextSummary();
+    updateAdminGuides();
+    updateTopLineActionState();
+    updateEditOverlay();
+  });
 }
 
 function updateSelectedLayerTextCase(value) {
@@ -1985,7 +2264,7 @@ function updateSelectedLayerTypography() {
   }
   
   saveLayerOverrides();
-  render();
+  render(() => updateEditOverlay());
 }
 
 function updateSelectedBulletStyle(style){
@@ -1997,7 +2276,7 @@ function updateSelectedBulletStyle(style){
     layer.bullet = style !== 'none';
   });
   saveLayerOverrides();
-  render();
+  render(() => updateEditOverlay());
   selectAdminLayer(selectedAdminLayer);
 }
 
@@ -2107,23 +2386,25 @@ function selectedRowsForSpacing(){
 
 function applyLineSpacingToLayer(layer, value){
   if (!layer) return;
-  layer.lineHeight = value;
+  const spacing = readPositiveSpacing(value, numericLineHeightForLayer(layer, 24));
+  layer.lineHeight = spacing;
   const source = styleSourceForLayer(layer);
-  if (source && source !== layer) source.lineHeight = value;
+  if (source && source !== layer) source.lineHeight = spacing;
 }
 
 function applySpacingToSelectedRows(rows, spacingPx){
   const t = TEMPLATES[currentTpl];
   const designH = t.h || H;
+  const spacing = readPositiveSpacing(spacingPx, 1);
   const sorted = editRowsFromLayers(rows)
     .sort((a, b) => (a.y || 0) - (b.y || 0));
   if (sorted.length < 2) return;
   const baseY = sorted[0].y || 0;
-  const spacingRatio = spacingPx / designH;
+  const spacingRatio = spacing / designH;
   sorted.forEach((layer, index) => {
     layer.y = baseY + index * spacingRatio;
     layer.autoLayout = true;
-    applyLineSpacingToLayer(layer, spacingPx);
+    applyLineSpacingToLayer(layer, spacing);
   });
 }
 
@@ -2549,6 +2830,106 @@ function estimatedOverlayLineCount(layer, width, fontPx){
   return Math.max(explicitLines, wrappedLines);
 }
 
+function measureTextInkRun(ctx, text, letterSpacing = 0){
+  const chars = Array.from(String(text || ' '));
+  const whole = ctx.measureText(String(text || ' '));
+  let width = 0;
+  let ascent = whole.actualBoundingBoxAscent || 0;
+  let descent = whole.actualBoundingBoxDescent || 0;
+  chars.forEach((char, index) => {
+    const metrics = ctx.measureText(char);
+    width += metrics.width || 0;
+    if (index < chars.length - 1) width += letterSpacing;
+    ascent = Math.max(ascent, metrics.actualBoundingBoxAscent || 0);
+    descent = Math.max(descent, metrics.actualBoundingBoxDescent || 0);
+  });
+  return {
+    width: Math.max(1, width || whole.width || 1),
+    ascent,
+    descent
+  };
+}
+
+function tightTextBoundsForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy){
+  const source = layer.type === 'edit_row'
+    ? styleSourceForEditRow(t, layer)
+    : (styleSourceForLayer(layer) || layer);
+  const rawText = (getLayerEditValue(layer) || layer.text || source.text || '').trim() || ' ';
+  const sourceFont = rigidFontString(layer.font || source.font || '500 24px sans-serif');
+  const basePx = fontSizeFromFont(sourceFont, 24);
+  const displayPx = Math.max(1, basePx * fit * scaleX);
+  const displayFont = sourceFont.replace(/\d+(?:\.\d+)?px/, displayPx + 'px');
+  const maxWidth = Math.max(16, (layer.maxW || source.maxW || 0.5) * designW * fit * scaleX);
+  const measureCanvas = tightTextBoundsForLayer.canvas || (tightTextBoundsForLayer.canvas = document.createElement('canvas'));
+  const ctx = measureCanvas.getContext('2d');
+  ctx.font = displayFont;
+  const defaultBullet = layer.field === 'f-bullets';
+  const prefix = layer.type === 'edit_row'
+    ? (layer.bullet === undefined && defaultBullet ? '\u2022  ' : bulletPrefixForLayer(layer))
+    : '';
+  const lines = rawText.split('\n').flatMap(p => wrapLines(ctx, prefix + p, maxWidth, displayFont));
+  const measuredLines = lines.length ? lines : [' '];
+  const displayLetterSpacing = readNumericInput(layer.letterSpacing ?? source.letterSpacing ?? 0, 0) * fit * scaleX;
+  const lineMetrics = measuredLines.map(line => measureTextInkRun(ctx, line, displayLetterSpacing));
+  const textWidth = Math.max(1, ...lineMetrics.map(metrics => metrics.width));
+  const ascent = Math.max(1, ...lineMetrics.map(metrics => metrics.ascent || displayPx * 0.72));
+  const descent = Math.max(1, ...lineMetrics.map(metrics => metrics.descent || displayPx * 0.18));
+  const sourceLineHeight = numericLineHeightForLayer(layer, basePx) * fit * scaleY;
+  const glyphHeight = Math.max(2, ascent + descent);
+  const visualHeight = Math.max(2, glyphHeight + (measuredLines.length - 1) * sourceLineHeight);
+  const layerX = (!shouldShowQr() && layer.noQrX !== undefined) ? layer.noQrX : layer.x;
+  const anchorX = (dx + layerX * designW * fit) * scaleX;
+  const baselineY = (dy + layer.y * designH * fit) * scaleY;
+  const align = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'center');
+  const left = align === 'right'
+    ? anchorX - textWidth
+    : align === 'center'
+      ? anchorX - textWidth / 2
+      : anchorX;
+  const framePad = 1;
+  return {
+    left: left - framePad,
+    top: baselineY - ascent - framePad,
+    width: textWidth + framePad * 2,
+    height: visualHeight + framePad * 2
+  };
+}
+
+function currentOverlayMetrics(){
+  const t = TEMPLATES[currentTpl];
+  if (!t || !canvas || !canvas.clientWidth || !canvas.clientHeight) return null;
+  const displayW = canvas.clientWidth;
+  const displayH = canvas.clientHeight;
+  const scaleX = displayW / canvas.width;
+  const scaleY = displayH / canvas.height;
+  const designW = t.w || W;
+  const designH = t.h || H;
+  const fit = Math.min(canvas.width / designW, canvas.height / designH);
+  const dx = (canvas.width - designW * fit) / 2;
+  const dy = (canvas.height - designH * fit) / 2;
+  return { t, designW, designH, fit, scaleX, scaleY, dx, dy };
+}
+
+function displayBoundsForLayer(layer){
+  if (!layer) return null;
+  const metrics = currentOverlayMetrics();
+  if (!metrics) return null;
+  const { t, designW, designH, fit, scaleX, scaleY, dx, dy } = metrics;
+  if (isTextEditableLayer(layer)) {
+    return tightTextBoundsForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy);
+  }
+  const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+  const sourceFont = rigidFontString(source.font || layer.font);
+  const fontPx = parseInt(sourceFont.match(/(\d+)px/)?.[1] || '24', 10) * fit * scaleX;
+  const geometry = overlayGeometryForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx);
+  return {
+    left: geometry.align === 'center' ? geometry.left - geometry.width / 2 : geometry.align === 'right' ? geometry.left - geometry.width : geometry.left,
+    top: geometry.top,
+    width: geometry.width,
+    height: geometry.height || Math.max(24, fontPx * 1.4)
+  };
+}
+
 function updateEditOverlay(){
   if (!editOverlay) return;
   isRebuildingOverlay = true;
@@ -2571,6 +2952,7 @@ function updateEditOverlay(){
     const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
     const sourceFont = rigidFontString(source.font || layer.font);
     const fontPx = parseInt(sourceFont.match(/(\d+)px/)[1], 10) * fit * scaleX;
+    const isEditableTextLayer = isTextEditableLayer(layer);
     const geometry = overlayGeometryForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx);
     const left = geometry.left;
     const top = geometry.top;
@@ -2590,11 +2972,17 @@ function updateEditOverlay(){
       ? Math.max(14, editRowVisualHeight * editRowLineCount)
       : geometry.height || Math.max(24, perLineHeight * lineCount);
     const visualTop = layer.type === 'edit_row' ? top - (fontPx * 0.9) : top;
+    let selectedFrameBounds = null;
     const hot = document.createElement('button');
     hot.type = 'button';
     const overlayAlign = geometry.align || layer.align || 'center';
-    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '') + (layer.type === 'qr' ? ' qr-hotspot' : '');
-    hot.classList.toggle('selected', selectedAdminLayers.includes(layer) || selectedAdminLayer === layer);
+    const isSelected = selectedAdminLayers.includes(layer) || selectedAdminLayer === layer;
+    hot.className = 'edit-hotspot align-' + overlayAlign
+      + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '')
+      + (isEditableTextLayer ? ' text-hotspot' : '')
+      + (layer.type === 'edit_row' ? ' edit-row-hotspot' : '')
+      + (layer.type === 'qr' ? ' qr-hotspot' : '');
+    hot.classList.toggle('selected', isSelected && !isEditableTextLayer);
     hot.title = 'Edit ' + layer.id;
     if (layer.type === 'edit_row') hot.style.zIndex = '4';
     hot.style.left = left + 'px';
@@ -2620,27 +3008,33 @@ function updateEditOverlay(){
       if (['qr','rule'].includes(layer.type) && !isAdminMode){
         return;
       }
-      if (isAdminMode || ['qr','rule'].includes(layer.type)){
-        selectAdminLayer(layer, e.shiftKey || e.metaKey || e.ctrlKey);
+      if (isAdminMode || isEditableTextLayer || ['qr','rule'].includes(layer.type)){
+        const addToLineSelection = editScope === 'line'
+          && isEditableTextLayer
+          && selectedAdminLayer
+          && layer !== selectedAdminLayer;
+        selectAdminLayer(layer, e.shiftKey || e.metaKey || e.ctrlKey || addToLineSelection);
         return;
       }
-      openVisualEditor(layer, {
-        left: overlayAlign === 'center' ? left - width / 2 : overlayAlign === 'right' ? left - width : left,
-        top: visualTop,
-        width,
-        height
-      });
+      selectAdminLayer(layer);
     });
     hot.addEventListener('dblclick', e => {
       if (['qr','rule'].includes(layer.type)) return;
       e.preventDefault();
-      openVisualEditor(layer, {
-        left: overlayAlign === 'center' ? left - width / 2 : overlayAlign === 'right' ? left - width : left,
-        top: visualTop,
-        width,
-        height
-      });
+      openVisualEditor(layer, displayBoundsForLayer(layer));
     });
+
+    if (isSelected && isEditableTextLayer) {
+      const frameBounds = tightTextBoundsForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy);
+      selectedFrameBounds = frameBounds;
+      const frame = document.createElement('div');
+      frame.className = 'text-selection-frame ' + (editScope === 'line' ? 'line-selection' : 'block-selection');
+      frame.style.left = frameBounds.left + 'px';
+      frame.style.top = frameBounds.top + 'px';
+      frame.style.width = frameBounds.width + 'px';
+      frame.style.height = frameBounds.height + 'px';
+      editOverlay.appendChild(frame);
+    }
 
     editOverlay.appendChild(hot);
 
@@ -2650,8 +3044,6 @@ function updateEditOverlay(){
       closeBtn.className = 'hotspot-close-btn';
       closeBtn.innerHTML = '&times;';
       closeBtn.style.position = 'absolute';
-      closeBtn.style.top = '-10px';
-      closeBtn.style.right = '-10px';
       closeBtn.style.width = '20px';
       closeBtn.style.height = '20px';
       closeBtn.style.borderRadius = '50%';
@@ -2677,7 +3069,16 @@ function updateEditOverlay(){
         e.preventDefault();
         deleteSelectedLayer();
       });
-      editOverlay.appendChild(closeBtn);
+      if (selectedFrameBounds) {
+        closeBtn.style.top = (selectedFrameBounds.top - 10) + 'px';
+        closeBtn.style.left = (selectedFrameBounds.left + selectedFrameBounds.width - 10) + 'px';
+        closeBtn.style.right = 'auto';
+        editOverlay.appendChild(closeBtn);
+      } else {
+        closeBtn.style.top = '-10px';
+        closeBtn.style.right = '-10px';
+        hot.appendChild(closeBtn);
+      }
     }
   });
 
@@ -2867,8 +3268,8 @@ function openLayerContextMenu(event, layer){
   if (pasteLineBtn) pasteLineBtn.disabled = copiedPropertyBuckets.lineSpacing.length === 0;
   if (pasteStyleBtn) pasteStyleBtn.disabled = copiedPropertyBuckets.textStyle.length === 0;
   note.textContent = selectedCount > 1
-    ? `Copy/paste properties for ${selectedCount} selected rows.`
-    : 'Copy or paste this row’s properties.';
+    ? `Copy/paste properties for ${selectedCount} selected lines.`
+    : 'Copy or paste this line’s properties.';
   menu.classList.add('open');
   menu.setAttribute('aria-hidden', 'false');
   const rect = menu.getBoundingClientRect();
@@ -2903,39 +3304,59 @@ function pasteContextLayerProperties(){
   selectAdminLayer(contextMenuLayer);
 }
 
+function specificPropertyTargets(kind, fallbackLayer = contextMenuLayer || selectedAdminLayer){
+  if (kind === 'lineSpacing') {
+    const selectedRows = editRowsFromLayers(selectedAdminLayers);
+    if (selectedRows.length) return selectedRows;
+  }
+  if (selectedAdminLayers.length > 1) {
+    const rows = editRowsFromLayers(selectedAdminLayers);
+    return rows.length ? rows : selectedAdminLayers.filter(layer => layer && !layer.hidden);
+  }
+  if (fallbackLayer) return selectedLayersForCopy(fallbackLayer);
+  return selectedAdminLayer ? [selectedAdminLayer] : [];
+}
+
 function copySpecificContextProperty(kind){
-  if (!contextMenuLayer) return;
-  copiedPropertyBuckets[kind] = selectedLayersForCopy(contextMenuLayer).map(layer => readSpecificLayerProperty(layer, kind));
+  const targets = specificPropertyTargets(kind);
+  if (!targets.length) return;
+  copiedPropertyBuckets[kind] = targets.map(layer => readSpecificLayerProperty(layer, kind));
   closeLayerContextMenu();
 }
 
 function pasteSpecificContextProperty(kind){
   const copied = copiedPropertyBuckets[kind] || [];
-  if (!contextMenuLayer || !copied.length) return;
+  const activeLayer = contextMenuLayer || selectedAdminLayer;
+  if (!activeLayer || !copied.length) return;
   pushUndoSnapshot();
-  const activeLayer = contextMenuLayer;
-  const preservedSelection = selectedAdminLayers.length > 1 ? [...selectedAdminLayers] : [contextMenuLayer];
-  const targets = kind === 'lineSpacing'
-    ? (editRowsFromLayers(selectedLayersForCopy(contextMenuLayer)).length
-      ? editRowsFromLayers(selectedLayersForCopy(contextMenuLayer))
-      : selectedLayersForCopy(contextMenuLayer))
-    : selectedLayersForCopy(contextMenuLayer);
+  const preservedSelection = selectedAdminLayers.length > 1 ? [...selectedAdminLayers] : [activeLayer];
+  const targets = specificPropertyTargets(kind, activeLayer);
   targets.forEach((layer, index) => {
     const props = copied[Math.min(index, copied.length - 1)];
     applySpecificLayerProperty(layer, kind, props);
   });
   if (kind === 'lineSpacing' && targets.length > 1) {
-    const gap = copied[0]?.lineHeight ?? 0;
+    const gap = readPositiveSpacing(copied[0]?.lineHeight, 0);
     if (gap) applySpacingToSelectedRows(targets, gap);
   }
   saveLayerOverrides();
   closeLayerContextMenu();
-  render();
   selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
   selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-  updateAdminGuides();
-  updateEditOverlay();
-  updateTopLineActionState();
+  if (kind === 'lineSpacing') {
+    const lineSpacingInput = document.getElementById('prop-line-spacing');
+    const pastedSpacing = readPositiveSpacing(copied[0]?.lineHeight, 0);
+    if (lineSpacingInput && pastedSpacing) {
+      lineSpacingInput.value = String(pastedSpacing);
+      lineSpacingInput.placeholder = String(pastedSpacing);
+    }
+  }
+  render(() => {
+    updateSelectedTextSummary();
+    updateAdminGuides();
+    updateTopLineActionState();
+    updateEditOverlay();
+  });
 }
 
 function initBgImages(){
@@ -2947,8 +3368,15 @@ function initBgImages(){
         if (key === currentTpl) render();
         drawThumb(key);
       };
+      img.onerror = (e) => {
+        console.error("Failed to load template image:", t.src, e);
+      };
       img.src = t.src + (t.src.includes('?') ? '&' : '?') + 'v=terry-cutout-v2';
       bgImages[key] = img;
+      if (img.complete && img.naturalWidth > 0) {
+        if (key === currentTpl) render();
+        drawThumb(key);
+      }
     }
   });
 }
@@ -2995,15 +3423,12 @@ function drawThumb(key){
     if (existingLabel) card.insertBefore(c, existingLabel);
     else card.appendChild(c);
   }
-  const activeDraft = {};
-  COPY_FIELD_IDS.forEach(id => { activeDraft[id] = document.getElementById(id).value; });
   const t = TEMPLATES[key];
   const tw = t.w || 1122;
   const th = t.h || 1588;
   const targetW = 220;
   
   // Calculate a dynamic scale factor for every template
-  const scale = targetW / tw;
   const targetH = Math.round(220 * th / tw);
 
   c.width = targetW;
@@ -3015,16 +3440,12 @@ function drawThumb(key){
   ctx.fillStyle = getTemplateFallbackBg(t);
   ctx.fillRect(0, 0, targetW, targetH);
 
-  loadCopyDraft(key);
   const layersToDraw = t.socialLayers || t.layers || [];
   
-  // Multiply all text coordinates (x, y), font sizes, line heights, and padding by this scale factor 
-  // when rendering onto thumbnail canvases so text scales down proportionally regardless of template aspect ratio.
   const offscreen = document.createElement('canvas');
   renderNativeToCanvas(offscreen, t, tw, th, layersToDraw, () => {
     ctx.clearRect(0, 0, targetW, targetH);
     ctx.drawImage(offscreen, 0, 0, targetW, targetH);
-    COPY_FIELD_IDS.forEach(id => { document.getElementById(id).value = activeDraft[id] || ''; });
   });
 }
 // One-time local storage migration to clear old preselected Yes radios from drafts
@@ -3190,28 +3611,11 @@ function toggleAdminMode(val) {
   isAdminMode = (val !== undefined) ? val : !isAdminMode;
   refreshAdminPanel();
   updateAdminGuides();
+  updateEditScopeUi();
+  updateEditOverlay();
   document.querySelectorAll('.adv-ctrls').forEach(el => {
     el.style.display = isAdminMode ? 'flex' : 'none';
   });
-}
-
-function toggleSidebarCollapse() {
-  const sidebar = document.getElementById('figmaSidebar');
-  if (!sidebar) return;
-  const isCollapsed = sidebar.classList.toggle('collapsed');
-  document.body.classList.toggle('sidebar-collapsed-active', isCollapsed);
-  const icon = sidebar.querySelector('.collapse-icon');
-  const text = sidebar.querySelector('.collapse-text');
-  
-  if (isCollapsed) {
-    if (icon) icon.textContent = '+';
-    if (text) text.textContent = 'Show';
-    sidebar.querySelectorAll('.sidebar-head-actions').forEach(el => el.style.display = 'none');
-  } else {
-    if (icon) icon.textContent = '−';
-    if (text) text.textContent = 'Hide';
-    sidebar.querySelectorAll('.sidebar-head-actions').forEach(el => el.style.display = '');
-  }
 }
 
 document.addEventListener('keydown', (e) => {
@@ -3455,6 +3859,7 @@ window.addEventListener('keydown', e => {
 });
 
 document.getElementById('userUndoBtn').addEventListener('click', undoLastUserEdit);
+document.getElementById('userRestoreBtn').addEventListener('click', restoreOriginalTemplate);
 updateUserUndoButton();
 
 
@@ -3691,7 +4096,10 @@ if (document.fonts && document.fonts.ready){
     render();
     Object.keys(TEMPLATES).forEach(key => drawThumb(key));
   };
-  document.fonts.ready.then(redrawAll);
+  document.fonts.ready.then(redrawAll).catch(err => {
+    console.warn("Font loading ready caught error:", err);
+    redrawAll();
+  });
   document.fonts.addEventListener('loadingdone', redrawAll);
 }
 // --- Custom Modal Utilities ---
@@ -3919,7 +4327,7 @@ async function showDraftsModal() {
     });
   } catch (e) {
     console.error(e);
-    overlay.querySelector('#draftsListContainer').innerHTML = \`<div style="color: red; padding: 20px;">Error loading drafts: \${e.message}</div>\`;
+    overlay.querySelector('#draftsListContainer').innerHTML = `<div style="color: red; padding: 20px;">Error loading drafts: ${e.message}</div>`;
   }
 }
 
@@ -3948,4 +4356,3 @@ function loadDraft(draft) {
 if (document.getElementById('saveCloudBtn')) {
   document.getElementById('saveCloudBtn').addEventListener('click', saveDraftToCloud);
 }
-

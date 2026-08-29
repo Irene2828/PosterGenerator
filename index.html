@@ -3109,8 +3109,39 @@ function saveLayerOverrides(){
   const t = TEMPLATES[currentTpl];
   if (!t) return;
   const overrides = {};
-  ((t.layers || []).concat(t.socialLayers || [])).forEach(layer => {
+  (t.layers || []).forEach(layer => {
     overrides[layer.id + ':' + layer.type] = {
+      x: layer.x,
+      y: layer.y,
+      align: layer.align,
+      hidden: !!layer.hidden,
+      alpha: layer.alpha,
+      letterSpacing: layer.letterSpacing || 0,
+      text: layer.text,
+      font: layer.font,
+      size: layer.size,
+      lineHeight: layer.lineHeight,
+      lineWidth: layer.lineWidth,
+      x1: layer.x1,
+      x2: layer.x2,
+      shadow: layer.shadow,
+      maxW: layer.maxW,
+      bullet: layer.bullet,
+      bulletStyle: layer.bulletStyle,
+      scaleX: layer.scaleX,
+      maxItems: layer.maxItems,
+      noQrX: layer.noQrX,
+      noQrX1: layer.noQrX1,
+      noQrX2: layer.noQrX2,
+      group: layer.group,
+      autoLayout: layer.autoLayout,
+      layoutRule: layer.layoutRule,
+      groupAlign: layer.groupAlign,
+      textCase: layer.textCase
+    };
+  });
+  (t.socialLayers || []).forEach(layer => {
+    overrides[layer.id + ':' + layer.type + ':social'] = {
       x: layer.x,
       y: layer.y,
       align: layer.align,
@@ -3154,8 +3185,17 @@ function applyLayerOverrides(tplKey){
   
   const merged = Object.assign({}, globalOverrides[tplKey] || {}, localOverrides);
   
-  ((t.layers || []).concat(t.socialLayers || [])).forEach(layer => {
+  (t.layers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
+    if (!saved) return;
+    ['x','y','align','hidden','alpha','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
+      if (saved[key] !== undefined) layer[key] = saved[key];
+    });
+    normalizeLayerFonts(layer);
+  });
+  
+  (t.socialLayers || []).forEach(layer => {
+    const saved = merged[layer.id + ':' + layer.type + ':social'] || merged[layer.id + ':' + layer.type];
     if (!saved) return;
     ['x','y','align','hidden','alpha','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];

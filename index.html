@@ -5977,20 +5977,12 @@ function renderAuthUI() {
 
 function handleSignOut() {
   window.firebaseAuth.signOut().then(() => {
-    currentDraftId = null;
-    currentDraftName = null;
-    currentTpl = 'communityRunLetter';
-    
-    // Clear all template drafts from localStorage
     Object.keys(TEMPLATES).forEach(key => {
-      localStorage.removeItem('draft_tfr_' + key);
-      localStorage.removeItem('draft_tfr_' + key + '_overrides');
+      localStorage.removeItem(typeof draftStorageKey === 'function' ? draftStorageKey(key) : 'draft_tfr_' + key);
+      localStorage.removeItem(typeof overrideStorageKey === 'function' ? overrideStorageKey(key) : 'posterLayerOverrides:' + key);
     });
     localStorage.removeItem('layout_tweaks');
-
-    if (typeof reRenderCanvas === 'function') reRenderCanvas();
-    if (typeof renderSidebar === 'function') renderSidebar();
-    if (typeof renderPicker === 'function') renderPicker();
+    window.location.reload();
   });
 }
 

@@ -87,7 +87,7 @@
   html,body{margin:0;padding:0;background:var(--bg);font-family:var(--font-display);color:var(--ink);}
   .wrap{max-width:1265px;margin:0 auto;padding:0 0 60px;}
   .toolbar{background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);border-bottom:none;}
-  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;max-width:1265px;margin:0 auto;}
+  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;max-width:1265px;margin:0 auto;min-height:56px;}
   .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;letter-spacing:.35px;}
   .toolbar .sub{font-size:11px;color:#A0AABF;letter-spacing:1.5px;text-transform:uppercase;}
   .content{padding:45px 24px 0;}
@@ -5232,7 +5232,14 @@ function handleSignOut() {
     currentDraftId = null;
     currentDraftName = null;
     currentTpl = 'communityRunLetter';
-    localStorage.removeItem('draft_tfr');
+    
+    // Clear all template drafts from localStorage
+    Object.keys(TEMPLATES).forEach(key => {
+      localStorage.removeItem('draft_tfr_' + key);
+      localStorage.removeItem('draft_tfr_' + key + '_overrides');
+    });
+    localStorage.removeItem('layout_tweaks');
+
     if (typeof reRenderCanvas === 'function') reRenderCanvas();
     if (typeof renderSidebar === 'function') renderSidebar();
     if (typeof renderPicker === 'function') renderPicker();

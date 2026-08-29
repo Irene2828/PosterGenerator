@@ -1,1669 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Poster Generator</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<style>
-  /* Local Rigid Square brand files. The canvas renderer uses these exact
-     weight/style tokens, so Figma font weights map to real local font files. */
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:300; font-style:normal;
-    src: url('./fonts/fonnts.com-rigidsquare-light.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:400; font-style:normal;
-    src: url('./fonts/fonnts.com-rigidsquare-regular.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:500; font-style:normal;
-    src: url('./fonts/fonnts.com-rigidsquare-semibold.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:600; font-style:normal;
-    src: url('./fonts/fonnts.com-rigidsquare-semibold.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:700; font-style:normal;
-    src: url('./fonts/fonnts.com-rigidsquare-bold.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:900; font-style:normal;
-    src: url('./fonts/fonnts.com-rigidsquare-extrabold.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:300; font-style:italic;
-    src: url('./fonts/fonnts.com-rigidsquare-lightitalic.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:400; font-style:italic;
-    src: url('./fonts/fonnts.com-rigidsquare-italic.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:500; font-style:italic;
-    src: url('./fonts/fonnts.com-rigidsquare-semibolditalic.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:600; font-style:italic;
-    src: url('./fonts/fonnts.com-rigidsquare-semibolditalic.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:700; font-style:italic;
-    src: url('./fonts/fonnts.com-rigidsquare-bolditalic.otf') format('opentype');
-    font-display:swap;
-  }
-  @font-face{
-    font-family:'RigidSquareWeb';
-    font-weight:900; font-style:italic;
-    src: url('./fonts/fonnts.com-rigidsquare-extrabolditalic.otf') format('opentype');
-    font-display:swap;
-  }
-  :root{
-    --font-display:'RigidSquareWeb',sans-serif;
-    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --bg:#FFFFFF; --panel:#F5F5F5; --border:#E4E4E4; --border-strong:#D0D0D0;
-    --ink:#0D0D0D; --muted:#8C8C8C; --blue:#0D8BFF; --blue-wash:#EAF5FF;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);font-family:var(--font-display);color:var(--ink);overflow-x:hidden;}
-  .wrap{max-width:1440px;margin:0 auto;padding:0 0 60px;}
-  .toolbar{background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);border-bottom:none;}
-  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;max-width:1440px;margin:0 auto;}
-  .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;letter-spacing:.35px;}
-  .toolbar .sub{font-size:11px;color:#A0AABF;letter-spacing:1.5px;text-transform:uppercase;}
-  .content{padding:45px 24px 0;}
-  .page-headline{
-    margin:0 0 24px;
-    color:#0B132B;
-    font-size:22px;
-    font-weight:700;
-    letter-spacing:.35px;
-    text-align:center;
-  }
-  h2.section-title{font-size:15px;font-weight:600;margin:0 0 14px;}
-  .mobile-warning {
-    display: none;
-  }
-  .column-intro {
-    height:90px;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:center;
-    text-align:center;
-    margin-bottom:12px;
-  }
-  .step-tag{display:block;text-align:center;background:transparent;color:#152B50;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 21px;letter-spacing:1.5px;line-height:1.35;}
-  .step-index{display:inline-block;background:#E01A2B;color:#fff;border-radius:8px;padding:3px 8px;margin-right:6px;letter-spacing:.08em;}
-  .step-chip{background:#1E293B;color:#F8FAFC;border-radius:4px;padding:2px 6px;margin-right:4px;font-size:9.5px;letter-spacing:1px;}
-  .step-description, .poster-edit-help{font-size:13px;color:#4B5563;margin:0 auto 12px;line-height:1.45;text-align:center;}
-  .step-description{max-width:none;}
-  .poster-edit-help{max-width:none;}
-  .poster-edit-help p{margin:0 0 2px;font-size:13px;color:#4B5563;line-height:1.45;}
-  .poster-edit-help button{
-    background:none;border:none;color:#E01A2B;font-weight:600;padding:0;font-size:13px;
-    text-decoration:underline;cursor:pointer;font-family:inherit;
-  }
-  .poster-edit-help button:hover{color:#C81423;}
-  .templates{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-    align-items:center;
-  }
-  .tpl-card{
-    flex:0 0 auto;width:130px;cursor:pointer;border-radius:10px;overflow:hidden;
-    border:2px solid var(--border);background:var(--panel);
-    opacity:0.55;
-    filter:grayscale(100%) blur(.45px) brightness(1.2);
-    background:rgba(255,255,255,.72);
-    transition:opacity 0.2s, filter 0.2s, border-color 0.2s, background .2s;
-  }
-  .tpl-card:hover{
-    opacity:1;
-    filter:none;
-    border-color:var(--border-strong);
-    background:#fff;
-  }
-  .tpl-card.active{
-    opacity:0.72;
-    filter:grayscale(20%) blur(.35px) brightness(1.12);
-    border-color:var(--blue);
-    background:rgba(255,255,255,.8);
-    box-shadow:0 0 0 2px rgba(13,139,255,.08);
-  }
-  .tpl-card.active:hover{
-    opacity:1;
-    filter:none;
-    background:#fff;
-  }
-  .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
-  .tpl-name{font-size:13.5px;text-align:center;padding:8px 6px;font-weight:500;font-family:var(--font-ui);}
-  .grid{display:grid;grid-template-columns:240px 1fr 340px;gap:24px;align-items:start;}
-  .templates-col{padding-top:0;}
 
-  @media (max-width:900px){
-    .grid{grid-template-columns:1fr;gap:48px;}
-    .templates-col{padding-top:0; width: 100%; max-width: 100vw; overflow: hidden;}
-    .column-intro{align-items:flex-start;text-align:left;height:auto;min-height:auto;}
-    .step-tag{text-align:left;}
-    .step-description{margin:0;text-align:left;max-width:none!important;}
-    .templates-col .step-description,
-    .options-col .step-description{max-width:none!important;}
-    .poster-edit-help{margin:0 0 12px;text-align:left;max-width:none;}
-    .templates-col .panel {
-      padding: 16px 0 !important;
-    }
-    .templates {
-      flex-direction: row;
-      overflow-x: auto;
-      padding: 0 16px 12px;
-      justify-content: flex-start;
-      align-items: stretch;
-      -webkit-overflow-scrolling: touch;
-      width: 100%;
-    }
-    .tpl-card {
-      flex: 0 0 auto;
-    }
-    .mobile-warning {
-      display: block;
-      background: #FFF3CD;
-      color: #856404;
-      padding: 12px 24px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 500;
-      border-bottom: 1px solid #FFEEBA;
-    }
-  }
-  .panel{background:#FFFFFF;border:1px solid var(--border);border-radius:14px;padding:20px 26px 26px;}
-  .copy-fields-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
-  .field{margin-bottom:18px;}
-  .field label{display:block;font-size:15px;font-weight:600;margin-bottom:7px;color:#152B50;}
-  .field .optional{font-weight:400;color:var(--muted);}
-  .field input[type=text], .field textarea, .field select{
-    width:100%;background:var(--bg);border:1.5px solid var(--border-strong);border-radius:10px;
-    font-family:var(--font-display);font-size:15px;padding:11px 13px;resize:none;outline:none;
-  }
-  .field textarea{min-height:64px;line-height:1.4;}
-  .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;cursor:pointer;}
-  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(13,139,255,.08);}
-  .qr-status{margin-top:7px;font-size:12px;line-height:1.35;color:var(--muted);}
-  .qr-status strong{color:#177245;font-weight:700;}
-  .qr-status.qr-active{border:1px solid #BFE6CC;background:#EFFAF2;border-radius:8px;padding:8px 10px;color:#315D3A;}
-  .qr-badge{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:#177245;color:#fff;font-size:10px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;opacity:0;transition:opacity .2s;}
-  .qr-status.qr-active .qr-badge{opacity:1;}
-  .field input#f-url{background:#F5F6F8;color:#374151;padding-right:42px;}
-  .qr-input-wrap{display:flex;align-items:center;gap:10px;position:relative;}
-  .qr-input-wrap input#f-qr-url{flex:1;width:auto;margin:0;}
-  .qr-check-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#FFFFFF;flex-shrink:0;opacity:0;transform:scale(0.8);transition:opacity .18s ease,transform .18s ease;pointer-events:none;}
-  .qr-input-wrap.ready .qr-check-badge{opacity:1;transform:scale(1);}
-  .qr-processed{background:var(--blue-wash)!important;border-color:rgba(13,139,255,0.4)!important;color:#152B50;}
-  .qr-caption{margin-top:7px;font-size:12px;line-height:1.35;color:var(--muted);}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
-  .btn-primary{background:#E01A2B;color:#FFFFFF;border:none;transition:background-color .2s, opacity .2s;}
-  .btn-primary:hover{opacity:.9;}
-  .preview-col{position:static;}
-  .poster-edit-help {
-    color:#6B7280;
-    font-family:var(--font-ui);
-    font-size:13px;
-    line-height:1.35;
-    font-weight:400!important;
-    margin:0 auto 12px;
-    max-width:540px;
-    text-align:center;
-  }
-  .poster-edit-help p {
-    margin:0 0 6px;
-    font-weight:400!important;
-  }
-  .poster-edit-help p:last-child {
-    margin-bottom:0;
-  }
-  .poster-edit-help button {
-    border:0;
-    background:transparent;
-    color:#152B50;
-    cursor:pointer;
-    font:inherit;
-    font-weight:600!important;
-    padding:0;
-    text-decoration:underline;
-    transition:color 0.2s;
-  }
-  .poster-edit-help button:hover {
-    color:#0D8BFF;
-    text-decoration:none;
-  }
-  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:24px 4px 12px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);max-width:640px;margin:0 auto;}
-  .visual-hint{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;}
-  .poster-stage{position:relative;width:100%;max-width:500px;}
-  canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 6px 16px rgba(0,0,0,.07);display:block;}
-  .edit-overlay{position:absolute;inset:0;border-radius:0;pointer-events:none;}
-  .edit-hotspot{position:absolute;transform:translate(-50%,-76%);min-width:34px;min-height:18px;border:1px solid transparent;border-radius:3px;pointer-events:auto;cursor:text;background:transparent;padding:0;appearance:none;}
-  .edit-hotspot.admin-draggable{cursor:pointer;border-color:transparent;background:transparent;}
-  .edit-hotspot.admin-draggable:hover,
-  .edit-hotspot.admin-draggable.selected{border-color:rgba(11,19,43,.42);background:rgba(11,19,43,.055);}
-  .edit-hotspot.text-hotspot.admin-draggable.selected,
-  .edit-hotspot.text-hotspot.admin-draggable:hover{border-color:transparent!important;background:transparent!important;}
-  .edit-hotspot.edit-row-hotspot.admin-draggable.selected,
-  .edit-hotspot.edit-row-hotspot.admin-draggable:hover{border-color:transparent!important;background:transparent!important;}
-  .poster-stage.line-editing .edit-hotspot.text-hotspot.admin-draggable:hover,
-  .poster-stage.line-editing .edit-hotspot.edit-row-hotspot.admin-draggable:hover{border-color:rgba(11,19,43,.22)!important;background:rgba(11,19,43,.025)!important;}
-  .text-selection-frame{position:absolute;z-index:6;border:1.5px solid rgba(11,19,43,.82);background:rgba(11,19,43,.055);border-radius:4px;pointer-events:none;box-shadow:0 0 0 2px rgba(255,255,255,.72);}
-  .text-selection-frame.block-selection{border-style:dashed;border-color:rgba(11,19,43,.48);background:rgba(11,19,43,.035);}
-  .text-selection-frame.line-selection{border-color:rgba(11,19,43,.88);background:rgba(11,19,43,.065);}
-  .text-selection-frame.line-hover{border-color:rgba(11,19,43,.24);background:rgba(11,19,43,.025);box-shadow:none;}
-  .admin-guide{display:none;position:absolute;pointer-events:none;background:rgba(11,19,43,.52);z-index:3;}
-  .admin-guide.v{top:0;bottom:0;width:1px;left:50%;}
-  .admin-guide.h{left:0;right:0;height:1px;top:50%;}
-  .admin-guide.selected-v{top:0;bottom:0;width:1px;background:rgba(224,26,43,.72);}
-  .admin-guide.selected-h{left:0;right:0;height:1px;background:rgba(224,26,43,.72);}
-  .poster-stage.admin-guides .admin-guide.v,
-  .poster-stage.admin-guides .admin-guide.h{display:block;}
-  .edit-hotspot.align-left{transform:translate(0,-76%);}
-  .edit-hotspot.qr-hotspot{transform:none!important;}
-  .edit-hotspot.align-right{transform:translate(-100%,-76%);}
-  .edit-hotspot:hover{border-color:rgba(13,139,255,.9);background:rgba(13,139,255,.08);}
-  .visual-editor{
-    position:absolute;z-index:5;border:1.5px solid rgba(13,139,255,.9);border-radius:3px;
-    background:rgba(13,139,255,.06);color:inherit;padding:0 2px;
-    font-family:inherit;font-size:inherit;line-height:inherit;resize:none;
-    box-shadow:0 0 0 2px rgba(255,255,255,.16);outline:none;pointer-events:auto;
-    overflow:hidden;
-  }
-  .preview-caption{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
-  .preview-actions{width:100%;max-width:500px;margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:12px;}
-  .poster-actions-stack {
-    position: absolute;
-    left: -48px;
-    top: 20px;
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
-  }
-  .poster-actions-stack.right {
-    left: auto;
-    right: -48px;
-  }
-  .action-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .action-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--border);
-    background: #fff;
-    color: var(--muted);
-    border-radius: 50%;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .action-btn:hover {
-    background: #F7F8FA;
-    color: var(--ink);
-  }
-  .action-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  .action-label {
-    font-family: var(--font-ui);
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: lowercase;
-  }
-  @media (max-width: 1100px) {
-    .poster-actions-stack {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      flex-direction: row;
-      gap: 12px;
-    }
-  }
-
-  .preview-icon{width:30px;height:30px;border:0;background:transparent;color:var(--muted);border-radius:50%;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.72;}
-  .preview-icon:hover,.preview-icon:focus{opacity:1;color:var(--ink);outline:none;background:#F7F8FA;}
-  .large-preview{position:fixed;inset:0;z-index:20000;background:rgba(255,255,255,.94);display:none;align-items:center;justify-content:center;padding:22px;}
-  .large-preview.open{display:flex;}
-  .large-preview img{max-width:96vw;max-height:90vh;object-fit:contain;box-shadow:0 8px 24px rgba(0,0,0,.10);background:#fff;}
-  .large-preview-close{position:absolute;right:22px;top:18px;width:38px;height:38px;border:1px solid var(--border);border-radius:50%;background:#fff;color:#111827;font-size:24px;line-height:1;cursor:pointer;}
-  .subtle-undo{
-    border:0;
-    background:transparent;
-    color:#4D6278;
-    border-radius:999px;
-    padding:7px 14px 7px 0;
-    font-family:var(--font-display);
-    font-size:12px;
-    font-weight:500;
-    letter-spacing:.01em;
-    text-transform:none;
-    cursor:pointer;
-    opacity:.76;
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-    transition:color .16s,opacity .16s;
-  }
-  .subtle-undo::before{
-    content:'↺';
-    background:transparent;
-    color:currentColor;
-    font-family:var(--font-display);
-    font-size:12px;
-    font-weight:300;
-    line-height:1;
-    text-align:center;
-  }
-  .subtle-undo:hover,.subtle-undo:focus{
-    opacity:1;
-    color:var(--ink);
-    outline:none;
-  }
-  .subtle-undo:disabled{opacity:.35;cursor:not-allowed;}
-  .scratchpad{margin-top:36px;border:1px solid #E2E5E9;border-radius:0;background:#FFFFFF;color:#5A626A;box-shadow:none;overflow:hidden;}
-  .scratchpad-head{display:flex;align-items:center;justify-content:space-between;background:#FFFFFF;border-bottom:1px solid #E2E5E9;padding:12px 16px;font-size:14px;font-weight:600;color:#6B7280;}
-  .scratchpad-toggle{width:24px;height:24px;border:none;background:transparent;color:#8E969F;border-radius:50%;font-size:18px;line-height:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
-  .scratchpad-toggle:hover{background:#EFEFEF;}
-  .scratchpad-body{padding:16px;}
-  .scratchpad textarea{width:100%;min-height:168px;border:0;background:#FFFFFF;color:#5A626A;font-family:var(--font-display);font-size:14px;line-height:1.5;resize:vertical;outline:none;}
-  .scratchpad textarea::placeholder{color:#D1D5DB;}
-  .scratchpad.collapsed .scratchpad-body{display:none;}
-  .scratchpad.collapsed .scratchpad-toggle::before{content:'+';}
-  .scratchpad:not(.collapsed) .scratchpad-toggle::before{content:'-';}
-  
-  .adv-ctrls {
-    margin-top: 8px;
-    display: none;
-    gap: 8px;
-    flex-wrap: wrap;
-    background: #fff;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-  }
-  .adv-ctrls button {
-    background: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-size: 11px;
-    padding: 4px 8px;
-    cursor: pointer;
-    color: #fff;
-  }
-  .adv-ctrls button:hover { opacity: 0.8; }
-  
-  /* Figma-Style Sidebar */
-  body.admin-active {
-    padding-right: 0;
-    transition: padding 0.2s ease;
-  }
-  .options-col {
-    position: sticky;
-    top: 20px;
-    align-self: start;
-    /* max-height removed */
-    display: flex;
-    flex-direction: column;
-  }
-  body.admin-active #step3FinishWrapper {
-    display: none !important;
-  }
-  body.admin-active .figma-sidebar {
-    display: flex !important;
-  }
-  .figma-sidebar {
-    position: static;
-    width: 100%;
-    /* max-height removed */
-    height: auto;
-    background: #F3F4F6;
-    color: #1F2937;
-    border: 1px solid #E5E7EB;
-    border-radius: 14px;
-    font-family: var(--font-ui);
-    font-size: 12px;
-    z-index: 10;
-    box-shadow: 0 2px 10px rgba(15,23,42,0.05);
-    display: none;
-    flex-direction: column;
-    overflow: visible;
-  }
-  .figma-sidebar,
-  .figma-sidebar * {
-    box-sizing: border-box;
-    max-width: 100%;
-  }
-  .sidebar-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: #F3F4F6;
-    border-bottom: 1px solid #E5E7EB;
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex: 0 0 auto;
-  }
-  .sidebar-scroll-area {
-    flex: 1 1 auto;
-    /* min-height removed */
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 12px 12px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .sidebar-heading-copy {
-    display:flex;
-    flex-direction:column;
-    gap:5px;
-    min-width:0;
-  }
-  .sidebar-title {
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #111827;
-  }
-  .sidebar-caption {
-    color:#6B7280;
-    font-size:11px;
-    line-height:1.35;
-    letter-spacing:0;
-    max-width:245px;
-    text-transform:none;
-  }
-  .sidebar-close-btn {
-    background: transparent;
-    border: none;
-    color: #6B7280;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: var(--font-display);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    transition: background 0.15s, color 0.15s;
-  }
-  .sidebar-close-btn:hover {
-    color: #111827;
-    background: #E5E7EB;
-  }
-  .sidebar-close-btn .x-icon {
-    font-size: 18px;
-    font-weight: normal;
-    line-height: 1;
-    margin-left: 2px;
-  }
-  .sidebar-head-actions {
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-left:auto;
-    padding-top:0;
-    flex:0 0 auto;
-  }
-  .header-save-btn {
-    width:auto;
-    min-width:100px;
-    padding:6px 12px;
-    font-size:11px;
-    line-height:1.1;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    background: #0B132B;
-    border: 1px solid #0B132B;
-    color: #FFFFFF;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
-  }
-  .header-save-btn:hover {
-    background: #152B50;
-    border-color: #152B50;
-    color: #FFFFFF;
-  }
-  .header-save-btn::after {
-    content:'';
-    width:12px;
-    height:12px;
-    display:inline-block;
-    background:#FFFFFF;
-    flex-shrink:0;
-    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8A2 2 0 0 1 21 8.8V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'/%3E%3Cpath d='M17 21v-7H7v7'/%3E%3Cpath d='M7 3v5h8'/%3E%3C/svg%3E") center / contain no-repeat;
-    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8A2 2 0 0 1 21 8.8V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'/%3E%3Cpath d='M17 21v-7H7v7'/%3E%3Cpath d='M7 3v5h8'/%3E%3C/svg%3E") center / contain no-repeat;
-  }
-  .header-save-btn.saved-success {
-    background: #177245 !important;
-    border-color: #177245 !important;
-    color: #FFFFFF !important;
-  }
-  .header-save-btn.saved-success::after {
-    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / contain no-repeat;
-    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / contain no-repeat;
-  }
-  .sidebar-section {
-    padding: 8px 12px 14px;
-  }
-  .section-title {
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: #111827;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .no-selection-msg {
-    margin: 8px 12px 14px;
-    padding: 28px 16px;
-    background:#FFFFFF;
-    border:1px solid #E5E7EB;
-    border-radius:12px;
-    color: #6B7280;
-    text-align: center;
-    font-style: italic;
-  }
-  .property-group {
-    margin: 0 0 12px;
-    padding: 14px;
-    background:#FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-  }
-  .property-group:last-child {
-    margin-bottom: 0;
-  }
-  .group-title {
-    font-weight: 600;
-    color: #6B7280;
-    margin-bottom: 8px;
-    font-size: 11px;
-  }
-  .figma-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    align-items: center;
-  }
-  .figma-row:last-child {
-    margin-bottom: 0;
-  }
-  .figma-col {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-  }
-  .figma-col.full-width {
-    flex: 0 0 100%;
-  }
-  .figma-col label {
-    font-size: 10px;
-    color: #6B7280;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-  }
-  .editor-subhead {
-    color: #111827;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin: 0 0 12px;
-  }
-  .selected-text-summary {
-    color: #111827;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-  .selected-text-preview {
-    color: #6B7280;
-    font-size: 11px;
-    line-height: 1.35;
-    margin-bottom: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .edit-scope-label {
-    color: #6B7280;
-    font-size: 10px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .editor-mode-footnote {
-    margin-top: 4px;
-    color: #6B7280;
-    font-weight: 400;
-  }
-  .field-label-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 5px;
-  }
-  .field-label-row label {
-    margin: 0;
-  }
-  .field-reset-btn {
-    flex: 0 0 auto;
-    border: 1px solid #D1D5DB;
-    background: #F9FAFB;
-    color: #6B7280;
-    border-radius: 4px;
-    font-family: var(--font-ui);
-    font-size: 10px;
-    line-height: 1;
-    padding: 3px 6px;
-    cursor: pointer;
-  }
-  .field-reset-btn:hover {
-    background: #EEF6FF;
-    color: #111827;
-  }
-  .figma-sidebar input[type=text],
-  .figma-sidebar input[type=number],
-  .figma-sidebar select {
-    width: 100%;
-    min-width: 0;
-    background: #F9FAFB;
-    border: 1px solid #D1D5DB;
-    border-radius: 4px;
-    color: #111827;
-    padding: 6px 8px;
-    font-size: 12px;
-    outline: none;
-    font-family: inherit;
-  }
-  .figma-sidebar input[type=text]:focus,
-  .figma-sidebar input[type=number]:focus,
-  .figma-sidebar select:focus {
-    border-color: #0B132B;
-    box-shadow:0 0 0 2px rgba(11,19,43,.08);
-  }
-  .figma-btn {
-    flex: 1;
-    background: #F3F4F6;
-    border: 1px solid #D1D5DB;
-    border-radius: 4px;
-    color: #111827;
-    padding: 6px 10px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    font-size: 11px;
-    transition: background 0.15s;
-  }
-  .figma-btn:hover {
-    background: #E5E7EB;
-  }
-  .figma-btn.primary {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #FFFFFF;
-  }
-  .figma-btn.primary:hover {
-    opacity: 0.9;
-  }
-  .figma-btn.danger {
-    background: #E01A2B;
-    border-color: #E01A2B;
-    color: #FFFFFF;
-  }
-  .figma-btn.danger:hover {
-    background: #C01422;
-  }
-  .segment-control {
-    display: flex;
-    background: #F9FAFB;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    overflow: hidden;
-    padding: 2px;
-  }
-  .segment-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: #4B5563;
-    padding: 5px 4px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 500;
-    border-radius: 4px;
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-  }
-  .segment-btn:hover {
-    color: #111827;
-    background: #EEF6FF;
-  }
-  .segment-btn.active {
-    background: #EBF2FA;
-    color: #0B132B;
-    font-weight: 700;
-    box-shadow: inset 0 0 0 1px #92A9C8;
-  }
-  .check-row {
-    gap: 8px;
-    cursor: pointer;
-  }
-  .check-row input[type=checkbox] {
-    accent-color: #0B132B;
-    width: 14px;
-    height: 14px;
-  }
-  .save-status {
-    font-size: 10px;
-    color: #008F5A;
-    margin-top: 8px;
-    text-align: center;
-  }
-  .control-note {
-    color: #6B7280;
-    font-size: 11px;
-    line-height: 1.35;
-    margin: -4px 0 12px;
-  }
-  .font-note {
-    margin: 8px 0 16px;
-  }
-  .settings-toggle-row {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:10px;
-  }
-  .settings-toggle-text {
-    display:flex;
-    flex-direction:column;
-    gap:3px;
-    min-width:0;
-  }
-  .settings-toggle-row span {
-    color:#374151;
-    font-size:12px;
-    font-weight:600;
-  }
-  .settings-toggle-help {
-    color:#6B7280;
-    font-size:10px;
-    line-height:1.25;
-    font-weight:400;
-  }
-  .switch-toggle {
-    position:relative;
-    width:42px;
-    height:22px;
-    border:0;
-    border-radius:999px;
-    background:#D1D5DB;
-    cursor:pointer;
-    flex:0 0 auto;
-    transition:background .18s ease;
-  }
-  .switch-toggle::after {
-    content:'';
-    position:absolute;
-    width:18px;
-    height:18px;
-    left:2px;
-    top:2px;
-    border-radius:50%;
-    background:#FFFFFF;
-    box-shadow:0 1px 2px rgba(15,23,42,.22);
-    transition:transform .18s ease;
-  }
-  .switch-toggle.active {
-    background:#0B132B;
-  }
-  .switch-toggle.active::after {
-    transform:translateX(20px);
-  }
-  .move-line-control {
-    margin-top: 2px;
-  }
-  .move-line-header {
-    color:#6B7280;
-    font-size:10px;
-    font-weight:700;
-    text-transform:uppercase;
-    margin-bottom:6px;
-  }
-  .move-line-row {
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:14px;
-  }
-  .move-pad {
-    display:grid;
-    grid-template-columns: 44px 44px 44px;
-    grid-template-rows: 42px 42px;
-    gap:6px;
-    justify-content:start;
-  }
-  .nudge-step-row {
-    flex: 1;
-    margin: 0;
-  }
-  .nudge-step-row .figma-col {
-    flex: 1;
-    width: auto;
-  }
-  .nudge-step-row input {
-    width: 60px;
-    min-width: 60px;
-  }
-  .px-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .figma-sidebar .px-input-wrap input {
-    width: 60px !important;
-    min-width: 60px !important;
-  }
-  #prop-nudge-step {
-    width: 80px !important;
-    min-width: 80px !important;
-    text-align: center;
-  }
-  .px-suffix{font-family:var(--font-ui);font-size:11px;color:#6B7280;font-weight:600;}
-  .move-undo-btn{align-self:flex-end;margin-bottom:0;}
-  .move-side-controls {
-    display:flex;
-    align-items:flex-start;
-    gap:6px;
-    flex:0 0 auto;
-  }
-  .move-pad .nudge-control:nth-child(1){grid-column:2;grid-row:1;}
-  .move-pad .nudge-control:nth-child(2){grid-column:1;grid-row:2;}
-  .move-pad .nudge-control:nth-child(3){grid-column:2;grid-row:2;}
-  .move-pad .nudge-control:nth-child(4){grid-column:3;grid-row:2;}
-  .nudge-btn {
-    background:#F3F4F6;
-    border:1px solid #D1D5DB;
-    border-radius:4px;
-    color:#111827;
-    cursor:pointer;
-    font-size:15px;
-    line-height:1;
-    width:100%;
-    height:26px;
-  }
-  .nudge-btn:hover{background:#E5E7EB;}
-  .nudge-label {
-    display:block;
-    margin-top:3px;
-    color:#6B7280;
-    font-size:9px;
-    line-height:1;
-    text-align:center;
-  }
-  .figma-sidebar .sidebar-section:first-of-type {
-    padding-top: 8px;
-  }
-  .layer-context-menu {
-    position: fixed;
-    z-index: 30000;
-    display: none;
-    min-width: 190px;
-    background: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    box-shadow: 0 10px 24px rgba(15,23,42,.16);
-    padding: 6px;
-    font-family: var(--font-ui);
-  }
-  .layer-context-menu.open { display: block; }
-  .layer-context-menu button {
-    width: 100%;
-    border: 0;
-    background: transparent;
-    border-radius: 4px;
-    color: #111827;
-    cursor: pointer;
-    display: block;
-    font: inherit;
-    font-size: 12px;
-    padding: 8px 9px;
-    text-align: left;
-  }
-  .layer-context-menu button:hover { background: #EEF6FF; }
-  .layer-context-menu button:disabled {
-    color: #9CA3AF;
-    cursor: not-allowed;
-    background: transparent;
-  }
-  .layer-context-menu .menu-note {
-    color: #6B7280;
-    font-size: 10px;
-    line-height: 1.3;
-    padding: 5px 9px 3px;
-  }
-  .admin-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  .admin-actions .figma-btn {
-    width: 100%;
-    max-width: 220px;
-    flex: 0 0 auto;
-  }
-  .actions-section {
-    border-top: 0;
-    margin: 0 12px 14px;
-    padding: 10px 0 0;
-    order: 50;
-  }
-  .top-delete-actions {
-    width:100%;
-    max-width:220px;
-    display:flex;
-    flex-direction:row;
-    align-items:center;
-    gap:6px;
-  }
-  .top-delete-actions .group-title {
-    margin-bottom:0;
-  }
-  .top-delete-actions .figma-row {
-    flex:1;
-    align-items:stretch;
-    margin:0;
-  }
-  .top-delete-actions .figma-btn {
-    max-width:none;
-  }
-  .top-delete-actions .figma-btn:disabled {
-    opacity:.45;
-    cursor:not-allowed;
-  }
-  .top-undo-btn {
-    width:32px;
-    height:32px;
-    border:1px solid #D1D5DB;
-    border-radius:4px;
-    background:#F9FAFB;
-    color:#374151;
-    cursor:pointer;
-    flex:0 0 32px;
-    font-size:16px;
-    line-height:1;
-  }
-  .top-undo-btn:disabled {
-    opacity:.35;
-    cursor:not-allowed;
-  }
-  .top-undo-btn:not(:disabled):hover {
-    background:#EEF6FF;
-    border-color:#0B132B;
-  }
-  input[type=color] {
-    width: 100%;
-    height: 28px;
-    padding: 0;
-    border: 1px solid #D1D5DB;
-    border-radius: 4px;
-    background: #F9FAFB;
-    cursor: pointer;
-  }
-  .editor-subhead,
-  .figma-col label,
-  .move-line-header,
-  .edit-scope-label,
-  .group-title,
-  .selected-text-summary,
-  .selected-text-preview,
-  .figma-btn,
-  .segment-btn,
-  .nudge-label,
-  .control-note,
-  .no-selection-msg {
-    font-family: var(--font-ui);
-  }
-  .edit-scope-label {
-    color:#374151;
-    font-size:12px;
-    font-weight:600;
-    margin:0 0 7px;
-    text-transform:none;
-    letter-spacing:0;
-  }
-  .selected-text-group {
-    background:#FFFFFF;
-  }
-  .selected-text-preview {
-    color:#111827;
-    background:#FFFFFF;
-    border:1px solid #EEF0F3;
-    border-radius:7px;
-    padding:8px 10px;
-    margin-bottom:12px;
-  }
-  .secondary-text-actions {
-    background: #FFFFFF;
-  }
-  .secondary-text-actions .admin-actions {
-    align-items:stretch;
-  }
-  .secondary-text-actions .figma-btn {
-    max-width:none;
-  }
-  .fine-adjustments {
-    border-bottom:1px solid #E5E7EB;
-  }
-  .fine-adjustments summary {
-    cursor:pointer;
-    color:#374151;
-    font:600 12px var(--font-ui);
-    list-style:none;
-    margin-bottom:0;
-  }
-  .fine-adjustments summary::-webkit-details-marker { display:none; }
-  .fine-adjustments summary::after {
-    content:'▾';
-    float:right;
-    color:#6B7280;
-  }
-  .fine-adjustments[open] summary::after { content:'▴'; }
-  .fine-adjustments[open] summary {
-    margin-bottom:12px;
-  }
-  #group-effects {
-    margin-top: 2px;
-    padding-top: 12px;
-    border-top: 1px solid #EEF0F3;
-  }
-  #shadow-properties {
-    margin-top: 10px;
-  }
-  .secondary-text-actions .figma-btn {
-    background:transparent;
-  }
-  .secondary-text-actions .figma-btn:hover {
-    background:#EEF0F3;
-  }
-  .secondary-text-actions #delete-selected-line-btn {
-    color:#6B7280;
-  }
-  .secondary-text-actions #delete-selected-line-btn:not(:disabled):hover {
-    color:#991B1B;
-  }
-  #qrHidden{position:absolute;left:-9999px;top:-9999px;}
-  /* Custom Modal Styles */
-  .custom-modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 99999;
-    opacity: 0; transition: opacity 0.2s ease;
-    backdrop-filter: blur(2px);
-  }
-  .custom-modal-overlay.visible { opacity: 1; }
-  .custom-modal-box {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 12px; padding: 24px;
-    width: 90%; max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    font-family: var(--font-ui); color: var(--text);
-    transform: translateY(20px); transition: transform 0.2s ease;
-  }
-  .custom-modal-overlay.visible .custom-modal-box { transform: translateY(0); }
-  .custom-modal-msg { font-size: 15px; margin-bottom: 20px; line-height: 1.4; color: var(--text); }
-  .custom-modal-input {
-    width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 20px;
-    border: 1px solid var(--border); border-radius: 6px;
-    background: var(--panel); color: var(--text); font-family: var(--font-ui);
-    font-size: 14px;
-  }
-  .custom-modal-input:focus { border-color: #E01A2B; outline: none; }
-  .custom-modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
-  .custom-modal-btn {
-    padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border);
-    background: var(--panel); color: var(--text); cursor: pointer; font-weight: 600;
-    font-size: 14px; font-family: var(--font-ui); transition: all 0.15s ease;
-  }
-  .custom-modal-btn:hover { background: var(--border); }
-  .custom-modal-btn.primary { background: #E01A2B; color: #fff; border-color: #E01A2B; }
-  .custom-modal-btn.primary:hover { background: #C81423; }
-  @media (min-width: 1670px) {
-    .toolbar-inner { padding: 19px 24px; }
-    .toolbar h1 { font-size: 15.75px; }
-    .toolbar .sub { font-size: 11.55px; }
-    .step-tag { font-size: 11px; }
-    .step-chip { font-size: 9.9px; }
-    .step-description, .poster-edit-help, .poster-edit-help p { font-size: 13.75px; }
-    .field label { font-size: 15.4px; }
-  }
-  .large-preview-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 10000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-  .large-preview-overlay.open { display: flex; }
-  .large-preview-content { display: flex; justify-content: center; align-items: center; }
-  .large-preview-content img { max-width: 100%; max-height: 90vh; object-fit: contain; }
-  .close-preview-btn {
-    position: absolute; top: 20px; right: 24px;
-    background: none; border: none; color: #fff;
-    font-size: 40px; cursor: pointer; line-height: 1;
-  }
-</style>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="./firebase-init.js"></script>
-</head>
-<body>
-<div class="toolbar">
-  <div class="toolbar-inner" style="display:flex;">
-    <h1>Poster Generator</h1>
-    <div class="sub" style="margin-left: 12px; position:relative; padding-left:14px;"><span style="position:absolute; left:0; opacity:0.5;">/</span>multi-city event poster tool</div>
-    <div class="auth-ui" id="authUiContainer" style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-family: var(--font-ui);">
-      <!-- Populated by JS -->
-    </div>
-  </div>
-</div>
-<div class="mobile-warning">
-  For proper editor view, please use the desktop version of the tool.
-</div>
-<div class="wrap">
-
-  <div class="content">
-    <div class="grid">
-      <div class="templates-col">
-        <div class="column-intro">
-        <div class="step-tag"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
-          <p class="step-description"><b>Pick</b> a poster design.</p>
-        </div>
-        <div class="panel" style="padding-top:24px; padding-bottom: 24px;">
-          <div class="templates" id="templatePicker"></div>
-        </div>
-      </div>
-
-	  <div class="preview-col">
-      <div class="column-intro">
-        <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEMPLATE</div>
-        <div class="poster-edit-help">
-          <p>Edit or remove the text lines directly on the poster.</p>
-          <p style="margin-top: 12px;">For more text or layout edits - use <button type="button" onclick="toggleAdminMode(true)" style="color: var(--blue) !important; font-weight: 600;">Full Editor</button>.</p>
-        </div>
-      </div>
-	    <div class="canvas-shell">
-	      <div class="poster-stage" id="posterStage">
-          <div class="poster-actions-stack">
-            <div class="action-item">
-              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-              <span class="action-label">restore</span>
-            </div>
-            <div class="action-item">
-              <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-              <span class="action-label">undo</span>
-            </div>
-          </div>
-          <div class="poster-actions-stack right">
-            <div class="action-item">
-              <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-              <span class="action-label">zoom in</span>
-            </div>
-          </div>
-	        <canvas id="posterCanvas" width="792" height="1224"></canvas>
-	        <div class="edit-overlay" id="editOverlay"></div>
-	        <div class="admin-guide v"></div>
-	        <div class="admin-guide h"></div>
-	        <div class="admin-guide selected-v" id="selectedGuideV"></div>
-	        <div class="admin-guide selected-h" id="selectedGuideH"></div>
-	      </div>
-	    </div>
-	  </div>
-
-	  <div class="options-col" id="optionsCol">
-      <div id="step3FinishWrapper">
-        <div class="column-intro">
-          <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <div class="poster-edit-help">
-            <p><b>Choose</b> your <b>download format</b>.</p>
-            <p style="margin-top: 12px;">Add a QR code to your poster (if template supports).</p>
-          </div>
-        </div>
-	      <div class="panel">
-
-        <!-- QR CODE OPTIONS -->
-        <div class="field" id="qr-options-section">
-          <label style="color: #152B50; font-weight: bold;">Include QR Code on poster?</label>
-          <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
-            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 14px;">
-              <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
-            </label>
-            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 14px;">
-              <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
-            </label>
-          </div>
-        </div>
-
-        <div id="qr-link-section" style="margin-top: 12px; margin-bottom: 12px; display: none;">
-          <div class="field">
-            <label style="color: #152B50;">Type the link for the QR code here</label>
-            <div class="qr-input-wrap" id="qrInputWrap">
-              <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
-              <span class="qr-check-badge" title="Valid link">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </span>
-            </div>
-          </div>
-        </div>
-
-	      <div class="field">
-	        <label style="color: #152B50;">Download Format</label>
-	        <select id="f-format">
-	          <option value="png">PNG</option>
-	          <option value="pdf">PDF</option>
-	          <option value="jpeg">JPEG</option>
-	        </select>
-	      </div>
-
- 	      <div style="text-align: center; margin-top: 40px; margin-bottom: 10px; font-family: var(--font-ui); font-size: 11px; color: #6B7280;">
- 	        * Scan the QR code on the poster to test it before downloading
-	      </div>
-	      <button class="btn btn-primary" id="downloadBtn">Download poster</button>
-
-	      </div>
-
-	      <div class="copy-fields-hidden" aria-hidden="true">
-	      <input type="text" id="f-url" placeholder="terryfox.org">
-	      <input type="text" id="f-email" placeholder="TwinCitiesTerryFoxRun@outlook.com">
-	      <div class="field">
-	        <label>City / chapter name</label>
-	        <input type="text" id="f-city" placeholder="Silicon Valley" maxlength="30">
-	        <div class="adv-ctrls" data-key="city"></div>
-	      </div>
-
-          <div class="field">
-            <label>Event date</label>
-            <input type="text" id="f-date" placeholder="Sunday September 27 2026" maxlength="40">
-            <div class="adv-ctrls" data-key="date"></div>
-          </div>
-
-          <div class="field">
-            <label>Special guest line <span class="optional">(optional)</span></label>
-            <input type="text" id="f-guest" placeholder="With special guest, Darrell Fox, brother of Terry Fox" maxlength="80">
-            <div class="adv-ctrls" data-key="guest"></div>
-          </div>
-
-          <div class="field">
-            <label>Location</label>
-            <input type="text" id="f-location" placeholder="Bedwell Bayfront Park, City of Menlo Park" maxlength="60">
-            <div class="adv-ctrls" data-key="location"></div>
-          </div>
-
-          <div class="field">
-            <label>Address <span class="optional">(optional)</span></label>
-            <input type="text" id="f-location2" placeholder="660 N Desert Breeze Blvd E, Chandler" maxlength="80">
-            <div class="adv-ctrls" data-key="location2"></div>
-          </div>
-
-          <div class="field">
-            <label>Schedule</label>
-            <div class="row2">
-              <input type="text" id="f-t1" placeholder="Registration opens: 8:30" maxlength="30">
-              <input type="text" id="f-t2" placeholder="Opening ceremony: 09:40" maxlength="30">
-            </div>
-            <div style="height:8px"></div>
-            <input type="text" id="f-t3" placeholder="Fun run/walk starts: 10:00" maxlength="30">
-            <div class="adv-ctrls" data-key="schedule"></div>
-          </div>
-
-          <div class="field">
-            <label>Highlights <span class="optional">(optional)</span></label>
-            <input type="text" id="f-b1" placeholder="Highlight line 1" maxlength="80">
-            <div style="height:8px"></div>
-            <input type="text" id="f-b2" placeholder="Highlight line 2" maxlength="80">
-            <div class="adv-ctrls" data-key="bullets"></div>
-          </div>
-
-	      <div class="field">
-	        <label>Registration note <span class="optional">(optional)</span></label>
-	        <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office, scan the QR code, or visit:">
-	        <div class="adv-ctrls" data-key="footIntro"></div>
-	      </div>
-	      </div>
-      </div>
-
-      <div id="figmaSidebar" class="figma-sidebar">
-        <div class="sidebar-header">
-          <div class="sidebar-head-actions">
-            <button class="sidebar-close-btn" onclick="toggleAdminMode(false)" title="Hide inspector">
-              <span>Close Editor</span>
-              <span class="x-icon">&times;</span>
-            </button>
-          </div>
-        </div>
-        
-        <div class="sidebar-scroll-area">
-  
-  <div id="noLayerSelected" class="no-selection-msg">
-    Select text on the poster to edit it
-  </div>
-
-  <div id="adminLayerTools" class="sidebar-section" style="display: none;">
-    <div class="property-group selected-text-group" id="selectedTextGroup">
-      <div class="editor-subhead">Editing</div>
-      <div id="selectedTextSummary" class="selected-text-summary">Editing selected text</div>
-      <div id="selectedTextPreview" class="selected-text-preview"></div>
-      <div class="edit-scope-control">
-        <div class="edit-scope-label">Apply changes to</div>
-        <div class="segment-control edit-scope-buttons">
-          <button id="edit-scope-block" class="segment-btn active" onclick="setEditScope('block')">Whole text block</button>
-          <button id="edit-scope-line" class="segment-btn" onclick="setEditScope('line')">One line</button>
-        </div>
-      </div>
-    </div>
-    <!-- POSITION / LAYOUT -->
-    <div class="property-group" id="placementGroup">
-      <div class="editor-subhead">Placement</div>
-      <div class="figma-row">
-        <div class="figma-col full-width">
-          <label>Alignment</label>
-          <div class="segment-control">
-            <button id="template-align-left" class="segment-btn" onclick="alignToTemplate('left')">Left</button>
-            <button id="template-align-center" class="segment-btn" onclick="alignToTemplate('center')">Center</button>
-            <button id="template-align-right" class="segment-btn" onclick="alignToTemplate('right')">Right</button>
-          </div>
-        </div>
-      </div>
-      <div class="figma-row block-only-control">
-        <div class="figma-col full-width">
-          <div class="field-label-row">
-            <label>Text width</label>
-            <button type="button" class="field-reset-btn" onclick="resetSelectedField('maxW')" title="Reset text width">↺</button>
-          </div>
-          <input type="number" step="1" id="prop-maxW" placeholder="0" oninput="updateSelectedLayerProp('maxW', readNumericInput(this.value, 0)/(TEMPLATES[currentTpl].w || W))">
-        </div>
-      </div>
-      <div class="figma-row block-only-control" id="line-spacing-row">
-        <div class="figma-col full-width">
-          <div class="field-label-row">
-            <label>Line spacing</label>
-            <button type="button" class="field-reset-btn" onclick="resetSelectedField('lineHeight')" title="Reset line spacing">↺</button>
-          </div>
-          <input type="number" step="1" id="prop-line-spacing" placeholder="0" oninput="updateSelectedLineSpacing(readNumericInput(this.value, 0))">
-        </div>
-      </div>
-      <div class="move-line-control">
-        <div class="move-line-header">Move</div>
-        <div class="move-line-row">
-          <div class="move-pad" aria-label="Move selected line">
-            <div class="nudge-control">
-              <button class="nudge-btn" onclick="nudgeSelectedLayer(0,-1)" title="Move up">↑</button>
-              <span class="nudge-label">Up</span>
-            </div>
-            <div class="nudge-control">
-              <button class="nudge-btn" onclick="nudgeSelectedLayer(-1,0)" title="Move left">←</button>
-              <span class="nudge-label">Left</span>
-            </div>
-            <div class="nudge-control">
-              <button class="nudge-btn" onclick="nudgeSelectedLayer(0,1)" title="Move down">↓</button>
-              <span class="nudge-label">Down</span>
-            </div>
-            <div class="nudge-control">
-              <button class="nudge-btn" onclick="nudgeSelectedLayer(1,0)" title="Move right">→</button>
-              <span class="nudge-label">Right</span>
-            </div>
-          </div>
-          <div class="figma-row nudge-step-row">
-            <div class="figma-col full-width" style="display: flex; flex-direction: column; gap: 8px;">
-              <label>Amount</label>
-              <div class="px-input-wrap" style="display: flex; align-items: center; gap: 4px;">
-                <input type="number" id="prop-nudge-step" min="1" step="1" value="32">
-                <span class="px-suffix">px</span>
-              </div>
-              <button class="top-undo-btn move-undo-btn" id="moveUndoBtn" onclick="undoLastUserEdit()" title="Undo last move" aria-label="Undo last move" disabled>↺</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="figma-row line-only-control" id="prop-group-container">
-        <button class="figma-btn" id="group-toggle-btn" onclick="toggleLayerGroup()">Adjust selected lines together</button>
-      </div>
-      <div class="control-note" id="group-help">Use One line mode to adjust selected lines together.</div>
-      <div id="autolayout-options" class="advanced-control" style="display:none;">
-        <div class="figma-row" id="prop-gap-container">
-          <div class="figma-col full-width">
-            <label>Selected line spacing</label>
-            <input type="text" inputmode="decimal" id="prop-gap" oninput="updateGroupGap(readNumericInput(this.value, 0))">
-          </div>
-        </div>
-        <div class="figma-row">
-          <div class="figma-col full-width">
-            <label>Layout position</label>
-            <select id="prop-layout-rule" onchange="updateAutoLayoutRule(this.value)">
-              <option value="centered">Center</option>
-              <option value="right">Right Aligned</option>
-              <option value="left">Left Aligned</option>
-            </select>
-          </div>
-        </div>
-        <div class="figma-row">
-          <div class="figma-col">
-            <label>Letter spacing</label>
-            <input type="text" inputmode="numeric" id="prop-group-letter-spacing" oninput="updateGroupLetterSpacing(readNumericInput(this.value, 0))">
-          </div>
-          <div class="figma-col">
-            <label>Line spacing</label>
-            <input type="text" inputmode="decimal" id="prop-group-line-spacing" oninput="updateGroupGap(readNumericInput(this.value, 0))">
-          </div>
-        </div>
-        <div class="figma-row">
-          <div class="figma-col full-width">
-            <label>Selected lines alignment</label>
-            <div class="segment-control">
-              <button id="group-align-left" class="segment-btn" onclick="alignSelectedGroup('left')">Left</button>
-              <button id="group-align-center" class="segment-btn" onclick="alignSelectedGroup('center')">Center</button>
-              <button id="group-align-right" class="segment-btn" onclick="alignSelectedGroup('right')">Right</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="figma-row prop-size-row advanced-control" id="prop-size-container" style="display:none;">
-        <div class="figma-col">
-          <label id="size-label">Size</label>
-          <input type="number" id="prop-size" step="0.1" oninput="updateSelectedLayerProp('size', parseFloat(this.value) || 0)">
-        </div>
-      </div>
-    </div>
-
-    <!-- TYPOGRAPHY -->
-    <div class="property-group" id="group-typography" style="display: none;">
-      <div class="editor-subhead">Text</div>
-      <div class="figma-row advanced-control">
-        <div class="figma-col full-width">
-          <label>Font</label>
-          <select id="prop-font-family" disabled>
-            <option value="RigidSquareWeb">Rigid Square</option>
-          </select>
-          <div class="control-note font-note">This template uses a fixed font.</div>
-        </div>
-      </div>
-      <div class="figma-row advanced-control">
-        <div class="figma-col full-width">
-          <label>Text Style</label>
-          <select id="prop-font-weight" onchange="updateSelectedLayerTypography()">
-            <option value="300">Light</option>
-            <option value="400">Regular</option>
-            <option value="600">SemiBold</option>
-            <option value="700">Bold</option>
-            <option value="900">ExtraBold</option>
-            <option value="italic">Italic</option>
-          </select>
-        </div>
-      </div>
-      <div class="figma-row">
-        <div class="figma-col full-width">
-          <label>Text Case</label>
-          <select id="prop-text-case" onchange="updateSelectedLayerTextCase(this.value)">
-            <option value="none">Default (As typed)</option>
-            <option value="uppercase">Uppercase (ALL CAPS)</option>
-            <option value="lowercase">Lowercase (all lowercase)</option>
-          </select>
-        </div>
-      </div>
-      <div class="figma-row">
-        <div class="figma-col">
-          <div class="field-label-row">
-            <label>Text size</label>
-            <button type="button" class="field-reset-btn" onclick="resetSelectedField('font')" title="Reset text size">↺</button>
-          </div>
-          <input type="number" id="prop-font-size" oninput="updateSelectedLayerTypography()">
-          <div id="prop-shrink-warning" style="display:none; color:#FF9900; font-size:10px; margin-top:5px; font-weight:normal; line-height:1.2; text-transform:none; letter-spacing:0;">Auto-shrunk to fit Row Width. Increase Row Width to make it larger.</div>
-        </div>
-        <div class="figma-col">
-          <div class="field-label-row">
-            <label>Letter spacing</label>
-            <button type="button" class="field-reset-btn" onclick="resetSelectedField('letterSpacing')" title="Reset letter spacing">↺</button>
-          </div>
-          <input type="number" id="prop-letter-spacing" oninput="updateSelectedLayerProp('letterSpacing', parseInt(this.value) || 0)">
-        </div>
-      </div>
-      <div class="figma-row" id="prop-bullet-container" style="display: none;">
-        <div class="figma-col full-width">
-          <label>Bullets</label>
-          <select id="prop-bullet-style" onchange="updateSelectedBulletStyle(this.value)">
-            <option value="none">No bullet</option>
-            <option value="dot">Dot bullet</option>
-            <option value="dash">Dash bullet</option>
-          </select>
-        </div>
-      </div>
-      <div id="group-effects" class="advanced-control">
-        <div class="group-title">Text shadow</div>
-        <div class="figma-row check-row">
-          <input type="checkbox" id="prop-shadow-enable" onchange="updateSelectedLayerShadow()">
-          <label for="prop-shadow-enable">Add shadow</label>
-        </div>
-        <div id="shadow-properties" style="display: none;">
-          <div class="figma-row">
-            <div class="figma-col full-width">
-              <label>Shadow Color</label>
-              <div class="segment-control">
-                <button id="shadow-color-dark" class="segment-btn" onclick="setShadowTone('dark')">Dark</button>
-                <button id="shadow-color-white" class="segment-btn" onclick="setShadowTone('white')">White</button>
-              </div>
-            </div>
-          </div>
-          <div class="figma-row">
-            <div class="figma-col full-width">
-              <label>Shadow Level</label>
-              <div class="segment-control">
-                <button id="shadow-level-1" class="segment-btn" onclick="setShadowLevel(1)">1</button>
-                <button id="shadow-level-2" class="segment-btn" onclick="setShadowLevel(2)">2</button>
-                <button id="shadow-level-3" class="segment-btn" onclick="setShadowLevel(3)">3</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="property-group" id="gridGroup" style="margin-top: 10px;">
-      <div class="settings-toggle-row" style="margin: 0;">
-        <div class="settings-toggle-text">
-          <span style="font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">Show Grid</span>
-        </div>
-        <button class="switch-toggle" id="grid-toggle-btn" onclick="toggleGrid()" aria-label="Show Grid" aria-pressed="false" style="margin: 0;"></button>
-      </div>
-    </div>
-  </div>
-  
-  <div class="sidebar-section">
-    <div class="property-group secondary-text-actions" style="margin-top: 10px;">
-      <div class="editor-subhead" style="margin-bottom: 10px;">Actions</div>
-      <div class="admin-actions">
-        <button class="figma-btn" onclick="addNewTextRow()">+ Add text</button>
-        <div class="top-delete-actions" id="top-delete-actions">
-          <div class="figma-row">
-            <button class="figma-btn" id="delete-selected-line-btn" onclick="deleteSelectedLayer()" disabled>Delete selected text</button>
-          </div>
-          <button class="top-undo-btn" id="topUndoBtn" onclick="undoLastUserEdit()" title="Undo last edit" aria-label="Undo last edit" disabled>↺</button>
-        </div>
-        <input type="file" id="customBgUpload" accept="image/*" style="display:none;" onchange="handleCustomUpload(event)">
-      </div>
-      <div id="adminSaveStatus" class="save-status"></div>
-    </div>
-  </div>
-  <textarea id="adminExportOutput" style="display:none;" readonly></textarea>
-        </div><!-- /.sidebar-scroll-area -->
-      </div><!-- /#figmaSidebar -->
-	  </div><!-- /.options-col -->
-
-<div id="qrHidden"></div>
-<div id="layerContextMenu" class="layer-context-menu" role="menu" aria-hidden="true">
-  <button type="button" id="copyLayerPropsBtn">Copy properties</button>
-  <button type="button" id="pasteLayerPropsBtn">Paste properties</button>
-  <button type="button" id="copyLetterSpacingBtn">Copy letter spacing</button>
-  <button type="button" id="pasteLetterSpacingBtn">Paste letter spacing</button>
-  <button type="button" id="copyLineSpacingBtn">Copy line spacing</button>
-  <button type="button" id="pasteLineSpacingBtn">Paste line spacing</button>
-  <button type="button" id="copyTextStyleBtn">Copy text style</button>
-  <button type="button" id="pasteTextStyleBtn">Paste text style</button>
-  <div class="menu-note" id="layerContextNote">Right-click a row to copy or paste.</div>
-</div>
-
-<script>
 window.onerror = function(message, source, lineno, colno, error) {
   const div = document.createElement('div');
   div.style.position = 'fixed';
@@ -1705,44 +40,27 @@ window.onunhandledrejection = function(event) {
    One shared "copy" object drives every template. Add a new template by
    describing where its layers sit -- the form and data never change.
    ========================================================================= */
-function getDraftValues(tplKey) {
-  const targetKey = tplKey || currentTpl;
-  if (targetKey === currentTpl) {
-    const values = {};
-    COPY_FIELD_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) values[id] = el.value;
-    });
-    return values;
-  }
-  let saved = null;
-  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(targetKey)) || 'null'); }
-  catch (e) { saved = null; }
-  return saved || getTemplateDefaults(targetKey);
-}
-
-function getCopy(tplKey){
-  const targetKey = tplKey || currentTpl;
-  const values = getDraftValues(targetKey);
-  const t1 = (values['f-t1'] || '').trim();
-  const t2 = (values['f-t2'] || '').trim();
-  const t3 = (values['f-t3'] || '').trim();
+function getCopy(){
+  const t1 = f('f-t1');
+  const t2 = f('f-t2');
+  const t3 = f('f-t3');
   const schedule = [t1, t2, t3].filter(Boolean).join('   \u2215   ');
   return {
-    city: (values['f-city'] || '').trim(),
-    date: (values['f-date'] || '').trim(),
-    guest: (values['f-guest'] || '').trim(),
-    location: (values['f-location'] || '').trim(),
-    location2: (values['f-location2'] || '').trim(),
+    city: f('f-city'),
+    date: f('f-date'),
+    guest: f('f-guest'),
+    location: f('f-location'),
+    location2: f('f-location2'),
     schedule: schedule,
-    b1: (values['f-b1'] || '').trim(),
-    b2: (values['f-b2'] || '').trim(),
-    bullets: [(values['f-b1'] || '').trim(), (values['f-b2'] || '').trim()].filter(Boolean),
-    url: (values['f-url'] || '').trim(),
-    email: (values['f-email'] || '').trim(),
-    footIntro: (values['f-footintro'] || '').trim(),
-    qrUrl: (values['f-qr-url'] || '').trim()
+    b1: f('f-b1'),
+    b2: f('f-b2'),
+    bullets: [f('f-b1'), f('f-b2')].filter(Boolean),
+    url: f('f-url'),
+    email: f('f-email'),
+    footIntro: f('f-footintro'),
+    qrUrl: f('f-qr-url')
   };
+  function f(id){ return document.getElementById(id).value.trim(); }
 }
 
 const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
@@ -1963,21 +281,21 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0566, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
+      { id:'city',     type:'text',   x:0.4995,y:0.0566, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
-      { id:'guest',    type:'edit_row', x:0.5000,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
-      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
-      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
+      { id:'guest',    type:'edit_row', x:0.4995,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
+      { id:'location', type:'text',   x:0.4977,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
+      { id:'location2', type:'text',   x:0.4993,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
       { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
       { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
       { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005 },
-      { id:'divider',  type:'rule',   x1:0.1300,x2:0.6589, y:0.9533, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
-      { id:'footer',   type:'qr_caption', x:0.1300,y:0.9679, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'footIntro', type:'edit_row', x:0.1300,y:0.9679, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'url',       type:'edit_row', x:0.1300,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
+      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005, pad:0 },
+      { id:'divider',  type:'rule',   x1:0.1298,x2:0.6589, y:0.9533, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
+      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9679, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
+      { id:'footIntro', type:'edit_row', x:0.1286,y:0.9679, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
+      { id:'url',       type:'edit_row', x:0.1286,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
@@ -1989,44 +307,9 @@ const TEMPLATES = {
     name: 'poster 8.5 X 11',
     kind: 'image',
     focal: { x: 0.5, y: 0.5 },
-    w: 2550,
-    h: 3300,
+    w: 2448,
+    h: 3168,
     src: "./template_8x11_clean.jpg",
-    ink: '#FFFFFF',
-    accent: '#202945',
-    qrBg: '#FFFFFF',
-    edgeColor: '#E63E30',
-    layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0392, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
-      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
-      { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
-      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
-      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8834, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
-      { id:'bullets',  type:'list',   x:0.5000,y:0.9008, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8834, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.9008, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9181, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9355, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0868 },
-      { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9527, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0450, noQrX2:0.5898 },
-      { id:'footer',   type:'qr_caption', x:0.1270,y:0.9709, align:'left', referenceStyle:true, font:'400 44px "RigidSquareWeb", sans-serif', boldFont:'700 44px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:56, noQrX:0.0450 },
-      { id:'footIntro', type:'edit_row', x:0.1270,y:0.9709, align:'left', field:'f-footintro', font:'400 44px "RigidSquareWeb", sans-serif', boldFont:'700 44px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:56, noQrX:0.0450 },
-      { id:'url',       type:'edit_row', x:0.1270,y:0.9879, align:'left', field:'f-url', font:'400 44px "RigidSquareWeb", sans-serif', boldFont:'700 44px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:56, noQrX:0.0450 }
-    ],
-    socialLayers: [
-      { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
-    ]
-  },
-
-  communityRunA3: {
-    name: 'poster A3',
-    kind: 'image',
-    focal: { x: 0.5, y: 0.42 },
-    stretch: true,
-    w: 3508,
-    h: 4960,
-    src: "./11x18_clean.jpg",
     ink: '#FFFFFF',
     accent: '#202945',
     qrBg: '#FFFFFF',
@@ -2047,42 +330,6 @@ const TEMPLATES = {
       { id:'footer',   type:'qr_caption', x:0.1300,y:0.9675, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
       { id:'footIntro', type:'edit_row', x:0.1300,y:0.9675, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
       { id:'url',       type:'edit_row', x:0.1300,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
-    ],
-    socialLayers: [
-      { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
-      { id:'date', type:'text', x:0.5, y:0.90, align:'center', font:'700 46px "RigidSquareWeb", sans-serif', color:'ink' }
-    ]
-  },
-
-  communityRunA4: {
-    name: 'poster A4',
-    kind: 'image',
-    focal: { x: 0.5, y: 0.5 },
-    stretch: true,
-    w: 2480,
-    h: 3508,
-    src: "./template_8x11_clean.jpg",
-    ink: '#FFFFFF',
-    accent: '#202945',
-    qrBg: '#FFFFFF',
-    edgeColor: '#E63E30',
-    layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0440, align:'center', font:'700 112px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
-      { id:'date',     type:'text',   x:0.5000,y:0.7594, align:'center', font:'700 116px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6880 },
-      { id:'guest',    type:'edit_row', x:0.5000,y:0.7843, align:'center', field:'f-guest', maxW:0.9500, lineHeight:50, font:'italic 400 48px "RigidSquareWeb", sans-serif' },
-      { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'600 68px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.8800, letterSpacing:2 },
-      { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'400 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.9500 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8834, align:'center', font:'400 44px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:55, bullet:true, includeBullets:true, maxItems:3 },
-      { id:'bullets',  type:'list',   x:0.5000,y:0.9008, align:'center', font:'500 48px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.2300, lineHeight:55, bullet:true, maxItems:2 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8834, align:'center', field:'f-t1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.9008, align:'center', field:'f-t2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9181, align:'center', field:'f-b1', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9355, align:'center', field:'f-b2', maxW:0.8800, lineHeight:55, font:'400 44px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.0953 },
-      { id:'divider',  type:'rule',   x1:0.1270,x2:0.6920, y:0.9521, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0450, noQrX2:0.5898 },
-      { id:'footer',   type:'qr_caption', x:0.1270,y:0.9703, align:'left', referenceStyle:true, font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.92, maxW:0.6060, lineHeight:61, noQrX:0.0450 },
-      { id:'footIntro', type:'edit_row', x:0.1270,y:0.9703, align:'left', field:'f-footintro', font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:61, noQrX:0.0450 },
-      { id:'url',       type:'edit_row', x:0.1270,y:0.9877, align:'left', field:'f-url', font:'300 42px "RigidSquareWeb", sans-serif', boldFont:'600 42px "RigidSquareWeb", sans-serif', maxW:0.6060, lineHeight:61, noQrX:0.0450 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
@@ -2185,11 +432,7 @@ function wrapLines(ctx, text, maxWidth, font){
   return lines;
 }
 
-function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}, stretch = false) {
-  if (stretch) {
-    ctx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dW, dH);
-    return;
-  }
+function drawCover(ctx, img, dx, dy, dW, dH, focal = {x:0.5, y:0.5}) {
   const srcW = img.width, srcH = img.height;
   const srcRatio = srcW / srcH;
   const dstRatio = dW / dH;
@@ -2265,7 +508,7 @@ function drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, boldPat
 }
 
 function drawEditRow(ctx, t, layer, copy, w, h, scale){
-  const source = styleSourceForLayer(layer) || layer;
+  const source = styleSourceForEditRow(t, layer);
   const rawText = getLayerEditValue(layer).trim();
   if (!rawText) return;
   const sourceFont = (layer.fixedFont || source.fixedFont) ? source.font : (layer.font || source.font || '500 24px sans-serif');
@@ -2310,7 +553,8 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
       return;
     }
     const text = rawText.replace(/^visit:\s*/i, '');
-    drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, null, spacing);
+    ctx.font = regularFont;
+    drawTextLine(ctx, text, x, y, layer);
     return;
   }
 
@@ -2345,7 +589,7 @@ function drawBackground(ctx, t, w, h){
   if (t.kind === 'image'){
     const img = bgImages[t._key];
     if (img && img.complete && img.naturalWidth > 0) {
-      drawCover(ctx, img, 0, 0, w, h, t.focal || {x:0.5, y:0.5}, t.stretch || false);
+      drawCover(ctx, img, 0, 0, w, h, t.focal || {x:0.5, y:0.5});
     }
   } else if (t.bg1 && t.bg2) {
     const grad = ctx.createLinearGradient(0,0,0,h);
@@ -2600,11 +844,6 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     ctx.stroke();
   }
 
-  if (layer.type === 'rect'){
-    ctx.fillStyle = resolveColor(t, layer.color);
-    ctx.fillRect(layer.x*w, layer.y*h, layer.w*w, layer.h*h);
-  }
-
   if (layer.type === 'qr'){
     const size = layer.size * w;
     const x = layer.x * w, y = layer.y * h;
@@ -2718,16 +957,15 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
   canvasEl._renderId = (canvasEl._renderId || 0) + 1;
   const currentRenderId = canvasEl._renderId;
 
-  const tplKey = t._key || currentTpl;
-  const copy = getCopy(tplKey);
-
   if (t.draw) {
+    const copy = getCopy();
     t.draw(ctx, wPx, hPx, copy);
     if (cb) cb();
     return;
   }
 
   drawBackground(ctx, t, wPx, hPx);
+  const copy = getCopy();
   const qrLayer = (layersToDraw || []).find(l => l.type === 'qr');
   const drawTextLayers = (qrCanvas) => {
     if (canvasEl._renderId !== currentRenderId) return;
@@ -2735,7 +973,7 @@ function renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, cb) {
     (layersToDraw || []).forEach(layer => { if (layer.type !== 'qr') drawLayer(ctx, t, layer, copy, wPx, hPx, null); });
     if (cb) cb();
   };
-  const qrUrl = qrUrlForTemplate(tplKey);
+  const qrUrl = qrUrlForTemplate();
   if (qrLayer && qrUrl){
     getQrCanvas(qrUrl, (qrCanvas) => drawTextLayers(qrCanvas));
   } else {
@@ -2839,30 +1077,19 @@ function isValidQrInput(value){
 const scheduleFields = ['f-t1', 'f-t2', 'f-t3', 'f-bullets'];
 const footerFields = ['f-footintro', 'f-url', 'f-email'];
 
-function qrUrlForTemplate(tplKey = currentTpl){
-  const t = TEMPLATES[tplKey];
-  if (!t) return '';
+function qrUrlForTemplate(){
+  const t = TEMPLATES[currentTpl];
   const hasQrLayer = (t.layers || []).some(layer => layer.type === 'qr');
   if (!hasQrLayer) return '';
-  if (!shouldShowQr(tplKey)) return '';
-  const copy = getCopy(tplKey);
-  const value = copy.qrUrl;
+  if (!shouldShowQr()) return '';
+  const value = document.getElementById('f-qr-url').value;
   return isValidQrInput(value) ? normalizedQrUrl(value) : '';
 }
 
-function shouldShowQr(tplKey = currentTpl){
-  if (!templateHasQrChoice(tplKey)) return false;
-  if (tplKey === currentTpl) {
-    const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
-    return showQrRadio ? showQrRadio.value === 'yes' : true;
-  }
-  let saved = null;
-  try { saved = JSON.parse(localStorage.getItem(draftStorageKey(tplKey)) || 'null'); }
-  catch (e) { saved = null; }
-  if (saved && saved['show-qr-radio'] !== undefined) {
-    return saved['show-qr-radio'] === 'yes';
-  }
-  return true;
+function shouldShowQr(){
+  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (!templateHasQrChoice()) return false;
+  return showQrRadio ? showQrRadio.value === 'yes' : true;
 }
 
 function templateHasQrChoice(tplKey = currentTpl){
@@ -2956,8 +1183,7 @@ let lastQrStatusText = '';
 let adminUndoStack = [];
 let isRestoringUndo = false;
 let activeEditingLayer = null;
-let isAdminMode = false;
-let editScope = 'block';
+let isAdminMode = true;
 let groupSeedLayer = null;
 let nextGroupId = 1;
 let isRebuildingOverlay = false;
@@ -2994,22 +1220,14 @@ function styleSourceForLayer(layer){
   return layer?.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
 }
 
-function isTextEditableLayer(layer){
-  return layer && !layer.hidden && !['qr','rule'].includes(layer.type);
-}
-
-function spacingRowsFromLayers(layers){
-  return (layers || []).filter(isTextEditableLayer);
-}
-
 function editRowsFromLayers(layers){
-  return spacingRowsFromLayers(layers);
+  return (layers || []).filter(layer => layer && !layer.hidden && layer.type === 'edit_row');
 }
 
 function readSpecificLayerProperty(layer, kind){
   const source = styleSourceForLayer(layer) || layer;
   if (kind === 'letterSpacing') return { letterSpacing: layer.letterSpacing ?? source.letterSpacing ?? 0 };
-  if (kind === 'lineSpacing') return { lineHeight: numericLineHeightForLayer(layer, 24) };
+  if (kind === 'lineSpacing') return { lineHeight: layer.lineHeight ?? source.lineHeight ?? 0 };
   if (kind === 'textStyle') {
     return {
       font: rigidFontString(layer.font || source.font),
@@ -3027,7 +1245,7 @@ function readSpecificLayerProperty(layer, kind){
 function applySpecificLayerProperty(layer, kind, props){
   if (kind === 'letterSpacing') layer.letterSpacing = props.letterSpacing ?? 0;
   if (kind === 'lineSpacing') {
-    const value = readPositiveSpacing(props.lineHeight, numericLineHeightForLayer(layer, 24));
+    const value = props.lineHeight ?? 0;
     applyLineSpacingToLayer(layer, value);
   }
   if (kind === 'textStyle') {
@@ -3063,7 +1281,7 @@ function pushUndoSnapshotFrom(copy, overrides){
 
 function updateUserUndoButton(){
   const btn = document.getElementById('userUndoBtn');
-  if (btn) btn.disabled = adminUndoStack.length === 0;
+  if (btn) btn.textContent = adminUndoStack.length ? 'Undo Last Edit' : 'Restore original text';
   const topUndo = document.getElementById('topUndoBtn');
   if (topUndo) topUndo.disabled = adminUndoStack.length === 0;
   const moveUndo = document.getElementById('moveUndoBtn');
@@ -3086,54 +1304,6 @@ function readNumericInput(value, fallback = 0){
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function readPositiveSpacing(value, fallback = 1){
-  return Math.max(1, Math.round(readNumericInput(value, fallback)));
-}
-
-function fontSizeFromFont(fontStr, fallback = 28){
-  const match = String(fontStr || '').match(/(\d+(?:\.\d+)?)px/);
-  return match ? parseFloat(match[1]) : fallback;
-}
-
-function numericLineHeightForLayer(layer, fallback = 24){
-  const source = styleSourceForLayer(layer) || layer || {};
-  const fontPx = fontSizeFromFont(layer?.font || source.font, fallback);
-  const defaultHeight = Math.round(fontPx * 1.2) || fallback;
-  return readPositiveSpacing(layer?.lineHeight ?? source.lineHeight ?? defaultHeight, defaultHeight);
-}
-
-function resetSelectedField(key){
-  if (!selectedAdminLayer) return;
-  pushUndoSnapshot();
-  const activeLayer = selectedAdminLayer;
-  const preservedSelection = [...selectedAdminLayers];
-  const rows = selectedRowsForSpacing();
-  const targets = rows.length ? rows : [selectedAdminLayer];
-  targets.forEach(layer => {
-    const source = styleSourceForLayer(layer) || layer;
-    if (key === 'maxW') {
-      layer.maxW = source && source !== layer && source.maxW !== undefined ? source.maxW : 0.5;
-    } else if (key === 'lineHeight') {
-      applyLineSpacingToLayer(layer, Math.round(fontSizeFromFont(layer.font || source.font, 24) * 1.2));
-    } else if (key === 'letterSpacing') {
-      layer.letterSpacing = source && source !== layer && source.letterSpacing !== undefined ? source.letterSpacing : 0;
-    } else if (key === 'font') {
-      const fontSize = fontSizeFromFont(source.font || layer.font, 28);
-      layer.font = rigidFontString(source.font || `400 ${fontSize}px ${RIGID_FONT_FAMILY}`);
-      if (layer.boldFont || source.boldFont) {
-        layer.boldFont = rigidFontString(source.boldFont || `700 ${fontSize}px ${RIGID_FONT_FAMILY}`);
-      }
-    }
-  });
-  saveLayerOverrides();
-  render(() => updateEditOverlay());
-  selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
-  selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-  updateAdminGuides();
-  selectAdminLayer(selectedAdminLayer);
-  updateTopLineActionState();
-}
-
 function saveLayerOverrides(){
   const t = TEMPLATES[currentTpl];
   if (!t) return;
@@ -3144,7 +1314,6 @@ function saveLayerOverrides(){
       y: layer.y,
       align: layer.align,
       hidden: !!layer.hidden,
-      alpha: layer.alpha,
       letterSpacing: layer.letterSpacing || 0,
       text: layer.text,
       font: layer.font,
@@ -3175,7 +1344,6 @@ function saveLayerOverrides(){
       y: layer.y,
       align: layer.align,
       hidden: !!layer.hidden,
-      alpha: layer.alpha,
       letterSpacing: layer.letterSpacing || 0,
       text: layer.text,
       font: layer.font,
@@ -3217,7 +1385,7 @@ function applyLayerOverrides(tplKey){
   (t.layers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','alpha','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
     normalizeLayerFonts(layer);
@@ -3226,7 +1394,7 @@ function applyLayerOverrides(tplKey){
   (t.socialLayers || []).forEach(layer => {
     const saved = merged[layer.id + ':' + layer.type + ':social'] || merged[layer.id + ':' + layer.type];
     if (!saved) return;
-    ['x','y','align','hidden','alpha','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
+    ['x','y','align','hidden','letterSpacing','text','font','size','lineWidth','x1','x2','shadow','maxW','bullet','bulletStyle','scaleX','maxItems','noQrX','noQrX1','noQrX2','lineHeight','group','autoLayout','layoutRule','groupAlign','textCase'].forEach(key => {
       if (saved[key] !== undefined) layer[key] = saved[key];
     });
     normalizeLayerFonts(layer);
@@ -3347,55 +1515,38 @@ function commitLayerEdit(layer, value, trackUndo = true){
 }
 
 function undoLastUserEdit(){
-  if (adminUndoStack.length === 0) return;
   const snapshot = adminUndoStack.pop();
   isRestoringUndo = true;
-  currentTpl = snapshot.tpl;
-  COPY_FIELD_IDS.forEach(id => {
-    const field = document.getElementById(id);
-    if (field && snapshot.copy[id] !== undefined) field.value = snapshot.copy[id];
-  });
-  localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
-  applyLayerOverrides(currentTpl);
+  if (snapshot){
+    currentTpl = snapshot.tpl;
+    COPY_FIELD_IDS.forEach(id => {
+      const field = document.getElementById(id);
+      if (field && snapshot.copy[id] !== undefined) field.value = snapshot.copy[id];
+    });
+    localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(snapshot.overrides || {}));
+    applyLayerOverrides(currentTpl);
+  } else {
+    const defaults = getTemplateDefaults(currentTpl);
+    COPY_FIELD_IDS.forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.value = defaults[id] || '';
+    });
+    const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
+    const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
+    if (radioYes) radioYes.checked = false;
+    if (radioNo) radioNo.checked = false;
+    const qrSection = document.getElementById('qr-link-section');
+    if (qrSection) qrSection.style.display = 'none';
+
+    localStorage.removeItem(overrideStorageKey(currentTpl));
+    applyLayerOverrides(currentTpl);
+  }
   selectedAdminLayer = null;
   saveCopyDraft(currentTpl);
   refreshActive();
   updateAdminGuides();
   render();
   isRestoringUndo = false;
-  updateUserUndoButton();
-}
-
-async function restoreOriginalTemplate(){
-  const confirmed = await customConfirm("Are you sure you want to restore the original text and layout coordinates?<br><br>This will clear your custom edits for this template.");
-  if (!confirmed) return;
-  
-  pushUndoSnapshot();
-  
-  // Revert template definitions to code defaults
-  TEMPLATES[currentTpl] = JSON.parse(JSON.stringify(ORIGINAL_TEMPLATES[currentTpl]));
-  TEMPLATES[currentTpl]._key = currentTpl;
-  
-  const defaults = getTemplateDefaults(currentTpl);
-  COPY_FIELD_IDS.forEach(id => {
-    const field = document.getElementById(id);
-    if (field) field.value = defaults[id] || '';
-  });
-  const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
-  const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
-  if (radioYes) radioYes.checked = false;
-  if (radioNo) radioNo.checked = false;
-  const qrSection = document.getElementById('qr-link-section');
-  if (qrSection) qrSection.style.display = 'none';
-
-  localStorage.removeItem(overrideStorageKey(currentTpl));
-  applyLayerOverrides(currentTpl);
-  
-  selectedAdminLayer = null;
-  saveCopyDraft(currentTpl);
-  refreshActive();
-  updateAdminGuides();
-  render();
   updateUserUndoButton();
   updateTopLineActionState();
 }
@@ -3405,12 +1556,10 @@ function openVisualEditor(layer, rect){
   const existing = editOverlay.querySelector('.visual-editor');
   if (existing) existing.remove();
   activeEditingLayer = layer;
-  render(() => mountVisualEditor(layer, rect || displayBoundsForLayer(layer)));
+  render(() => mountVisualEditor(layer, rect));
 }
 
 function mountVisualEditor(layer, rect){
-  rect = rect || displayBoundsForLayer(layer);
-  if (!rect) return;
   const currentValue = getLayerEditValue(layer);
   const editRowMultiLine = layer.type === 'edit_row' && (currentValue.indexOf('\n') !== -1 || currentValue.length > 34);
   const useTextarea = editRowMultiLine || (layer.type !== 'text' && layer.id !== 'date') || currentValue.length > 34;
@@ -3487,83 +1636,14 @@ function toggleGrid() {
   if (btn) {
     btn.classList.toggle('active', showGrid);
     btn.setAttribute('aria-pressed', showGrid ? 'true' : 'false');
-    btn.setAttribute('aria-label', showGrid ? 'Hide Grid' : 'Show Grid');
+    btn.setAttribute('aria-label', showGrid ? 'Hide Guides' : 'Show Guides');
   }
   updateAdminGuides();
   render();
 }
 
-function setEditScope(scope){
-  editScope = scope === 'line' ? 'line' : 'block';
-  if (editScope === 'block' && selectedAdminLayer) {
-    selectedAdminLayers = [selectedAdminLayer];
-  }
-  updateEditScopeUi();
-  updateSelectedTextSummary();
-  updateSidebarScopeVisibility();
-  updateEditOverlay();
-}
-
-function updateEditScopeUi(){
-  document.getElementById('edit-scope-block')?.classList.toggle('active', editScope === 'block');
-  document.getElementById('edit-scope-line')?.classList.toggle('active', editScope === 'line');
-  document.querySelector('.poster-stage')?.classList.toggle('line-editing', editScope === 'line');
-}
-
-function displayNameForLayer(layer){
-  if (!layer) return 'selected text';
-  if (layer.field) return layer.field.replace(/^f-/, '').replace(/[-_]+/g, ' ');
-  return (layer.id || layer.type || 'selected text').replace(/[-_]+/g, ' ');
-}
-
-function previewTextForLayer(layer){
-  if (!layer) return '';
-  const source = styleSourceForLayer(layer) || layer;
-  const text = (getLayerEditValue(layer) || layer.text || source.text || '').trim().replace(/\s+/g, ' ');
-  return text.length > 120 ? text.slice(0, 117) + '...' : text;
-}
-
-function updateSelectedTextSummary(){
-  const summary = document.getElementById('selectedTextSummary');
-  const preview = document.getElementById('selectedTextPreview');
-  if (!summary || !preview) return;
-  updateEditScopeUi();
-  if (!selectedAdminLayer) {
-    summary.textContent = 'No text selected';
-    preview.textContent = '';
-    return;
-  }
-  const selectedTextLayers = editRowsFromLayers(selectedAdminLayers);
-  const count = selectedTextLayers.length || 1;
-  if (editScope === 'line' && count > 1) {
-    summary.textContent = `${count} lines selected`;
-  } else if (editScope === 'line') {
-    summary.textContent = `1 line selected`;
-  } else {
-    summary.textContent = `Text block selected`;
-  }
-  preview.textContent = count > 1
-    ? selectedTextLayers.map(previewTextForLayer).filter(Boolean).slice(0, 3).join(' / ')
-    : previewTextForLayer(selectedAdminLayer);
-}
-
-function updateSidebarScopeVisibility(){
-  const selectedRows = editRowsFromLayers(selectedAdminLayers);
-  const hasMultiLineSelection = editScope === 'line' && selectedRows.length > 1;
-  const isLineScope = editScope === 'line';
-  document.querySelectorAll('.block-only-control').forEach(el => {
-    el.style.display = isLineScope ? 'none' : '';
-  });
-  document.querySelectorAll('.line-only-control').forEach(el => {
-    el.style.display = isLineScope ? '' : 'none';
-  });
-  const groupHelp = document.getElementById('group-help');
-  if (groupHelp) groupHelp.style.display = isLineScope && hasMultiLineSelection ? 'block' : 'none';
-  const autoLayoutOptions = document.getElementById('autolayout-options');
-  if (autoLayoutOptions) autoLayoutOptions.style.display = hasMultiLineSelection ? 'block' : 'none';
-}
-
 function selectAdminLayer(layer, additive = false){
+  if (!isAdminMode) return;
   selectedAdminLayer = layer;
   if (!layer) {
     selectedAdminLayers = [];
@@ -3586,8 +1666,6 @@ function selectAdminLayer(layer, additive = false){
     if (tools) tools.style.display = 'none';
     if (noSelection) noSelection.style.display = 'block';
     if (topDeleteActions) topDeleteActions.style.display = 'flex';
-    updateSelectedTextSummary();
-    updateSidebarScopeVisibility();
     updateTopLineActionState();
     return;
   }
@@ -3595,8 +1673,6 @@ function selectAdminLayer(layer, additive = false){
   if (tools) tools.style.display = 'block';
   if (noSelection) noSelection.style.display = 'none';
   if (topDeleteActions) topDeleteActions.style.display = 'flex';
-  updateSelectedTextSummary();
-  updateSidebarScopeVisibility();
   updateTopLineActionState();
   
   // Show warning if text is auto-shrunk
@@ -3629,26 +1705,22 @@ function selectAdminLayer(layer, additive = false){
   if (maxWInput) {
     const t = TEMPLATES[currentTpl];
     const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-    const designW = t.w || W;
-    const currentMaxW = layer.maxW || source.maxW || 0.5;
-    const widthPx = Math.max(1, Math.round(currentMaxW * designW));
-    maxWInput.value = String(widthPx);
-    maxWInput.placeholder = String(widthPx);
+    const currentMaxW = layer.maxW || source.maxW || 0;
+    maxWInput.value = currentMaxW ? (currentMaxW * 100).toFixed(1) : '';
   }
 
   const lineSpacingInput = document.getElementById('prop-line-spacing');
   if (lineSpacingInput) {
     const t = TEMPLATES[currentTpl];
     const selectedRows = selectedRowsForSpacing();
-    let currentLineHeight = numericLineHeightForLayer(layer, 24);
+    const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+    let currentLineHeight = layer.lineHeight || source.lineHeight || 0;
     if (selectedRows.length > 1) {
       const sorted = [...selectedRows].sort((a, b) => (a.y || 0) - (b.y || 0));
       const designH = t.h || H;
       currentLineHeight = Math.round(((sorted[1].y || 0) - (sorted[0].y || 0)) * designH) || currentLineHeight;
     }
-    const spacingPx = readPositiveSpacing(currentLineHeight, 1);
-    lineSpacingInput.value = String(spacingPx);
-    lineSpacingInput.placeholder = String(spacingPx);
+    lineSpacingInput.value = currentLineHeight ? String(Math.round(currentLineHeight)) : '';
   }
 
   const autoLayoutOptions = document.getElementById('autolayout-options');
@@ -3659,10 +1731,10 @@ function selectAdminLayer(layer, additive = false){
   const groupHelp = document.getElementById('group-help');
   const group = selectedGroupLayers();
   const hasMultiSelection = selectedAdminLayers.length > 1;
-  if (groupContainer) groupContainer.style.display = 'none';
-  if (autoLayoutOptions) autoLayoutOptions.style.display = 'none';
+  if (groupContainer) groupContainer.style.display = hasMultiSelection ? 'flex' : 'none';
+  if (autoLayoutOptions) autoLayoutOptions.style.display = hasMultiSelection && group.length > 1 ? 'block' : 'none';
   if (group.length > 1) {
-    if (gapContainer) gapContainer.style.display = 'flex';
+    gapContainer.style.display = 'flex';
     const sorted = [...group].sort((a, b) => a.y - b.y);
     const t = TEMPLATES[currentTpl];
     const designH = t.h || H;
@@ -3680,20 +1752,20 @@ function selectAdminLayer(layer, additive = false){
 
   if (groupBtn) {
     groupBtn.textContent = group.length > 1
-      ? (selectedAdminLayer.group && group.every(l => l.group === selectedAdminLayer.group) ? 'Stop adjusting together' : 'Adjust selected lines together')
+      ? (selectedAdminLayer.group && group.every(l => l.group === selectedAdminLayer.group) ? 'Ungroup' : 'Group Selected Rows')
       : groupSeedLayer && groupSeedLayer !== layer
-        ? 'Adjust with previous line'
-        : 'Adjust selected lines together';
+        ? 'Group With Previous'
+        : 'Group With Selected';
   }
   if (groupHelp) {
-    groupHelp.style.display = 'none';
+    groupHelp.style.display = hasMultiSelection ? 'block' : 'none';
     groupHelp.textContent = group.length > 1
       ? (selectedAdminLayer.group && group.every(l => l.group === selectedAdminLayer.group)
-        ? 'Spacing and alignment will apply to these selected lines.'
-        : 'Selected lines can be adjusted together.')
+        ? 'Use spacing, alignment, and centering rules below.'
+        : 'Shift-click rows, then group them.')
       : groupSeedLayer && groupSeedLayer !== layer
-        ? 'Adjust with the previous selected line.'
-        : 'Switch to One line mode to adjust individual lines.';
+        ? 'Click Group With Previous.'
+        : 'Shift-click to select more rows.';
   }
   document.querySelectorAll('[id^="group-align-"]').forEach(btn => btn.classList.remove('active'));
   const groupAlign = layer.groupAlign || layer.align || 'center';
@@ -3753,13 +1825,12 @@ function selectAdminLayer(layer, additive = false){
     const bulletContainer = document.getElementById('prop-bullet-container');
     const bulletSelect = document.getElementById('prop-bullet-style');
     const supportsBullet = ['text', 'wrap', 'list', 'schedule_list', 'edit_row'].includes(layer.type);
-    const textForBullet = getLayerEditValue(layer) || '';
-    const defaultBullet = layer.field === 'f-bullets';
-    const sourceStyle = layer.bulletStyle || source.bulletStyle;
-    const isListLike = ['list', 'schedule_list'].includes(layer.type) || defaultBullet || !!sourceStyle || layer.bullet === true || source.bullet === true;
-    const bulletMeaningful = supportsBullet && (isListLike || textForBullet.includes('\n') || textForBullet.trim().length >= 20);
-    if (bulletMeaningful) {
+    if (supportsBullet) {
       bulletContainer.style.display = 'flex';
+      const t = TEMPLATES[currentTpl];
+      const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
+      const defaultBullet = layer.field === 'f-bullets';
+      const sourceStyle = layer.bulletStyle || source.bulletStyle;
       bulletSelect.value = sourceStyle || ((layer.bullet !== undefined ? layer.bullet : defaultBullet) ? 'dot' : 'none');
     } else {
       bulletContainer.style.display = 'none';
@@ -3794,7 +1865,6 @@ function selectAdminLayer(layer, additive = false){
   }
   
   updateAdminGuides();
-  updateSidebarScopeVisibility();
   if (!isRebuildingOverlay) updateEditOverlay();
 }
 
@@ -3812,14 +1882,12 @@ function updateSelectedLayerProp(key, value) {
       if (source && source !== layer) source.letterSpacing = value;
     });
     saveLayerOverrides();
+    render();
     selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
     selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-    render(() => {
-      updateSelectedTextSummary();
-      updateAdminGuides();
-      updateTopLineActionState();
-      updateEditOverlay();
-    });
+    updateAdminGuides();
+    updateEditOverlay();
+    updateTopLineActionState();
     return;
   }
   
@@ -3863,12 +1931,7 @@ function updateSelectedLayerProp(key, value) {
   }
   
   saveLayerOverrides();
-  render(() => {
-    updateSelectedTextSummary();
-    updateAdminGuides();
-    updateTopLineActionState();
-    updateEditOverlay();
-  });
+  render();
 }
 
 function updateSelectedLineSpacing(value) {
@@ -3878,31 +1941,23 @@ function updateSelectedLineSpacing(value) {
   const preservedSelection = [...selectedAdminLayers];
   const rows = selectedRowsForSpacing();
   const targets = rows.length ? rows : [selectedAdminLayer];
-  const spacingValue = readPositiveSpacing(value, numericLineHeightForLayer(selectedAdminLayer, 24));
-  targets.forEach(layer => applyLineSpacingToLayer(layer, spacingValue));
+  targets.forEach(layer => applyLineSpacingToLayer(layer, value));
 
   if (targets.length > 1) {
-    applySpacingToSelectedRows(targets, spacingValue);
+    applySpacingToSelectedRows(targets, value);
     const gapInput = document.getElementById('prop-gap');
     const groupLineInput = document.getElementById('prop-group-line-spacing');
-    if (gapInput) gapInput.value = String(spacingValue);
-    if (groupLineInput) groupLineInput.value = String(spacingValue);
-  }
-  const lineSpacingInput = document.getElementById('prop-line-spacing');
-  if (lineSpacingInput) {
-    lineSpacingInput.value = String(spacingValue);
-    lineSpacingInput.placeholder = String(spacingValue);
+    if (gapInput) gapInput.value = String(value);
+    if (groupLineInput) groupLineInput.value = String(value);
   }
 
   saveLayerOverrides();
+  render();
   selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
   selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-  render(() => {
-    updateSelectedTextSummary();
-    updateAdminGuides();
-    updateTopLineActionState();
-    updateEditOverlay();
-  });
+  updateAdminGuides();
+  updateEditOverlay();
+  updateTopLineActionState();
 }
 
 function updateSelectedLayerTextCase(value) {
@@ -4002,7 +2057,7 @@ function updateSelectedLayerTypography() {
   }
   
   saveLayerOverrides();
-  render(() => updateEditOverlay());
+  render();
 }
 
 function updateSelectedBulletStyle(style){
@@ -4014,7 +2069,7 @@ function updateSelectedBulletStyle(style){
     layer.bullet = style !== 'none';
   });
   saveLayerOverrides();
-  render(() => updateEditOverlay());
+  render();
   selectAdminLayer(selectedAdminLayer);
 }
 
@@ -4124,25 +2179,23 @@ function selectedRowsForSpacing(){
 
 function applyLineSpacingToLayer(layer, value){
   if (!layer) return;
-  const spacing = readPositiveSpacing(value, numericLineHeightForLayer(layer, 24));
-  layer.lineHeight = spacing;
+  layer.lineHeight = value;
   const source = styleSourceForLayer(layer);
-  if (source && source !== layer) source.lineHeight = spacing;
+  if (source && source !== layer) source.lineHeight = value;
 }
 
 function applySpacingToSelectedRows(rows, spacingPx){
   const t = TEMPLATES[currentTpl];
   const designH = t.h || H;
-  const spacing = readPositiveSpacing(spacingPx, 1);
   const sorted = editRowsFromLayers(rows)
     .sort((a, b) => (a.y || 0) - (b.y || 0));
   if (sorted.length < 2) return;
   const baseY = sorted[0].y || 0;
-  const spacingRatio = spacing / designH;
+  const spacingRatio = spacingPx / designH;
   sorted.forEach((layer, index) => {
     layer.y = baseY + index * spacingRatio;
     layer.autoLayout = true;
-    applyLineSpacingToLayer(layer, spacing);
+    applyLineSpacingToLayer(layer, spacingPx);
   });
 }
 
@@ -4568,106 +2621,6 @@ function estimatedOverlayLineCount(layer, width, fontPx){
   return Math.max(explicitLines, wrappedLines);
 }
 
-function measureTextInkRun(ctx, text, letterSpacing = 0){
-  const chars = Array.from(String(text || ' '));
-  const whole = ctx.measureText(String(text || ' '));
-  let width = 0;
-  let ascent = whole.actualBoundingBoxAscent || 0;
-  let descent = whole.actualBoundingBoxDescent || 0;
-  chars.forEach((char, index) => {
-    const metrics = ctx.measureText(char);
-    width += metrics.width || 0;
-    if (index < chars.length - 1) width += letterSpacing;
-    ascent = Math.max(ascent, metrics.actualBoundingBoxAscent || 0);
-    descent = Math.max(descent, metrics.actualBoundingBoxDescent || 0);
-  });
-  return {
-    width: Math.max(1, width || whole.width || 1),
-    ascent,
-    descent
-  };
-}
-
-function tightTextBoundsForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy){
-  const source = layer.type === 'edit_row'
-    ? styleSourceForEditRow(t, layer)
-    : (styleSourceForLayer(layer) || layer);
-  const rawText = (getLayerEditValue(layer) || layer.text || source.text || '').trim() || ' ';
-  const sourceFont = rigidFontString(layer.font || source.font || '500 24px sans-serif');
-  const basePx = fontSizeFromFont(sourceFont, 24);
-  const displayPx = Math.max(1, basePx * fit * scaleX);
-  const displayFont = sourceFont.replace(/\d+(?:\.\d+)?px/, displayPx + 'px');
-  const maxWidth = Math.max(16, (layer.maxW || source.maxW || 0.5) * designW * fit * scaleX);
-  const measureCanvas = tightTextBoundsForLayer.canvas || (tightTextBoundsForLayer.canvas = document.createElement('canvas'));
-  const ctx = measureCanvas.getContext('2d');
-  ctx.font = displayFont;
-  const defaultBullet = layer.field === 'f-bullets';
-  const prefix = layer.type === 'edit_row'
-    ? (layer.bullet === undefined && defaultBullet ? '\u2022  ' : bulletPrefixForLayer(layer))
-    : '';
-  const lines = rawText.split('\n').flatMap(p => wrapLines(ctx, prefix + p, maxWidth, displayFont));
-  const measuredLines = lines.length ? lines : [' '];
-  const displayLetterSpacing = readNumericInput(layer.letterSpacing ?? source.letterSpacing ?? 0, 0) * fit * scaleX;
-  const lineMetrics = measuredLines.map(line => measureTextInkRun(ctx, line, displayLetterSpacing));
-  const textWidth = Math.max(1, ...lineMetrics.map(metrics => metrics.width));
-  const ascent = Math.max(1, ...lineMetrics.map(metrics => metrics.ascent || displayPx * 0.72));
-  const descent = Math.max(1, ...lineMetrics.map(metrics => metrics.descent || displayPx * 0.18));
-  const sourceLineHeight = numericLineHeightForLayer(layer, basePx) * fit * scaleY;
-  const glyphHeight = Math.max(2, ascent + descent);
-  const visualHeight = Math.max(2, glyphHeight + (measuredLines.length - 1) * sourceLineHeight);
-  const layerX = (!shouldShowQr() && layer.noQrX !== undefined) ? layer.noQrX : layer.x;
-  const anchorX = (dx + layerX * designW * fit) * scaleX;
-  const baselineY = (dy + layer.y * designH * fit) * scaleY;
-  const align = layer.align === 'group-center-left' ? 'left' : (layer.align || source.align || 'center');
-  const left = align === 'right'
-    ? anchorX - textWidth
-    : align === 'center'
-      ? anchorX - textWidth / 2
-      : anchorX;
-  const framePad = 1;
-  return {
-    left: left - framePad,
-    top: baselineY - ascent - framePad,
-    width: textWidth + framePad * 2,
-    height: visualHeight + framePad * 2
-  };
-}
-
-function currentOverlayMetrics(){
-  const t = TEMPLATES[currentTpl];
-  if (!t || !canvas || !canvas.clientWidth || !canvas.clientHeight) return null;
-  const displayW = canvas.clientWidth;
-  const displayH = canvas.clientHeight;
-  const scaleX = displayW / canvas.width;
-  const scaleY = displayH / canvas.height;
-  const designW = t.w || W;
-  const designH = t.h || H;
-  const fit = Math.min(canvas.width / designW, canvas.height / designH);
-  const dx = (canvas.width - designW * fit) / 2;
-  const dy = (canvas.height - designH * fit) / 2;
-  return { t, designW, designH, fit, scaleX, scaleY, dx, dy };
-}
-
-function displayBoundsForLayer(layer){
-  if (!layer) return null;
-  const metrics = currentOverlayMetrics();
-  if (!metrics) return null;
-  const { t, designW, designH, fit, scaleX, scaleY, dx, dy } = metrics;
-  if (isTextEditableLayer(layer)) {
-    return tightTextBoundsForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy);
-  }
-  const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
-  const sourceFont = rigidFontString(source.font || layer.font);
-  const fontPx = parseInt(sourceFont.match(/(\d+)px/)?.[1] || '24', 10) * fit * scaleX;
-  const geometry = overlayGeometryForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx);
-  return {
-    left: geometry.align === 'center' ? geometry.left - geometry.width / 2 : geometry.align === 'right' ? geometry.left - geometry.width : geometry.left,
-    top: geometry.top,
-    width: geometry.width,
-    height: geometry.height || Math.max(24, fontPx * 1.4)
-  };
-}
-
 function updateEditOverlay(){
   if (!editOverlay) return;
   isRebuildingOverlay = true;
@@ -4690,7 +2643,6 @@ function updateEditOverlay(){
     const source = layer.type === 'edit_row' ? styleSourceForEditRow(t, layer) : layer;
     const sourceFont = rigidFontString(source.font || layer.font);
     const fontPx = parseInt(sourceFont.match(/(\d+)px/)[1], 10) * fit * scaleX;
-    const isEditableTextLayer = isTextEditableLayer(layer);
     const geometry = overlayGeometryForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy, fontPx);
     const left = geometry.left;
     const top = geometry.top;
@@ -4710,17 +2662,11 @@ function updateEditOverlay(){
       ? Math.max(14, editRowVisualHeight * editRowLineCount)
       : geometry.height || Math.max(24, perLineHeight * lineCount);
     const visualTop = layer.type === 'edit_row' ? top - (fontPx * 0.9) : top;
-    let selectedFrameBounds = null;
     const hot = document.createElement('button');
     hot.type = 'button';
     const overlayAlign = geometry.align || layer.align || 'center';
-    const isSelected = selectedAdminLayers.includes(layer) || selectedAdminLayer === layer;
-    hot.className = 'edit-hotspot align-' + overlayAlign
-      + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '')
-      + (isEditableTextLayer ? ' text-hotspot' : '')
-      + (layer.type === 'edit_row' ? ' edit-row-hotspot' : '')
-      + (layer.type === 'qr' ? ' qr-hotspot' : '');
-    hot.classList.toggle('selected', isSelected && !isEditableTextLayer);
+    hot.className = 'edit-hotspot align-' + overlayAlign + (isAdminMode || layer.type === 'qr' ? ' admin-draggable' : '') + (layer.type === 'qr' ? ' qr-hotspot' : '');
+    hot.classList.toggle('selected', selectedAdminLayers.includes(layer) || selectedAdminLayer === layer);
     hot.title = 'Edit ' + layer.id;
     if (layer.type === 'edit_row') hot.style.zIndex = '4';
     hot.style.left = left + 'px';
@@ -4746,33 +2692,27 @@ function updateEditOverlay(){
       if (['qr','rule'].includes(layer.type) && !isAdminMode){
         return;
       }
-      if (isAdminMode || isEditableTextLayer || ['qr','rule'].includes(layer.type)){
-        const addToLineSelection = editScope === 'line'
-          && isEditableTextLayer
-          && selectedAdminLayer
-          && layer !== selectedAdminLayer;
-        selectAdminLayer(layer, e.shiftKey || e.metaKey || e.ctrlKey || addToLineSelection);
+      if (isAdminMode || ['qr','rule'].includes(layer.type)){
+        selectAdminLayer(layer, e.shiftKey || e.metaKey || e.ctrlKey);
         return;
       }
-      selectAdminLayer(layer);
+      openVisualEditor(layer, {
+        left: overlayAlign === 'center' ? left - width / 2 : overlayAlign === 'right' ? left - width : left,
+        top: visualTop,
+        width,
+        height
+      });
     });
     hot.addEventListener('dblclick', e => {
       if (['qr','rule'].includes(layer.type)) return;
       e.preventDefault();
-      openVisualEditor(layer, displayBoundsForLayer(layer));
+      openVisualEditor(layer, {
+        left: overlayAlign === 'center' ? left - width / 2 : overlayAlign === 'right' ? left - width : left,
+        top: visualTop,
+        width,
+        height
+      });
     });
-
-    if (isSelected && isEditableTextLayer) {
-      const frameBounds = tightTextBoundsForLayer(layer, t, designW, designH, fit, scaleX, scaleY, dx, dy);
-      selectedFrameBounds = frameBounds;
-      const frame = document.createElement('div');
-      frame.className = 'text-selection-frame ' + (editScope === 'line' ? 'line-selection' : 'block-selection');
-      frame.style.left = frameBounds.left + 'px';
-      frame.style.top = frameBounds.top + 'px';
-      frame.style.width = frameBounds.width + 'px';
-      frame.style.height = frameBounds.height + 'px';
-      editOverlay.appendChild(frame);
-    }
 
     editOverlay.appendChild(hot);
 
@@ -4782,6 +2722,8 @@ function updateEditOverlay(){
       closeBtn.className = 'hotspot-close-btn';
       closeBtn.innerHTML = '&times;';
       closeBtn.style.position = 'absolute';
+      closeBtn.style.top = '-10px';
+      closeBtn.style.right = '-10px';
       closeBtn.style.width = '20px';
       closeBtn.style.height = '20px';
       closeBtn.style.borderRadius = '50%';
@@ -4807,16 +2749,7 @@ function updateEditOverlay(){
         e.preventDefault();
         deleteSelectedLayer();
       });
-      if (selectedFrameBounds) {
-        closeBtn.style.top = (selectedFrameBounds.top - 10) + 'px';
-        closeBtn.style.left = (selectedFrameBounds.left + selectedFrameBounds.width - 10) + 'px';
-        closeBtn.style.right = 'auto';
-        editOverlay.appendChild(closeBtn);
-      } else {
-        closeBtn.style.top = '-10px';
-        closeBtn.style.right = '-10px';
-        hot.appendChild(closeBtn);
-      }
+      editOverlay.appendChild(closeBtn);
     }
   });
 
@@ -5006,8 +2939,8 @@ function openLayerContextMenu(event, layer){
   if (pasteLineBtn) pasteLineBtn.disabled = copiedPropertyBuckets.lineSpacing.length === 0;
   if (pasteStyleBtn) pasteStyleBtn.disabled = copiedPropertyBuckets.textStyle.length === 0;
   note.textContent = selectedCount > 1
-    ? `Copy/paste properties for ${selectedCount} selected lines.`
-    : 'Copy or paste this line’s properties.';
+    ? `Copy/paste properties for ${selectedCount} selected rows.`
+    : 'Copy or paste this row’s properties.';
   menu.classList.add('open');
   menu.setAttribute('aria-hidden', 'false');
   const rect = menu.getBoundingClientRect();
@@ -5042,59 +2975,39 @@ function pasteContextLayerProperties(){
   selectAdminLayer(contextMenuLayer);
 }
 
-function specificPropertyTargets(kind, fallbackLayer = contextMenuLayer || selectedAdminLayer){
-  if (kind === 'lineSpacing') {
-    const selectedRows = editRowsFromLayers(selectedAdminLayers);
-    if (selectedRows.length) return selectedRows;
-  }
-  if (selectedAdminLayers.length > 1) {
-    const rows = editRowsFromLayers(selectedAdminLayers);
-    return rows.length ? rows : selectedAdminLayers.filter(layer => layer && !layer.hidden);
-  }
-  if (fallbackLayer) return selectedLayersForCopy(fallbackLayer);
-  return selectedAdminLayer ? [selectedAdminLayer] : [];
-}
-
 function copySpecificContextProperty(kind){
-  const targets = specificPropertyTargets(kind);
-  if (!targets.length) return;
-  copiedPropertyBuckets[kind] = targets.map(layer => readSpecificLayerProperty(layer, kind));
+  if (!contextMenuLayer) return;
+  copiedPropertyBuckets[kind] = selectedLayersForCopy(contextMenuLayer).map(layer => readSpecificLayerProperty(layer, kind));
   closeLayerContextMenu();
 }
 
 function pasteSpecificContextProperty(kind){
   const copied = copiedPropertyBuckets[kind] || [];
-  const activeLayer = contextMenuLayer || selectedAdminLayer;
-  if (!activeLayer || !copied.length) return;
+  if (!contextMenuLayer || !copied.length) return;
   pushUndoSnapshot();
-  const preservedSelection = selectedAdminLayers.length > 1 ? [...selectedAdminLayers] : [activeLayer];
-  const targets = specificPropertyTargets(kind, activeLayer);
+  const activeLayer = contextMenuLayer;
+  const preservedSelection = selectedAdminLayers.length > 1 ? [...selectedAdminLayers] : [contextMenuLayer];
+  const targets = kind === 'lineSpacing'
+    ? (editRowsFromLayers(selectedLayersForCopy(contextMenuLayer)).length
+      ? editRowsFromLayers(selectedLayersForCopy(contextMenuLayer))
+      : selectedLayersForCopy(contextMenuLayer))
+    : selectedLayersForCopy(contextMenuLayer);
   targets.forEach((layer, index) => {
     const props = copied[Math.min(index, copied.length - 1)];
     applySpecificLayerProperty(layer, kind, props);
   });
   if (kind === 'lineSpacing' && targets.length > 1) {
-    const gap = readPositiveSpacing(copied[0]?.lineHeight, 0);
+    const gap = copied[0]?.lineHeight ?? 0;
     if (gap) applySpacingToSelectedRows(targets, gap);
   }
   saveLayerOverrides();
   closeLayerContextMenu();
+  render();
   selectedAdminLayers = preservedSelection.filter(layer => layer && !layer.hidden);
   selectedAdminLayer = selectedAdminLayers.includes(activeLayer) ? activeLayer : (selectedAdminLayers[selectedAdminLayers.length - 1] || activeLayer);
-  if (kind === 'lineSpacing') {
-    const lineSpacingInput = document.getElementById('prop-line-spacing');
-    const pastedSpacing = readPositiveSpacing(copied[0]?.lineHeight, 0);
-    if (lineSpacingInput && pastedSpacing) {
-      lineSpacingInput.value = String(pastedSpacing);
-      lineSpacingInput.placeholder = String(pastedSpacing);
-    }
-  }
-  render(() => {
-    updateSelectedTextSummary();
-    updateAdminGuides();
-    updateTopLineActionState();
-    updateEditOverlay();
-  });
+  updateAdminGuides();
+  updateEditOverlay();
+  updateTopLineActionState();
 }
 
 function initBgImages(){
@@ -5106,15 +3019,8 @@ function initBgImages(){
         if (key === currentTpl) render();
         drawThumb(key);
       };
-      img.onerror = (e) => {
-        console.error("Failed to load template image:", t.src, e);
-      };
       img.src = t.src + (t.src.includes('?') ? '&' : '?') + 'v=terry-cutout-v2';
       bgImages[key] = img;
-      if (img.complete && img.naturalWidth > 0) {
-        if (key === currentTpl) render();
-        drawThumb(key);
-      }
     }
   });
 }
@@ -5161,12 +3067,15 @@ function drawThumb(key){
     if (existingLabel) card.insertBefore(c, existingLabel);
     else card.appendChild(c);
   }
+  const activeDraft = {};
+  COPY_FIELD_IDS.forEach(id => { activeDraft[id] = document.getElementById(id).value; });
   const t = TEMPLATES[key];
   const tw = t.w || 1122;
   const th = t.h || 1588;
   const targetW = 220;
   
   // Calculate a dynamic scale factor for every template
+  const scale = targetW / tw;
   const targetH = Math.round(220 * th / tw);
 
   c.width = targetW;
@@ -5178,12 +3087,16 @@ function drawThumb(key){
   ctx.fillStyle = getTemplateFallbackBg(t);
   ctx.fillRect(0, 0, targetW, targetH);
 
+  loadCopyDraft(key);
   const layersToDraw = t.socialLayers || t.layers || [];
   
+  // Multiply all text coordinates (x, y), font sizes, line heights, and padding by this scale factor 
+  // when rendering onto thumbnail canvases so text scales down proportionally regardless of template aspect ratio.
   const offscreen = document.createElement('canvas');
   renderNativeToCanvas(offscreen, t, tw, th, layersToDraw, () => {
     ctx.clearRect(0, 0, targetW, targetH);
     ctx.drawImage(offscreen, 0, 0, targetW, targetH);
+    COPY_FIELD_IDS.forEach(id => { document.getElementById(id).value = activeDraft[id] || ''; });
   });
 }
 // One-time local storage migration to clear old preselected Yes radios from drafts
@@ -5349,11 +3262,28 @@ function toggleAdminMode(val) {
   isAdminMode = (val !== undefined) ? val : !isAdminMode;
   refreshAdminPanel();
   updateAdminGuides();
-  updateEditScopeUi();
-  updateEditOverlay();
   document.querySelectorAll('.adv-ctrls').forEach(el => {
     el.style.display = isAdminMode ? 'flex' : 'none';
   });
+}
+
+function toggleSidebarCollapse() {
+  const sidebar = document.getElementById('figmaSidebar');
+  if (!sidebar) return;
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  document.body.classList.toggle('sidebar-collapsed-active', isCollapsed);
+  const icon = sidebar.querySelector('.collapse-icon');
+  const text = sidebar.querySelector('.collapse-text');
+  
+  if (isCollapsed) {
+    if (icon) icon.textContent = '+';
+    if (text) text.textContent = 'Show';
+    sidebar.querySelectorAll('.sidebar-head-actions').forEach(el => el.style.display = 'none');
+  } else {
+    if (icon) icon.textContent = '−';
+    if (text) text.textContent = 'Hide';
+    sidebar.querySelectorAll('.sidebar-head-actions').forEach(el => el.style.display = '');
+  }
 }
 
 document.addEventListener('keydown', (e) => {
@@ -5597,7 +3527,6 @@ window.addEventListener('keydown', e => {
 });
 
 document.getElementById('userUndoBtn').addEventListener('click', undoLastUserEdit);
-document.getElementById('userRestoreBtn').addEventListener('click', restoreOriginalTemplate);
 updateUserUndoButton();
 
 
@@ -5834,10 +3763,7 @@ if (document.fonts && document.fonts.ready){
     render();
     Object.keys(TEMPLATES).forEach(key => drawThumb(key));
   };
-  document.fonts.ready.then(redrawAll).catch(err => {
-    console.warn("Font loading ready caught error:", err);
-    redrawAll();
-  });
+  document.fonts.ready.then(redrawAll);
   document.fonts.addEventListener('loadingdone', redrawAll);
 }
 // --- Custom Modal Utilities ---
@@ -5948,8 +3874,8 @@ function renderAuthUI() {
     container.innerHTML = `
 
       <div class="drafts-dropdown-wrapper" style="position:relative; display:flex; align-items:center; height:100%;">
-        <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 400; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="document.getElementById('draftsDropdown').style.display = document.getElementById('draftsDropdown').style.display === 'none' ? 'flex' : 'none'" title="My Drafts">
-          <span style="font-size:19px;">☰</span>
+        <button style="background:none; border:none; color:white; font-size:19px; font-weight: 600; cursor:pointer; display:flex; align-items:center;" onclick="document.getElementById('draftsDropdown').style.display = document.getElementById('draftsDropdown').style.display === 'none' ? 'flex' : 'none'" title="My Drafts">
+          ☰
         </button>
         <div id="draftsDropdown" style="display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #E5E7EB; border-radius:8px; width:220px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:8px; z-index:999999; flex-direction:column; gap:4px; margin-top:-4px;">
           <div id="draftsDropdownList" style="max-height: 300px; overflow-y: auto;"></div>
@@ -5958,7 +3884,7 @@ function renderAuthUI() {
       <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="saveDraftToCloud()" title="Save to Drafts">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
       </button>
-      <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 400; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="window.firebaseAuth.signOut()" title="Log Out">
+      <button style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center;" onclick="window.firebaseAuth.signOut()" title="Log Out">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
       </button>
     `;
@@ -6118,18 +4044,44 @@ function renderDraftsDropdown() {
     const dateStr = new Date(timeMs).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const item = document.createElement('div');
     item.style.cssText = `padding: 8px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: #111827; font-size: 13px; display: flex; flex-direction: column; gap: 4px;`;
-    item.onmouseover = () => item.style.background = '#F3F4F6';
-    item.onmouseout = () => item.style.background = 'transparent';
-
     item.innerHTML = `
-      <div style="font-weight: 500;">${draft.eventName || 'Unnamed Draft'}</div>
-      <div style="font-size: 11px; color: #6B7280;">${dateStr}</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="font-weight: 500;">${draft.eventName || 'Unnamed Draft'}</div>
+          <div style="font-size: 11px; color: #6B7280;">${dateStr}</div>
+        </div>
+        <button class="delete-draft-btn" style="background:none; border:none; padding:4px; margin:-4px; cursor:pointer; color:#9CA3AF; opacity:0; transition:opacity 0.2s; display:flex; align-items:center;" title="Delete Draft">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </button>
+      </div>
     `;
+    item.onmouseover = () => { item.style.background = '#F3F4F6'; const btn = item.querySelector('.delete-draft-btn'); if(btn) btn.style.opacity = '1'; };
+    item.onmouseout = () => { item.style.background = 'transparent'; const btn = item.querySelector('.delete-draft-btn'); if(btn) btn.style.opacity = '0'; };
     item.onclick = () => {
       loadDraft(draft);
       const dropdown = document.getElementById('draftsDropdown');
       if (dropdown) dropdown.style.display = 'none';
     };
+    const delBtn = item.querySelector('.delete-draft-btn');
+    if (delBtn) {
+      delBtn.onclick = async (e) => {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this draft?')) {
+          try {
+            await window.firebaseDb.collection('drafts').doc(draft.id).delete();
+            userDrafts = userDrafts.filter(d => d.id !== draft.id);
+            if (currentDraftId === draft.id) {
+              currentDraftId = null;
+              currentDraftName = null;
+            }
+            renderDraftsDropdown();
+          } catch(err) {
+            console.error(err);
+            alert('Failed to delete draft: ' + err.message);
+          }
+        }
+      };
+    }
     list.appendChild(item);
   });
 }
@@ -6161,33 +4113,5 @@ function loadDraft(draft) {
 if (document.getElementById('saveCloudBtn')) {
   document.getElementById('saveCloudBtn').addEventListener('click', saveDraftToCloud);
 }
-</script>
-<div id="largePreview" class="large-preview-overlay" aria-hidden="true" onclick="if(event.target===this) closeLargePreview()">
-  <button type="button" class="close-preview-btn" onclick="closeLargePreview()">×</button>
-  <div class="large-preview-content">
-    <img id="largePreviewImg" src="" alt="Large Preview" />
-  </div>
-</div>
 
-  <!-- Login Modal -->
-  <div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999999; align-items:center; justify-content:center;">
-    <div style="background:white; padding:24px; border-radius:12px; width:90%; max-width:320px; box-shadow:0 10px 25px rgba(0,0,0,0.2); font-family:var(--font-ui);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 style="margin:0; font-size:18px; font-weight:600; color:#111827;">Sign In</h3>
-        <button onclick="document.getElementById('loginModal').style.display='none'" style="background:none; border:none; cursor:pointer; font-size:24px; color:#6B7280; line-height:1; padding:0;">&times;</button>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <button onclick="loginWithGoogle(); document.getElementById('loginModal').style.display='none';" style="padding:10px; border:1px solid #D1D5DB; background:white; border-radius:6px; cursor:pointer; font-weight:500; color:#374151; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.2s;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='white'">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Sign in with Google
-        </button>
-        <div style="text-align:center; color:#9CA3AF; font-size:12px;">or</div>
-        <button onclick="loginWithEmailLink(); document.getElementById('loginModal').style.display='none';" style="padding:10px; border:1px solid #D1D5DB; background:white; border-radius:6px; cursor:pointer; font-weight:500; color:#374151; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.2s;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='white'">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          Sign in with Email Link
-        </button>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+  

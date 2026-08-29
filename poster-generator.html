@@ -912,12 +912,19 @@
   .custom-modal-btn.primary { background: #E01A2B; color: #fff; border-color: #E01A2B; }
   .custom-modal-btn.primary:hover { background: #C81423; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="./firebase-init.js"></script>
 </head>
 <body>
 <div class="toolbar">
-  <div class="toolbar-inner">
+  <div class="toolbar-inner" style="display:flex;">
     <h1>Poster Generator</h1>
     <div class="sub">multi-city event poster tool</div>
+    <div class="auth-ui" id="authUiContainer" style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-family: var(--font-ui);">
+      <!-- Populated by JS -->
+    </div>
   </div>
 </div>
 <div class="wrap">
@@ -1002,6 +1009,7 @@
 	        * Scan the QR code on the poster to test it before downloading
 	      </div>
 	      <button class="btn btn-primary" id="downloadBtn">Download poster</button>
+	      <button class="btn btn-secondary" id="saveCloudBtn" style="margin-top:8px; display:none; width: 100%;">Save to Cloud</button>
 	      </div>
 
 	      <div class="copy-fields-hidden" aria-hidden="true">
@@ -5105,6 +5113,171 @@ function customPrompt(message, defaultValue = '') {
       }
     });
   });
+}
+
+/* =========================================================================
+   CLOUD DRAFTS AND AUTHENTICATION
+   ========================================================================= */
+
+let currentUser = null;
+
+function renderAuthUI() {
+  const container = document.getElementById('authUiContainer');
+  if (!container) return;
+  const saveBtn = document.getElementById('saveCloudBtn');
+
+  if (currentUser) {
+    container.innerHTML = `
+      <div style="font-size: 13px; font-weight: 500; display:flex; align-items:center; gap:8px;">
+        <img src="${currentUser.photoURL}" style="width:24px; height:24px; border-radius:50%;" onerror="this.style.display='none'">
+        ${currentUser.displayName ? currentUser.displayName.split(' ')[0] : 'Admin'}
+      </div>
+      <button class="btn btn-secondary" onclick="showDraftsModal()" style="padding: 6px 12px; font-size:12px;">My Drafts</button>
+      <button class="btn btn-secondary" onclick="window.firebaseAuth.signOut()" style="padding: 6px 12px; font-size:12px;">Log Out</button>
+    `;
+    if (saveBtn) saveBtn.style.display = 'block';
+  } else {
+    container.innerHTML = `
+      <button class="btn btn-primary" onclick="loginWithGoogle()" style="padding: 6px 12px; font-size:12px;">Admin Login</button>
+    `;
+    if (saveBtn) saveBtn.style.display = 'none';
+  }
+}
+
+function loginWithGoogle() {
+  window.firebaseAuth.signInWithPopup(window.firebaseProvider).catch(error => {
+    alert('Error logging in: ' + error.message);
+  });
+}
+
+window.firebaseAuth.onAuthStateChanged(user => {
+  currentUser = user;
+  renderAuthUI();
+});
+
+async function saveDraftToCloud() {
+  if (!currentUser) return alert('Please login first.');
+  const eventName = await showPromptModal('Save Draft', 'Enter a name for this event:', 'e.g. NYC Terry Fox Run 2026');
+  if (!eventName) return;
+
+  const draftData = {
+    userId: currentUser.uid,
+    eventName: eventName.trim(),
+    templateId: currentTpl,
+    copy: {},
+    overrides: JSON.parse(localStorage.getItem(overrideStorageKey(currentTpl)) || '{}'),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  
+  COPY_FIELD_IDS.forEach(id => {
+    const field = document.getElementById(id);
+    if (field) draftData.copy[id] = field.value;
+  });
+
+  try {
+    const draftRef = window.firebaseDb.collection('drafts').doc();
+    await draftRef.set(draftData);
+    alert('Draft saved to cloud successfully!');
+  } catch (e) {
+    console.error(e);
+    alert('Error saving draft: ' + e.message);
+  }
+}
+
+async function showDraftsModal() {
+  if (!currentUser) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-modal-overlay';
+  overlay.style.zIndex = '999999';
+  
+  const modal = document.createElement('div');
+  modal.className = 'custom-modal';
+  modal.style.width = '400px';
+  modal.innerHTML = `
+    <h3 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 600; font-family: var(--font-ui);">My Saved Drafts</h3>
+    <div id="draftsListContainer" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+      <div style="text-align:center; padding: 20px; font-family: var(--font-ui); color: #6B7280;">Loading...</div>
+    </div>
+    <div style="display: flex; justify-content: flex-end;">
+      <button class="custom-modal-btn" id="closeDraftsBtn">Close</button>
+    </div>
+  `;
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  
+  overlay.querySelector('#closeDraftsBtn').addEventListener('click', () => {
+    document.body.removeChild(overlay);
+  });
+
+  try {
+    const draftsRef = window.firebaseDb.collection('drafts');
+    const q = draftsRef.where('userId', '==', currentUser.uid);
+    const snapshot = await q.get();
+    const container = overlay.querySelector('#draftsListContainer');
+    
+    if (snapshot.empty) {
+      container.innerHTML = '<div style="text-align:center; padding: 20px; font-family: var(--font-ui); color: #6B7280;">No saved drafts found.</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    const drafts = [];
+    snapshot.forEach(doc => {
+      drafts.push({ id: doc.id, ...doc.data() });
+    });
+    
+    drafts.sort((a, b) => {
+      const timeA = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
+      const timeB = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : 0;
+      return timeB - timeA;
+    });
+
+    drafts.forEach(draft => {
+      const item = document.createElement('div');
+      item.style.cssText = 'padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-ui);';
+      item.innerHTML = `
+        <div>
+          <div style="font-weight: 600; color: #111827;">${draft.eventName || 'Unnamed Draft'}</div>
+          <div style="font-size: 12px; color: #6B7280;">Template: ${draft.templateId}</div>
+        </div>
+        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Load</button>
+      `;
+      item.addEventListener('click', () => {
+        loadDraft(draft);
+        document.body.removeChild(overlay);
+      });
+      container.appendChild(item);
+    });
+  } catch (e) {
+    console.error(e);
+    overlay.querySelector('#draftsListContainer').innerHTML = \`<div style="color: red; padding: 20px;">Error loading drafts: \${e.message}</div>\`;
+  }
+}
+
+function loadDraft(draft) {
+  currentTpl = draft.templateId;
+  
+  if (draft.copy) {
+    COPY_FIELD_IDS.forEach(id => {
+      const field = document.getElementById(id);
+      if (field && draft.copy[id] !== undefined) {
+        field.value = draft.copy[id];
+      }
+    });
+  }
+  
+  if (draft.overrides) {
+    localStorage.setItem(overrideStorageKey(currentTpl), JSON.stringify(draft.overrides));
+  }
+  
+  applyLayerOverrides(currentTpl);
+  saveCopyDraft();
+  refreshActive();
+  render();
+}
+
+if (document.getElementById('saveCloudBtn')) {
+  document.getElementById('saveCloudBtn').addEventListener('click', saveDraftToCloud);
 }
 
 </script>

@@ -5925,20 +5925,18 @@ function renderAuthUI() {
     container.innerHTML = `
 
       <div class="drafts-dropdown-wrapper" style="position:relative; display:flex; align-items:center; height:100%; padding: 10px 0;">
-        <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 600; cursor:pointer; display:flex; align-items:center; gap:6px;">
-          <span style="font-size:16px;">☰</span> My Drafts
+        <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 400; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="document.getElementById('draftsDropdown').style.display = document.getElementById('draftsDropdown').style.display === 'none' ? 'flex' : 'none'" title="My Drafts">
+          <span style="font-size:16px;">☰</span>
         </button>
         <div id="draftsDropdown" style="display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #E5E7EB; border-radius:8px; width:220px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:8px; z-index:999999; flex-direction:column; gap:4px; margin-top:-4px;">
           <div id="draftsDropdownList" style="max-height: 300px; overflow-y: auto;"></div>
         </div>
       </div>
-      <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="saveDraftToCloud()">
+      <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="saveDraftToCloud()" title="Save to Drafts">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-        Save to Drafts
       </button>
-      <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 400; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="window.firebaseAuth.signOut()">
+      <button style="background:none; border:none; color:white; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--font-display); font-weight: 400; cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="window.firebaseAuth.signOut()" title="Log Out">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-        Log Out
       </button>
     `;
     const wrapper = container.querySelector('.drafts-dropdown-wrapper');
@@ -6003,20 +6001,19 @@ async function saveDraftToCloud(forceNew = false) {
   if (currentDraftId && !forceNew) {
     const choice = await new Promise(resolve => {
       const html = `
-        <div class="custom-modal-box" style="width:320px;">
-          <div class="custom-modal-msg" style="font-weight:600; margin-bottom:12px;">Save Draft</div>
-          <div style="font-size:13px; color:#4B5563; margin-bottom:20px; line-height: 1.5;">You are editing an existing draft: <br/><b>${currentDraftName}</b><br/><br/>Do you want to update it, or save it as a new draft?</div>
+        <div class="custom-modal-box" style="width:320px; position:relative;">
+          <button type="button" id="btnCancelX" style="position:absolute; top:12px; right:12px; background:none; border:none; cursor:pointer; font-size:18px; color:#9CA3AF; line-height:1; padding:4px;">&times;</button>
+          <div style="font-size:13px; color:#4B5563; margin-bottom:20px; margin-top:8px; line-height: 1.5;">You are editing an existing draft: <br/><b>${currentDraftName}</b><br/><br/>Do you want to update it, or save it as a new draft?</div>
           <div class="custom-modal-actions" style="flex-direction:column; gap:8px;">
             <button class="custom-modal-btn primary" id="btnUpdate" style="width:100%;">Update Existing</button>
             <button class="custom-modal-btn" id="btnNew" style="width:100%;">Save as New</button>
-            <button class="custom-modal-btn" id="btnCancel" style="width:100%; border:none; background:none; box-shadow:none;">Cancel</button>
           </div>
         </div>
       `;
       const overlay = createModalDOM(html);
+      overlay.querySelector('#btnCancelX').onclick = () => { removeModalDOM(overlay); resolve(null); };
       overlay.querySelector('#btnUpdate').onclick = () => { removeModalDOM(overlay); resolve('update'); };
       overlay.querySelector('#btnNew').onclick = () => { removeModalDOM(overlay); resolve('new'); };
-      overlay.querySelector('#btnCancel').onclick = () => { removeModalDOM(overlay); resolve(null); };
     });
 
     if (!choice) return;

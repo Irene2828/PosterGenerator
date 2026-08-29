@@ -5122,6 +5122,8 @@ function customPrompt(message, defaultValue = '') {
 let currentUser = null;
 let userDrafts = [];
 let draftsUnsubscribe = null;
+let currentDraftId = null;
+let currentDraftName = null;
 
 function renderAuthUI() {
   const container = document.getElementById('authUiContainer');
@@ -5134,9 +5136,9 @@ function renderAuthUI() {
         <img src="${currentUser.photoURL}" style="width:24px; height:24px; border-radius:50%;" onerror="this.style.display='none'">
         ${currentUser.displayName ? currentUser.displayName.split(' ')[0] : 'Admin'}
       </div>
-      <div class="drafts-dropdown-wrapper" style="position:relative; display:flex; align-items:center; height:100%;">
+      <div class="drafts-dropdown-wrapper" style="position:relative; display:flex; align-items:center; height:100%; padding: 10px 0;">
         <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer;">My Drafts</button>
-        <div id="draftsDropdown" style="display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #E5E7EB; border-radius:8px; width:220px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:8px; z-index:999999; flex-direction:column; gap:4px; margin-top:8px;">
+        <div id="draftsDropdown" style="display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #E5E7EB; border-radius:8px; width:220px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:8px; z-index:999999; flex-direction:column; gap:4px; margin-top:-4px;">
           <div style="font-size:11px; font-weight:600; color:#6B7280; padding:4px 8px; text-transform:uppercase; letter-spacing:0.05em;">Saved Drafts</div>
           <div id="draftsDropdownList" style="max-height: 300px; overflow-y: auto;"></div>
         </div>
@@ -5198,14 +5200,47 @@ if (window.firebaseAuth) {
 
 async function saveDraftToCloud() {
   if (!currentUser) return alert('Please login first.');
-  const cityField = document.getElementById('f-city');
-  const defaultName = cityField && cityField.value ? cityField.value.trim() + ' TFR' : 'New TFR Draft';
-  const eventName = await customPrompt('Save Draft', 'Enter a name for this event:', defaultName);
-  if (!eventName) return;
+
+  let draftIdToSave = null;
+  let finalEventName = null;
+
+  if (currentDraftId) {
+    const choice = await new Promise(resolve => {
+      const html = `
+        <div class="custom-modal-box" style="width:320px;">
+          <div class="custom-modal-msg" style="font-weight:600; margin-bottom:12px;">Save Draft</div>
+          <div style="font-size:13px; color:#4B5563; margin-bottom:20px; line-height: 1.5;">You are editing an existing draft: <br/><b>${currentDraftName}</b><br/><br/>Do you want to update it, or save it as a new draft?</div>
+          <div class="custom-modal-actions" style="flex-direction:column; gap:8px;">
+            <button class="custom-modal-btn primary" id="btnUpdate" style="width:100%;">Update Existing</button>
+            <button class="custom-modal-btn" id="btnNew" style="width:100%;">Save as New</button>
+            <button class="custom-modal-btn" id="btnCancel" style="width:100%; border:none; background:none; box-shadow:none;">Cancel</button>
+          </div>
+        </div>
+      `;
+      const overlay = createModalDOM(html);
+      overlay.querySelector('#btnUpdate').onclick = () => { removeModalDOM(overlay); resolve('update'); };
+      overlay.querySelector('#btnNew').onclick = () => { removeModalDOM(overlay); resolve('new'); };
+      overlay.querySelector('#btnCancel').onclick = () => { removeModalDOM(overlay); resolve(null); };
+    });
+
+    if (!choice) return;
+
+    if (choice === 'update') {
+      draftIdToSave = currentDraftId;
+      finalEventName = currentDraftName;
+    }
+  }
+
+  if (!draftIdToSave) {
+    const cityField = document.getElementById('f-city');
+    const defaultName = cityField && cityField.value ? cityField.value.trim() + ' TFR' : 'New TFR Draft';
+    finalEventName = await customPrompt('Save Draft', 'Enter a name for this new event:', defaultName);
+    if (!finalEventName) return;
+  }
 
   const draftData = {
     userId: currentUser.uid,
-    eventName: eventName.trim(),
+    eventName: finalEventName.trim(),
     templateId: currentTpl,
     copy: {},
     overrides: JSON.parse(localStorage.getItem(overrideStorageKey(currentTpl)) || '{}'),
@@ -5218,8 +5253,13 @@ async function saveDraftToCloud() {
   });
 
   try {
-    const draftRef = window.firebaseDb.collection('drafts').doc();
-    await draftRef.set(draftData);
+    if (draftIdToSave) {
+      await window.firebaseDb.collection('drafts').doc(draftIdToSave).update(draftData);
+    } else {
+      const newRef = await window.firebaseDb.collection('drafts').add(draftData);
+      currentDraftId = newRef.id;
+      currentDraftName = draftData.eventName;
+    }
     alert('Draft saved to cloud successfully!');
   } catch (e) {
     console.error(e);
@@ -5255,6 +5295,8 @@ function renderDraftsDropdown() {
 }
 
 function loadDraft(draft) {
+  currentDraftId = draft.id;
+  currentDraftName = draft.eventName;
   currentTpl = draft.templateId;
   
   if (draft.copy) {

@@ -5953,6 +5953,9 @@ if (window.firebaseAuth) {
 async function saveDraftToCloud(forceNew = false) {
   if (!currentUser) return alert('Please login first.');
 
+  if (typeof saveLayerOverrides === 'function') saveLayerOverrides();
+  if (typeof saveCopyDraft === 'function') saveCopyDraft();
+
   let draftIdToSave = null;
   let finalEventName = null;
 

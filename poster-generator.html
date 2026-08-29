@@ -1074,7 +1074,6 @@
       <div id="figmaSidebar" class="figma-sidebar">
         <div class="sidebar-header">
           <div class="sidebar-head-actions">
-            <span style="font-style: italic; font-size: 11px; color: #666; margin-right: 8px;">Done changing?</span>
             <button class="sidebar-close-btn" onclick="toggleAdminMode(false)" title="Hide inspector">
               <span>Close Editor</span>
               <span class="x-icon">&times;</span>
@@ -2340,12 +2339,14 @@ function render(afterOverlay){
     renderToCanvas(canvas, currentTpl, size.w, size.h, () => {
       updateEditOverlay();
       const previewCol = document.querySelector('.preview-col');
+      const canvasShell = document.querySelector('.canvas-shell');
       const sidebar = document.getElementById('figmaSidebar');
-      const optionsCol = document.querySelector('.options-col');
-      if (previewCol && sidebar && optionsCol) {
-        const previewHeight = previewCol.offsetHeight;
-        const sidebarOffset = sidebar.getBoundingClientRect().top - optionsCol.getBoundingClientRect().top;
-        sidebar.style.maxHeight = (previewHeight - sidebarOffset) + 'px';
+      if (previewCol && canvasShell && sidebar) {
+        const shellBottomRel = canvasShell.getBoundingClientRect().bottom - previewCol.getBoundingClientRect().top;
+        const sidebarTopRel = sidebar.offsetTop;
+        if (shellBottomRel > sidebarTopRel) {
+          sidebar.style.maxHeight = (shellBottomRel - sidebarTopRel) + 'px';
+        }
       }
       const cbs = renderCallbacks;
       renderCallbacks = [];

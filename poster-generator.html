@@ -87,7 +87,7 @@
   html,body{margin:0;padding:0;background:var(--bg);font-family:var(--font-display);color:var(--ink);}
   .wrap{max-width:1265px;margin:0 auto;padding:0 0 60px;}
   .toolbar{background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);border-bottom:none;}
-  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:17px 24px;max-width:1265px;margin:0 auto;}
+  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;max-width:1265px;margin:0 auto;}
   .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;letter-spacing:.35px;}
   .toolbar .sub{font-size:11px;color:#A0AABF;letter-spacing:1.5px;text-transform:uppercase;}
   .content{padding:45px 24px 0;}
@@ -5177,7 +5177,7 @@ function renderAuthUI() {
     container.innerHTML = `
 
       <div class="drafts-dropdown-wrapper" style="position:relative; display:flex; align-items:center; height:100%; padding: 10px 0;">
-        <button style="background:none; border:none; color:white; font-size:16px; font-weight: 600; cursor:pointer; display:flex; align-items:center;" onclick="document.getElementById('draftsDropdown').style.display = document.getElementById('draftsDropdown').style.display === 'none' ? 'flex' : 'none'" title="My Drafts">
+        <button style="background:none; border:none; color:white; font-size:19px; font-weight: 600; cursor:pointer; display:flex; align-items:center;" onclick="document.getElementById('draftsDropdown').style.display = document.getElementById('draftsDropdown').style.display === 'none' ? 'flex' : 'none'" title="My Drafts">
           ☰
         </button>
         <div id="draftsDropdown" style="display:none; position:absolute; top:100%; right:0; background:white; border:1px solid #E5E7EB; border-radius:8px; width:220px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:8px; z-index:999999; flex-direction:column; gap:4px; margin-top:-4px;">
@@ -5185,10 +5185,10 @@ function renderAuthUI() {
         </div>
       </div>
       <button style="background:none; border:none; color:white; font-size:13px; font-weight:500; font-family:var(--font-ui); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="saveDraftToCloud()" title="Save to Drafts">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
       </button>
       <button style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center;" onclick="window.firebaseAuth.signOut()" title="Log Out">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
       </button>
     `;
     const wrapper = container.querySelector('.drafts-dropdown-wrapper');

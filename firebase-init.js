@@ -17,3 +17,23 @@ const db = firebase.firestore();
 window.firebaseAuth = auth;
 window.firebaseDb = db;
 window.firebaseProvider = new firebase.auth.GoogleAuthProvider();
+
+// Check for Email Link Sign-In on page load
+if (window.firebaseAuth.isSignInWithEmailLink(window.location.href)) {
+  let email = window.localStorage.getItem('emailForSignIn');
+  if (!email) {
+    email = window.prompt('Please provide your email for confirmation');
+  }
+  if (email) {
+    window.firebaseAuth.signInWithEmailLink(email, window.location.href)
+      .then((result) => {
+        window.localStorage.removeItem('emailForSignIn');
+        // Clear the URL parameters so it doesn't try again
+        window.history.replaceState({}, document.title, window.location.pathname);
+      })
+      .catch((error) => {
+        console.error(error);
+        alert('Error signing in with email link: ' + error.message);
+      });
+  }
+}

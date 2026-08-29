@@ -5197,17 +5197,29 @@ function renderAuthUI() {
     wrapper.addEventListener('mouseleave', () => dropdown.style.display = 'none');
   } else {
     container.innerHTML = `
-      <button style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center;" onclick="loginWithGoogle()" title="Admin Login">
+      <button style="background:none; border:none; color:white; cursor:pointer; display:flex; align-items:center;" onclick="loginWithEmailLink()" title="Admin Login">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
       </button>
     `;
   }
 }
 
-function loginWithGoogle() {
-  window.firebaseAuth.signInWithPopup(window.firebaseProvider).catch(error => {
-    alert('Error logging in: ' + error.message);
-  });
+function loginWithEmailLink() {
+  const email = prompt("Enter your company email to sign in:");
+  if (!email) return;
+  const actionCodeSettings = {
+    url: window.location.origin + window.location.pathname,
+    handleCodeInApp: true
+  };
+  window.firebaseAuth.sendSignInLinkToEmail(email, actionCodeSettings)
+    .then(() => {
+      window.localStorage.setItem('emailForSignIn', email);
+      alert('Sign-in link sent to ' + email + '. Please check your email inbox (and spam folder) and click the link to sign in.');
+    })
+    .catch((error) => {
+      console.error(error);
+      alert('Error sending email link: ' + error.message);
+    });
 }
 
 if (window.firebaseAuth) {

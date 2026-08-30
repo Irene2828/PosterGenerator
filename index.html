@@ -6178,16 +6178,18 @@ function renderDraftsDropdown() {
   list.innerHTML = '';
   userDrafts.forEach(draft => {
     const timeMs = draft.updatedAt && draft.updatedAt.toMillis ? draft.updatedAt.toMillis() : Date.now();
-    const dateStr = new Date(timeMs).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    const dateObj = new Date(timeMs);
+    const dateStr = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeStr = dateObj.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
     const item = document.createElement('div');
     item.style.cssText = `padding: 8px; border-radius: 6px; cursor: pointer; transition: background 0.15s; color: #111827; font-size: 13px; display: flex; flex-direction: column; gap: 4px;`;
     item.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div style="display:flex; flex-direction:column; gap:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; flex-direction:column; gap:2px;">
           <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px;">${draft.eventName || 'Unnamed Draft'}</div>
-          <div style="font-size: 11px; color: #6B7280;">${dateStr}</div>
+          <div style="font-size: 11px; color: #6B7280;">${dateStr} • ${timeStr}</div>
         </div>
-        <button class="delete-draft-btn" style="background:none; border:none; padding:6px; margin:0; cursor:pointer; color:#9CA3AF; opacity:0; transition:opacity 0.2s; display:flex; align-items:center; flex-shrink:0;" title="Delete Draft">
+        <button class="delete-draft-btn" style="background:none; border:none; padding:4px; margin:0; cursor:pointer; color:#9CA3AF; opacity:0; transition:opacity 0.2s; display:flex; align-items:center; flex-shrink:0;" title="Delete Draft">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
         </button>
       </div>
@@ -6203,7 +6205,24 @@ function renderDraftsDropdown() {
     if (delBtn) {
       delBtn.onclick = async (e) => {
         e.stopPropagation();
-        if (confirm('Are you sure you want to delete this draft?')) {
+        const confirmed = await new Promise(resolve => {
+          const html = `
+            <div class="custom-modal-box" style="width:320px; position:relative;">
+              <button type="button" id="btnCancelX" style="position:absolute; top:12px; right:12px; background:none; border:none; cursor:pointer; font-size:18px; color:#9CA3AF; line-height:1; padding:4px;">&times;</button>
+              <div style="font-size:14px; color:#111827; font-weight:600; margin-bottom:8px;">Delete Draft?</div>
+              <div style="font-size:13px; color:#4B5563; margin-bottom:20px; line-height: 1.5;">Are you sure you want to delete <b>${draft.eventName || 'this draft'}</b>? This cannot be undone.</div>
+              <div class="custom-modal-actions" style="flex-direction:row; justify-content:flex-end; gap:8px;">
+                <button class="custom-modal-btn" id="btnCancel" style="padding: 8px 16px;">Cancel</button>
+                <button class="custom-modal-btn primary" id="btnDelete" style="background:#ef4444; border-color:#ef4444; padding: 8px 16px;">Delete</button>
+              </div>
+            </div>
+          `;
+          const overlay = createModalDOM(html);
+          overlay.querySelector('#btnCancelX').onclick = () => { removeModalDOM(overlay); resolve(false); };
+          overlay.querySelector('#btnCancel').onclick = () => { removeModalDOM(overlay); resolve(false); };
+          overlay.querySelector('#btnDelete').onclick = () => { removeModalDOM(overlay); resolve(true); };
+        });
+        if (confirmed) {
           try {
             await window.firebaseDb.collection('drafts').doc(draft.id).delete();
             userDrafts = userDrafts.filter(d => d.id !== draft.id);
@@ -6211,9 +6230,11 @@ function renderDraftsDropdown() {
               currentDraftId = null;
               currentDraftName = null;
             }
+            showToast('Draft deleted');
             renderDraftsDropdown();
           } catch(err) {
-            alert('Error deleting draft: ' + err.message);
+            console.error(err);
+            showToast('Error deleting draft: ' + err.message, true);
           }
         }
       };

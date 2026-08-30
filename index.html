@@ -6014,23 +6014,50 @@ function loginWithEmailLink() {
 
 if (window.firebaseAuth) {
   window.firebaseAuth.onAuthStateChanged(user => {
+    console.log('[DEBUG] onAuthStateChanged fired. user:', user ? user.email + ' (uid: ' + user.uid + ')' : 'null');
     currentUser = user;
     if (user) {
       if (draftsUnsubscribe) draftsUnsubscribe();
+      console.log('[DEBUG] Setting up Firestore onSnapshot for uid:', user.uid);
       draftsUnsubscribe = window.firebaseDb.collection('drafts')
         .where('userId', '==', user.uid)
         .onSnapshot(snapshot => {
+          console.log('[DEBUG] onSnapshot fired! docs count:', snapshot.size);
           userDrafts = [];
           snapshot.forEach(doc => {
             userDrafts.push({ id: doc.id, ...doc.data() });
           });
+
+          // If UID query returned 0 drafts, try migrating orphaned drafts by email
+          if (userDrafts.length === 0 && user.email) {
+            console.log('[DEBUG] 0 drafts for UID, trying email migration for:', user.email);
+            window.firebaseDb.collection('drafts')
+              .where('userEmail', '==', user.email)
+              .get()
+              .then(emailSnapshot => {
+                console.log('[DEBUG] Email query found:', emailSnapshot.size, 'drafts');
+                if (emailSnapshot.size > 0) {
+                  const batch = window.firebaseDb.batch();
+                  emailSnapshot.forEach(doc => {
+                    batch.update(doc.ref, { userId: user.uid });
+                  });
+                  batch.commit().then(() => {
+                    console.log('[DEBUG] Migrated', emailSnapshot.size, 'drafts to current UID');
+                  }).catch(err => console.error('[DEBUG] Migration error:', err));
+                }
+              })
+              .catch(err => console.error('[DEBUG] Email query error:', err));
+          }
+
           userDrafts.sort((a, b) => {
             const timeA = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
             const timeB = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : 0;
             return timeB - timeA;
           });
           renderDraftsDropdown();
-        }, error => console.error("Drafts sync error:", error));
+        }, error => {
+          console.error("[DEBUG] Drafts sync ERROR:", error.code, error.message);
+        });
     } else {
       if (draftsUnsubscribe) {
         draftsUnsubscribe();
@@ -6099,6 +6126,7 @@ async function saveDraftToCloud(forceNew = false) {
 
   const draftData = {
     userId: currentUser.uid,
+    userEmail: currentUser.email || '',
     eventName: finalEventName.trim(),
     templateId: currentTpl,
     copy: {},

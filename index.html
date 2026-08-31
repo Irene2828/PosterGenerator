@@ -2111,8 +2111,7 @@ const TEMPLATES = {
       { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6700, align:'left', field:'f-b1', maxW:0.3200, lineHeight:32, bullet:true },
       { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7600, align:'left', field:'f-b2', maxW:0.3200, lineHeight:32, bullet:true },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'footer',    type:'social_footer', x:0.2537,y:0.9820, align:'left', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', color:'ink', maxW:0.4685, lineHeight:18 },
-      { id:'url',       type:'edit_row', x:0.2537,y:0.9820, align:'left', field:'f-url', prefix:'', maxW:0.4685, lineHeight:18 }
+      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true }
     ],
     socialLayers: [
       { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 46px sans-serif', color:'ink', maxW:0.9 },
@@ -2122,7 +2121,7 @@ const TEMPLATES = {
       { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow },
       { id:'bullets',   type:'list',   x:0.6300,y:0.6850, align:'left',   font:'500 24px sans-serif', color:'ink', maxW:0.3200, lineHeight:32, maxItems:2, shadow:greyTextShadow },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'footer',    type:'social_footer', x:0.2537,y:0.9820, align:'left', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', color:'ink', maxW:0.4685, lineHeight:18 }
+      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true }
     ]
   },
   londonFlyer: {
@@ -2291,26 +2290,23 @@ function drawEditRow(ctx, t, layer, copy, w, h, scale){
     return;
   }
   if (layer.field === 'f-url'){
-    if (source.type === 'social_footer'){
-      const urlText = rawText.replace(/^visit:\s*/i, '');
+    const text = rawText.replace(/^visit:\s*/i, '');
+    drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, null, spacing);
+    
+    if (layer.underline || (source && source.type === 'social_footer')) {
       ctx.font = regularFont;
-      const textWidth = ctx.measureText(urlText).width;
-      const startX = source.x * w;
-      const boxWidth = (source.maxW || 0.4685) * w;
-      const finalX = startX + (boxWidth - textWidth) / 2;
-      
-      drawRichTextLine(ctx, urlText, finalX, y, regularFont, boldFont, color, null, spacing);
+      const textWidth = ctx.measureText(text).width;
+      let startX = x;
+      if (ctx.textAlign === 'center') startX -= textWidth / 2;
+      else if (ctx.textAlign === 'right') startX -= textWidth;
       
       ctx.beginPath();
       ctx.lineWidth = Math.max(1, 1 * scale);
       ctx.strokeStyle = color;
-      ctx.moveTo(finalX, y + 3 * scale);
-      ctx.lineTo(finalX + textWidth, y + 3 * scale);
+      ctx.moveTo(startX, y + 3 * scale);
+      ctx.lineTo(startX + textWidth, y + 3 * scale);
       ctx.stroke();
-      return;
     }
-    const text = rawText.replace(/^visit:\s*/i, '');
-    drawRichTextLine(ctx, text, x, y, regularFont, boldFont, color, null, spacing);
     return;
   }
 
@@ -6301,5 +6297,12 @@ if (document.getElementById('saveCloudBtn')) {
       </div>
     </div>
   </div>
+  <script>
+    document.addEventListener('wheel', function(e) {
+      if (document.activeElement && document.activeElement.type === 'number') {
+        document.activeElement.blur();
+      }
+    }, { passive: false });
+  </script>
 </body>
 </html>

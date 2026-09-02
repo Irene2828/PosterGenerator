@@ -1592,7 +1592,21 @@
         </div>
         <div style="position: relative; width: 100%;">
           <div class="canvas-shell" style="margin: 0 auto;">
-            <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)">
+            <div class="poster-side-actions-bar" style="position: relative; top: auto; left: auto; display: flex; flex-direction: row; justify-content: center; gap: 24px; width: 100%; margin-bottom: 24px;">
+              <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
+                <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
+                <span class="action-label">undo change</span>
+              </div>
+              <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
+                <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
+                <span class="action-label">restore template</span>
+              </div>
+              <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
+                <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
+                <span class="action-label">full screen view</span>
+              </div>
+            </div>
+            <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)" style="position: relative; top: auto; left: auto; transform: none; margin-bottom: 16px;">
               Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
             </div>
             <div class="poster-stage" id="posterStage">
@@ -1604,41 +1618,16 @@
               <div class="admin-guide selected-h" id="selectedGuideH"></div>
             </div>
           </div>
-          <div class="poster-side-actions-bar" style="position: absolute; top: 0; left: calc(50% + 290px);">
-            <div class="action-item">
-              <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-              <span class="action-label">undo change</span>
-            </div>
-            <div class="action-item">
-              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-              <span class="action-label">restore template</span>
-            </div>
-            <div class="action-item">
-              <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-              <span class="action-label">full screen view</span>
-            </div>
-          </div>
         </div>
-
 	  </div>
 
-
-
-      <!-- COLUMN 3 CONTAINER (FOR FULL EDITOR REPLACEMENT) -->
+      <!-- COLUMN 3 CONTAINER (STEP 3 DOWNLOAD) -->
 	  <div class="options-col" id="optionsCol">
-      <div id="step3FinishWrapper"></div>
-    </div>
-    </div> <!-- END GRID -->
-
-    <!-- ROW 3 DIVIDER & STEP 3 ROW -->
-    <div class="row-divider"></div>
-    <div class="step3-row grid" style="margin-bottom: 120px;">
-      <div class="step3-intro" style="margin-bottom: 20px;">
-        <div class="step-tag" style="margin:0 0 6px;"><span class="step-chip">STEP 3.</span> DOWNLOAD THE RESULT</div>
-        <div style="font-size:13.65px; font-weight:400; color:#6B7280;">Done editing? Download your poster.</div>
-      </div>
-      <div style="display: flex; justify-content: center; width: 100%;">
-        <div class="panel" style="width: 100%; max-width: 480px; border: 1px solid var(--border);">
+        <div class="column-intro" style="height: auto; margin-bottom: 32px;">
+          <div class="step-tag" style="margin:0 0 6px;"><span class="step-chip">STEP 3.</span> DOWNLOAD THE RESULT</div>
+          <div style="font-size:13.65px; font-weight:400; color:#6B7280;">Done editing? Download your poster.</div>
+        </div>
+        <div class="panel" style="width: 100%; border: 1px solid var(--border);">
           <!-- DOWNLOAD OPTIONS -->
           <div class="field" style="margin-bottom: 14px;">
             <label style="color: #152B50;">Download Format</label>
@@ -1654,9 +1643,9 @@
           </div>
           <button class="btn btn-primary" id="downloadBtn">Download poster</button>
         </div>
+        <div id="step3FinishWrapper"></div>
       </div>
-      <div></div>
-    </div>
+    </div> <!-- END GRID -->
 
           <!-- AUXILIARY HIDDEN INPUTS FOR STORAGE SYNC -->
           <input type="hidden" id="f-url" value="terryfox.org">

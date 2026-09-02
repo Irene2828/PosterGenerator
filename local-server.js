@@ -74,6 +74,16 @@ const server = http.createServer((req, res) => {
   });
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is busy, finding a free port...`);
+    server.listen(0, '0.0.0.0');
+  } else {
+    console.error(err);
+  }
+});
+
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running at http://0.0.0.0:${PORT}`);
+  const actualPort = server.address().port;
+  console.log(`Server running at http://localhost:${actualPort}`);
 });

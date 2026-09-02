@@ -88,12 +88,12 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);font-family:var(--font-display);color:var(--ink);overflow-x:hidden;}
-  .wrap{max-width:1440px;margin:0 auto;padding:0 0 60px;}
+  .wrap{width:100%;max-width:1324px;margin:0 auto;padding:0 40px 60px;}
   .toolbar{background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);border-bottom:none;}
-  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;max-width:1440px;margin:0 auto;min-height:56px;}
+  .toolbar-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 40px;max-width:1440px;margin:0 auto;min-height:56px;}
   .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;letter-spacing:.35px;}
   .toolbar .sub{font-size:11px;color:#A0AABF;letter-spacing:1.5px;text-transform:uppercase;}
-  .content{padding:45px 24px 0;}
+  .content{padding:45px 0 0;}
   .page-headline{
     margin:0 0 24px;
     color:#0B132B;
@@ -107,23 +107,24 @@
     display: none;
   }
   .column-intro {
-    height:90px;
+    height: 72px;
     display:flex;
     flex-direction:column;
     justify-content:flex-start;
-    align-items:center;
-    text-align:center;
+    align-items:flex-start;
+    text-align:left;
     margin-bottom:12px;
   }
-  .step-tag{display:block;text-align:center;background:transparent;color:#152B50;font-size:10px;font-weight:700;text-transform:uppercase;margin:0 0 21px;letter-spacing:1.5px;line-height:1.35;}
+  .step-tag{display:block;text-align:left;background:transparent;color:#152B50;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
   .step-index{display:inline-block;background:#E01A2B;color:#fff;border-radius:8px;padding:3px 8px;margin-right:6px;letter-spacing:.08em;}
-  .step-chip{background:#1E293B;color:#F8FAFC;border-radius:4px;padding:2px 6px;margin-right:4px;font-size:9.5px;letter-spacing:1px;}
-  .step-description, .poster-edit-help{font-size:13px;color:#4B5563;margin:0 auto 12px;line-height:1.45;text-align:center;}
+  .step-chip{background:#152B50;color:#FFFFFF;border-radius:4px;padding:2px 6px;margin-right:8px;font-size:10.5px;letter-spacing:1px;}
+  .preview-label{display:inline-block;background:transparent;color:#64748B;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0;}
+  .step-description, .poster-edit-help{font-size:13.65px;color:#4B5563;margin:0 auto 12px;line-height:1.45;text-align:center;}
   .step-description{max-width:none;}
   .poster-edit-help{max-width:none;}
-  .poster-edit-help p{margin:0 0 2px;font-size:13px;color:#4B5563;line-height:1.45;}
+  .poster-edit-help p{margin:0 0 2px;font-size:13.65px;color:#4B5563;line-height:1.45;}
   .poster-edit-help button{
-    background:none;border:none;color:#E01A2B;font-weight:600;padding:0;font-size:13px;
+    background:none;border:none;color:#E01A2B;font-weight:600;padding:0;font-size:13.65px;
     text-decoration:underline;cursor:pointer;font-family:inherit;
   }
   .poster-edit-help button:hover{color:#C81423;}
@@ -161,7 +162,95 @@
   }
   .tpl-thumb{width:100%;height:184px;display:block;object-fit:cover;}
   .tpl-name{font-size:13.5px;text-align:center;padding:8px 6px;font-weight:500;font-family:var(--font-ui);}
-  .grid{display:grid;grid-template-columns:240px 1fr 340px;gap:24px;align-items:start;}
+  .grid{display:grid;grid-template-columns:320px 1fr 305px;column-gap:36px;row-gap:24px;align-items:start;margin-top:20px;}
+  .step1-top-bar {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 16px 0;
+    margin-bottom: 0;
+  }
+  .row-divider {
+    width: 100%;
+    height: 1px;
+    background: #E5E7EB;
+    margin: 60px auto;
+    display: block;
+  }
+  .step1-intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+  .step1-collapse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #6B7280;
+    font-size: 14px;
+    transition: color 0.15s, transform 0.25s;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .step1-collapse-btn:hover {
+    background: transparent;
+    border: none;
+    color: #0D8BFF;
+  }
+  .step1-top-bar.collapsed .step1-collapse-btn {
+    transform: rotate(180deg);
+  }
+  .step1-top-bar.collapsed .step1-intro {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .step1-top-bar .templates-row {
+    overflow: hidden;
+    max-height: 500px;
+    transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.25s ease;
+    opacity: 1;
+  }
+  .step1-top-bar.collapsed .templates-row {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+  .templates-row {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    justify-content: flex-start;
+    align-items: stretch;
+    -webkit-overflow-scrolling: touch;
+  }
+  .templates-row .tpl-card {
+    flex: 0 0 auto;
+    width: 120px;
+  }
+  .templates-row .tpl-thumb {
+    height: 155px;
+  }
+  .form-col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .form-col .panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
   .templates-col{padding-top:0;}
 
   @media (max-width:900px){
@@ -199,11 +288,11 @@
       border-bottom: 1px solid #FFEEBA;
     }
   }
-  .panel{background:#FFFFFF;border:1px solid var(--border);border-radius:14px;padding:20px 26px 26px;}
+  .panel{background:#FFFFFF;border-radius:16px;padding:24px 20px;border:none;box-shadow:none;}
   .copy-fields-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
   .field{margin-bottom:18px;}
-  .field label{display:block;font-size:15px;font-weight:600;margin-bottom:7px;color:#152B50;}
-  .field .optional{font-weight:400;color:var(--muted);}
+  .field label{display:block;font-size:15.75px;font-weight:600;margin-bottom:7px;color:#152B50;}
+  .field .optional{font-weight:500;color:#0D8BFF;}
   .field input[type=text], .field textarea, .field select{
     width:100%;background:var(--bg);border:1.5px solid var(--border-strong);border-radius:10px;
     font-family:var(--font-display);font-size:15px;padding:11px 13px;resize:none;outline:none;
@@ -227,7 +316,7 @@
   .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
   .btn-primary{background:#E01A2B;color:#FFFFFF;border:none;transition:background-color .2s, opacity .2s;}
   .btn-primary:hover{opacity:.9;}
-  .preview-col{position:static;}
+  .preview-col{position:static; padding-left: 10%;}
   .poster-edit-help {
     color:#6B7280;
     font-family:var(--font-ui);
@@ -239,8 +328,9 @@
     text-align:center;
   }
   .poster-edit-help p {
-    margin:0 0 6px;
+    margin:0 0 2px;
     font-weight:400!important;
+    text-align:center;
   }
   .poster-edit-help p:last-child {
     margin-bottom:0;
@@ -260,7 +350,13 @@
     color:#0D8BFF;
     text-decoration:none;
   }
-  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:24px 4px 12px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);max-width:640px;margin:0 auto;}
+  .preview-col .column-intro {
+    width:100%;
+    margin:0 auto 6px;
+    align-items:center;
+    text-align:center;
+  }
+  .canvas-shell{background:#FFFFFF;border-radius:16px;padding:24px 32px;display:flex;flex-direction:column;align-items:center;border:1px solid var(--border);max-width:640px;margin:0 auto;position:relative;}
   .visual-hint{font-size:12px;color:var(--muted);margin-bottom:12px;text-align:center;}
   .poster-stage{position:relative;width:100%;max-width:500px;}
   canvas#posterCanvas{width:100%;height:auto;border-radius:0;box-shadow:0 6px 16px rgba(0,0,0,.07);display:block;}
@@ -299,34 +395,33 @@
   }
   .preview-caption{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
   .preview-actions{width:100%;max-width:500px;margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:12px;}
-  .poster-actions-stack {
-    position: absolute;
-    left: -48px;
-    top: 20px;
-    z-index: 50;
+  .poster-side-actions-bar {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    justify-content: flex-start;
     align-items: center;
+    gap: 24px;
+    padding-top: 16px;
+    width: 60px;
   }
-  .poster-actions-stack.right {
-    left: auto;
-    right: -48px;
-  }
-  .action-item {
+  .poster-side-actions-bar .action-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+  }
+  .poster-side-actions-bar .action-label {
+    text-align: center;
+    line-height: 1.1;
   }
   .action-btn {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--border);
-    background: #fff;
-    color: var(--muted);
+    width: 34px;
+    height: 34px;
+    border: 1px solid #D1D5DB;
+    background: #FFFFFF;
+    color: #152B50;
     border-radius: 50%;
-    font-size: 16px;
+    font-size: 17px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -334,8 +429,9 @@
     transition: all 0.2s ease;
   }
   .action-btn:hover {
-    background: #F7F8FA;
-    color: var(--ink);
+    background: #F0F4FF;
+    border-color: #152B50;
+    color: #0D8BFF;
   }
   .action-btn:disabled {
     opacity: 0.4;
@@ -343,18 +439,10 @@
   }
   .action-label {
     font-family: var(--font-ui);
-    font-size: 9px;
-    color: var(--muted);
+    font-size: 10px;
+    font-weight: 500;
+    color: #8C96A6;
     text-transform: lowercase;
-  }
-  @media (max-width: 1100px) {
-    .poster-actions-stack {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      flex-direction: row;
-      gap: 12px;
-    }
   }
 
   .preview-icon{width:30px;height:30px;border:0;background:transparent;color:var(--muted);border-radius:50%;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.72;}
@@ -438,32 +526,185 @@
     position: sticky;
     top: 20px;
     align-self: start;
-    /* max-height removed */
     display: flex;
     flex-direction: column;
   }
+  .optional-section-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 28px 0 12px;
+  }
+  .optional-section-divider span {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #0D8BFF;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-family: var(--font-ui);
+  }
+  .optional-section-divider::before,
+  .optional-section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #E5E7EB;
+  }
+  .optional-section-divider::before { display: none; }
+  .form-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #E01A2B;
+  }
+  .form-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #152B50;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+  .form-section-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: #0D8BFF;
+    font-family: var(--font-ui);
+  }
+  .edit-sample-notice {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 7px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-family: var(--font-ui);
+    letter-spacing: 0.2px;
+  }
+  .compact-form-group .field {
+    margin-bottom: 10px;
+  }
+  .compact-form-group .field label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1E293B;
+    display: block;
+  }
+  .compact-form-group .field input[type=text] {
+    padding: 7px 10px;
+    font-size: 12.5px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    background: #FFFFFF;
+    color: #9CA3AF;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
+    font-family: var(--font-ui);
+  }
+  .compact-form-group .field input[type=text]::placeholder {
+    color: #9CA3AF;
+    font-style: italic;
+    font-size: 11.5px;
+  }
+  .compact-form-group .field input[type=text]:focus {
+    background: #FFFFFF;
+    border-color: #0D8BFF;
+    box-shadow: 0 0 0 2px rgba(13, 139, 255, 0.12);
+    outline: none;
+  }
+  .compact-form-group .field.optional-field input[type=text] {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+  }
+  .compact-form-group .field.optional-field input[type=text]:focus {
+    background: #FFFFFF;
+  }
+  .compact-form-group .field input[type=text]:focus {
+    color: #1E293B;
+  }
+  .form-section-divider {
+    height: 1px;
+    background: #E5E7EB;
+    margin: 16px 0;
+  }
+  /* Floating Bubble over visual */
+  .full-editor-bubble {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.78);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    color: #1E293B;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .full-editor-bubble:hover {
+    transform: translateX(-50%) translateY(-2px) scale(1.02);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .full-editor-bubble .highlight-link {
+    color: #0D8BFF;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  body.admin-active .full-editor-bubble {
+    display: none !important;
+  }
+
   body.admin-active #step3FinishWrapper {
     display: none !important;
   }
   body.admin-active .figma-sidebar {
-    display: flex !important;
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
   }
   .figma-sidebar {
-    position: static;
-    width: 100%;
-    /* max-height removed */
-    height: auto;
+    position: fixed;
+    top: 84px;
+    right: 0;
+    bottom: 0;
+    width: 350px;
+    height: calc(100vh - 84px);
     background: #F3F4F6;
     color: #1F2937;
-    border: 1px solid #E5E7EB;
-    border-radius: 14px;
+    border-left: 1px solid #E5E7EB;
+    border-top: 1px solid #E5E7EB;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 0;
     font-family: var(--font-ui);
     font-size: 12px;
-    z-index: 10;
-    box-shadow: 0 2px 10px rgba(15,23,42,0.05);
-    display: none;
+    z-index: 10000;
+    box-shadow: -6px 6px 24px rgba(0, 0, 0, 0.12);
+    display: flex;
     flex-direction: column;
-    overflow: visible;
+    overflow: hidden;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
   }
   .figma-sidebar,
   .figma-sidebar * {
@@ -488,7 +729,7 @@
     /* min-height removed */
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 12px 12px 20px;
+    padding: 12px 6px 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -600,8 +841,8 @@
     letter-spacing: 0.5px;
   }
   .no-selection-msg {
-    margin: 8px 12px 14px;
-    padding: 28px 16px;
+    margin: 8px 6px 14px;
+    padding: 28px 12px;
     background:#FFFFFF;
     border:1px solid #E5E7EB;
     border-radius:12px;
@@ -611,7 +852,7 @@
   }
   .property-group {
     margin: 0 0 12px;
-    padding: 14px;
+    padding: 14px 10px;
     background:#FFFFFF;
     border: 1px solid #E5E7EB;
     border-radius: 12px;
@@ -912,9 +1153,18 @@
     min-width: 60px !important;
   }
   #prop-nudge-step {
-    width: 80px !important;
-    min-width: 80px !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
     text-align: center;
+  }
+  .nudge-step-row {
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .nudge-step-row .figma-col.full-width {
+    min-width: 0;
+    flex: 1 1 auto;
   }
   .px-suffix{font-family:var(--font-ui);font-size:11px;color:#6B7280;font-weight:600;}
   .move-undo-btn{align-self:flex-end;margin-bottom:0;}
@@ -1226,162 +1476,192 @@
 <div class="wrap">
 
   <div class="content">
-    <div class="grid">
-      <div class="templates-col">
-        <div class="column-intro">
-        <div class="step-tag"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
-          <p class="step-description"><b>Pick</b> a poster design.</p>
+
+    <!-- STEP 1: CHOOSE A TEMPLATE (TOP ROW BAR ABOVE COLUMNS) -->
+    <div class="step1-top-bar" id="step1TopBar">
+      <div class="step1-intro">
+        <div>
+          <div class="step-tag" style="margin:0 0 6px;"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
+          <div style="font-size:13.65px; font-weight:400; color:#6B7280;">Pick one template to start customizing your poster. Other templates update automatically.</div>
         </div>
-        <div class="panel" style="padding-top:24px; padding-bottom: 24px;">
-          <div class="templates" id="templatePicker"></div>
+        <button type="button" class="step1-collapse-btn" onclick="toggleStep1Row()" title="Collapse / expand template picker" aria-label="Toggle template row">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4.5L6 8L10 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="templates-row" id="templatePicker"></div>
+    </div>
+
+    <!-- ROW DIVIDER (3/4 SITE WIDTH, CENTERED) -->
+    <div class="row-divider" style="margin-top: 30px; margin-bottom: 60px;"></div>
+
+    <!-- 3-COLUMN GRID BELOW STEP 1 TOP ROW -->
+    <div class="grid">
+
+      <!-- COLUMN 1 (LEFT): STEP 2 ENTER POSTER DETAILS (INPUT FIELDS) -->
+      <div class="form-col" id="formCol">
+        <div class="column-intro" style="height: auto; margin-bottom: 32px;">
+          <div class="step-tag" style="margin:0 0 6px;"><span class="step-chip">STEP 2.</span> ENTER POSTER DETAILS</div>
+          <div style="font-size:13.65px; font-weight:400; color:#6B7280;">Type your event details below to update the poster.</div>
+        </div>
+        <div class="panel" style="padding: 0; background: transparent;">
+          <div class="compact-form-group">
+            <div class="field">
+              <label>City Name</label>
+              <input type="text" id="f-city" placeholder="Silicon Valley" maxlength="30">
+            </div>
+
+            <div class="field">
+              <label>Event Date</label>
+              <input type="text" id="f-date" placeholder="Sunday September 27 2026" maxlength="40">
+            </div>
+
+            <div class="field">
+              <label>Location Name</label>
+              <input type="text" id="f-location" placeholder="Bedwell Bayfront Park" maxlength="60">
+            </div>
+
+            <div class="field">
+              <label>Schedule Times</label>
+              <div class="row2" style="gap: 8px;">
+                <input type="text" id="f-t1" placeholder="Registration starts: 8:30" maxlength="40">
+                <input type="text" id="f-t2" placeholder="Run starts: 10:00" maxlength="40">
+              </div>
+            </div>
+
+            <div class="field optional-field">
+              <label>Address <span style="color:#9CA3AF; font-weight:400; font-size:13px; text-transform:none;">(optional)</span></label>
+              <input type="text" id="f-location2" placeholder="660 N Desert Breeze Blvd E, Chandler" maxlength="80">
+            </div>
+
+            <div class="field optional-field">
+              <label>Special Guest Line <span style="color:#9CA3AF; font-weight:400; font-size:13px; text-transform:none;">(optional)</span></label>
+              <input type="text" id="f-guest" placeholder="With special guest, Darrell Fox..." maxlength="80">
+            </div>
+
+            <div class="field optional-field">
+              <label>Highlights <span style="color:#9CA3AF; font-weight:400; font-size:13px; text-transform:none;">(optional)</span></label>
+              <div class="row2" style="gap: 8px;">
+                <input type="text" id="f-b1" placeholder="Highlight detail 1" maxlength="80">
+                <input type="text" id="f-b2" placeholder="Highlight detail 2" maxlength="80">
+              </div>
+              <div class="row2" style="gap: 8px; margin-top: 6px;">
+                <input type="text" id="f-b3" placeholder="Highlight detail 3" maxlength="80">
+                <input type="text" id="f-b4" placeholder="Highlight detail 4" maxlength="80">
+              </div>
+            </div>
+
+            <div class="field optional-field">
+              <label>Registration Note <span style="color:#9CA3AF; font-weight:400; font-size:13px; text-transform:none;">(optional)</span></label>
+              <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office...">
+            </div>
+
+            <!-- QR CODE OPTIONS (MOVED TO COLUMN 1) -->
+            <div class="field" id="qr-options-section" style="margin-bottom: 12px;">
+              <label style="color: #152B50; font-weight: bold;">Include QR Code on poster?</label>
+              <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
+                <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 13.5px;">
+                  <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
+                </label>
+                <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 13.5px;">
+                  <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
+                </label>
+              </div>
+            </div>
+
+            <div id="qr-link-section" style="margin-top: 10px; margin-bottom: 14px; display: none;">
+              <div class="field" style="margin-bottom: 0;">
+                <label style="color: #152B50;">Type the link for the QR code here</label>
+                <div class="qr-input-wrap" id="qrInputWrap">
+                  <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
+                  <span class="qr-check-badge" title="Valid link">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
+      <!-- COLUMN 2 (CENTER): PREVIEW YOUR TEMPLATE -->
 	  <div class="preview-col">
-      <div class="column-intro">
-        <div class="step-tag"><span class="step-chip">STEP 2.</span> EDIT YOUR TEMPLATE</div>
-        <div class="poster-edit-help">
-          <p>Edit or remove the text lines directly on the poster.</p>
-          <p style="margin-top: 12px;">For more text or layout edits - use <button type="button" onclick="toggleAdminMode(true)" style="color: var(--blue) !important; font-weight: 600;">Full Editor</button>.</p>
+        <div class="column-intro" style="height: auto; margin-bottom: 32px; visibility: hidden;">
+          <div class="step-tag" style="margin:0 0 4px;"><span class="step-chip">STEP 2.</span> ENTER POSTER DETAILS</div>
+          <div style="font-size:13.65px; font-weight:400;">Type your event details below to update the poster.</div>
         </div>
-      </div>
-	    <div class="canvas-shell">
-	      <div class="poster-stage" id="posterStage">
-          <div class="poster-actions-stack">
-            <div class="action-item">
-              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-              <span class="action-label">restore</span>
+        <div style="position: relative; width: 100%;">
+          <div class="canvas-shell" style="margin: 0 auto;">
+            <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)">
+              Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
             </div>
+            <div class="poster-stage" id="posterStage">
+              <canvas id="posterCanvas" width="792" height="1224"></canvas>
+              <div class="edit-overlay" id="editOverlay"></div>
+              <div class="admin-guide v"></div>
+              <div class="admin-guide h"></div>
+              <div class="admin-guide selected-v" id="selectedGuideV"></div>
+              <div class="admin-guide selected-h" id="selectedGuideH"></div>
+            </div>
+          </div>
+          <div class="poster-side-actions-bar" style="position: absolute; top: 0; left: calc(50% + 290px);">
             <div class="action-item">
               <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-              <span class="action-label">undo</span>
+              <span class="action-label">undo change</span>
             </div>
-          </div>
-          <div class="poster-actions-stack right">
+            <div class="action-item">
+              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
+              <span class="action-label">restore template</span>
+            </div>
             <div class="action-item">
               <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-              <span class="action-label">zoom in</span>
+              <span class="action-label">full screen view</span>
             </div>
           </div>
-	        <canvas id="posterCanvas" width="792" height="1224"></canvas>
-	        <div class="edit-overlay" id="editOverlay"></div>
-	        <div class="admin-guide v"></div>
-	        <div class="admin-guide h"></div>
-	        <div class="admin-guide selected-v" id="selectedGuideV"></div>
-	        <div class="admin-guide selected-h" id="selectedGuideH"></div>
-	      </div>
-	    </div>
+        </div>
+
 	  </div>
 
+
+
+      <!-- COLUMN 3 CONTAINER (FOR FULL EDITOR REPLACEMENT) -->
 	  <div class="options-col" id="optionsCol">
-      <div id="step3FinishWrapper">
-        <div class="column-intro">
-          <div class="step-tag"><span class="step-chip">STEP 3.</span> FINISH YOUR POSTER</div>
-          <div class="poster-edit-help">
-            <p><b>Choose</b> your <b>download format</b>.</p>
-            <p style="margin-top: 12px;">Add a QR code to your poster (if template supports).</p>
+      <div id="step3FinishWrapper"></div>
+    </div>
+    </div> <!-- END GRID -->
+
+    <!-- ROW 3 DIVIDER & STEP 3 ROW -->
+    <div class="row-divider"></div>
+    <div class="step3-row grid" style="margin-bottom: 120px;">
+      <div class="step3-intro" style="margin-bottom: 20px;">
+        <div class="step-tag" style="margin:0 0 6px;"><span class="step-chip">STEP 3.</span> DOWNLOAD THE RESULT</div>
+        <div style="font-size:13.65px; font-weight:400; color:#6B7280;">Done editing? Download your poster.</div>
+      </div>
+      <div style="display: flex; justify-content: center; width: 100%;">
+        <div class="panel" style="width: 100%; max-width: 480px; border: 1px solid var(--border);">
+          <!-- DOWNLOAD OPTIONS -->
+          <div class="field" style="margin-bottom: 14px;">
+            <label style="color: #152B50;">Download Format</label>
+            <select id="f-format">
+              <option value="png">PNG</option>
+              <option value="pdf">PDF</option>
+              <option value="jpeg">JPEG</option>
+            </select>
           </div>
+
+          <div style="text-align: center; margin-top: 14px; margin-bottom: 12px; font-family: var(--font-ui); font-size: 11px; color: #6B7280;">
+            * Scan the QR code on the poster to test it before downloading
+          </div>
+          <button class="btn btn-primary" id="downloadBtn">Download poster</button>
         </div>
-	      <div class="panel">
+      </div>
+      <div></div>
+    </div>
 
-        <!-- QR CODE OPTIONS -->
-        <div class="field" id="qr-options-section">
-          <label style="color: #152B50; font-weight: bold;">Include QR Code on poster?</label>
-          <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
-            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 14px;">
-              <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
-            </label>
-            <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 14px;">
-              <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
-            </label>
-          </div>
-        </div>
+          <!-- AUXILIARY HIDDEN INPUTS FOR STORAGE SYNC -->
+          <input type="hidden" id="f-url" value="terryfox.org">
+          <input type="hidden" id="f-email" value="TwinCitiesTerryFoxRun@outlook.com">
 
-        <div id="qr-link-section" style="margin-top: 12px; margin-bottom: 12px; display: none;">
-          <div class="field">
-            <label style="color: #152B50;">Type the link for the QR code here</label>
-            <div class="qr-input-wrap" id="qrInputWrap">
-              <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
-              <span class="qr-check-badge" title="Valid link">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </span>
-            </div>
-          </div>
-        </div>
-
-	      <div class="field">
-	        <label style="color: #152B50;">Download Format</label>
-	        <select id="f-format">
-	          <option value="png">PNG</option>
-	          <option value="pdf">PDF</option>
-	          <option value="jpeg">JPEG</option>
-	        </select>
-	      </div>
-
- 	      <div style="text-align: center; margin-top: 40px; margin-bottom: 10px; font-family: var(--font-ui); font-size: 11px; color: #6B7280;">
- 	        * Scan the QR code on the poster to test it before downloading
-	      </div>
-	      <button class="btn btn-primary" id="downloadBtn">Download poster</button>
-
-	      </div>
-
-	      <div class="copy-fields-hidden" aria-hidden="true">
-	      <input type="text" id="f-url" placeholder="terryfox.org">
-	      <input type="text" id="f-email" placeholder="TwinCitiesTerryFoxRun@outlook.com">
-	      <div class="field">
-	        <label>City / chapter name</label>
-	        <input type="text" id="f-city" placeholder="Silicon Valley" maxlength="30">
-	        <div class="adv-ctrls" data-key="city"></div>
-	      </div>
-
-          <div class="field">
-            <label>Event date</label>
-            <input type="text" id="f-date" placeholder="Sunday September 27 2026" maxlength="40">
-            <div class="adv-ctrls" data-key="date"></div>
-          </div>
-
-          <div class="field">
-            <label>Special guest line <span class="optional">(optional)</span></label>
-            <input type="text" id="f-guest" placeholder="With special guest, Darrell Fox, brother of Terry Fox" maxlength="80">
-            <div class="adv-ctrls" data-key="guest"></div>
-          </div>
-
-          <div class="field">
-            <label>Location</label>
-            <input type="text" id="f-location" placeholder="Bedwell Bayfront Park, City of Menlo Park" maxlength="60">
-            <div class="adv-ctrls" data-key="location"></div>
-          </div>
-
-          <div class="field">
-            <label>Address <span class="optional">(optional)</span></label>
-            <input type="text" id="f-location2" placeholder="660 N Desert Breeze Blvd E, Chandler" maxlength="80">
-            <div class="adv-ctrls" data-key="location2"></div>
-          </div>
-
-          <div class="field">
-            <label>Schedule</label>
-            <div class="row2">
-              <input type="text" id="f-t1" placeholder="Registration opens: 8:30" maxlength="30">
-              <input type="text" id="f-t2" placeholder="Opening ceremony: 09:40" maxlength="30">
-            </div>
-            <div style="height:8px"></div>
-            <input type="text" id="f-t3" placeholder="Fun run/walk starts: 10:00" maxlength="30">
-            <div class="adv-ctrls" data-key="schedule"></div>
-          </div>
-
-          <div class="field">
-            <label>Highlights <span class="optional">(optional)</span></label>
-            <input type="text" id="f-b1" placeholder="Highlight line 1" maxlength="80">
-            <div style="height:8px"></div>
-            <input type="text" id="f-b2" placeholder="Highlight line 2" maxlength="80">
-            <div class="adv-ctrls" data-key="bullets"></div>
-          </div>
-
-	      <div class="field">
-	        <label>Registration note <span class="optional">(optional)</span></label>
-	        <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office, scan the QR code, or visit:">
-	        <div class="adv-ctrls" data-key="footIntro"></div>
-	      </div>
 	      </div>
       </div>
 
@@ -1728,6 +2008,10 @@ function getCopy(tplKey){
   const t2 = (values['f-t2'] || '').trim();
   const t3 = (values['f-t3'] || '').trim();
   const schedule = [t1, t2, t3].filter(Boolean).join('   \u2215   ');
+  const b1 = (values['f-b1'] || '').trim();
+  const b2 = (values['f-b2'] || '').trim();
+  const b3 = (values['f-b3'] || '').trim();
+  const b4 = (values['f-b4'] || '').trim();
   return {
     city: (values['f-city'] || '').trim(),
     date: (values['f-date'] || '').trim(),
@@ -1735,9 +2019,11 @@ function getCopy(tplKey){
     location: (values['f-location'] || '').trim(),
     location2: (values['f-location2'] || '').trim(),
     schedule: schedule,
-    b1: (values['f-b1'] || '').trim(),
-    b2: (values['f-b2'] || '').trim(),
-    bullets: [(values['f-b1'] || '').trim(), (values['f-b2'] || '').trim()].filter(Boolean),
+    b1: b1,
+    b2: b2,
+    b3: b3,
+    b4: b4,
+    bullets: [b1, b2, b3, b4].filter(Boolean),
     url: (values['f-url'] || '').trim(),
     email: (values['f-email'] || '').trim(),
     footIntro: (values['f-footintro'] || '').trim(),
@@ -1745,7 +2031,7 @@ function getCopy(tplKey){
   };
 }
 
-const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-t3','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-b1','f-b2','f-b3','f-b4','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
   return 'posterCopyDraft:global';
@@ -1764,6 +2050,8 @@ function getTemplateDefaults(tplKey){
     'f-t3': defaults.t3 || '',
     'f-b1': defaults.b1 || '',
     'f-b2': defaults.b2 || '',
+    'f-b3': defaults.b3 || '',
+    'f-b4': defaults.b4 || '',
     'f-url': defaults.url || '',
     'f-email': defaults.email || '',
     'f-footintro': defaults.footIntro || '',
@@ -5341,6 +5629,11 @@ const CUSTOM_CONFIG = {
   footIntro: { x: 0.15, y: 0.96, size: 0.010, align: 'left', color: 'ink', visible: true },
 };
 
+function toggleStep1Row() {
+  const bar = document.getElementById('step1TopBar');
+  if (bar) bar.classList.toggle('collapsed');
+}
+
 function toggleAdminMode(val) {
   isAdminMode = (val !== undefined) ? val : !isAdminMode;
   refreshAdminPanel();
@@ -5565,13 +5858,19 @@ initScratchpad();
 COPY_FIELD_IDS
   .forEach(id => {
     const field = document.getElementById(id);
+    if (!field) return;
     field.addEventListener('focus', () => {
+      field.classList.add('is-edited');
       const copy = {};
-      COPY_FIELD_IDS.forEach(fieldId => { copy[fieldId] = document.getElementById(fieldId).value; });
+      COPY_FIELD_IDS.forEach(fieldId => {
+        const el = document.getElementById(fieldId);
+        if (el) copy[fieldId] = el.value;
+      });
       field.dataset.undoSnapshot = JSON.stringify(copy);
       field.dataset.undoPushed = 'false';
     });
     field.addEventListener('input', () => {
+      field.classList.add('is-edited');
       if (!isRestoringUndo && field.dataset.undoPushed !== 'true'){
         try { pushUndoSnapshotFrom(JSON.parse(field.dataset.undoSnapshot || '{}')); }
         catch (e) { pushUndoSnapshot(); }

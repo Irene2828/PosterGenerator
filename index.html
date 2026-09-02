@@ -1590,20 +1590,6 @@
       <!-- COLUMN 2 (CENTER): PREVIEW YOUR TEMPLATE -->
 	  <div class="preview-col">
         <div class="column-intro" style="height: auto; margin-bottom: 32px; display: flex; flex-direction: column; align-items: center;">
-          <div class="poster-side-actions-bar" style="position: relative; top: auto; left: auto; display: flex; flex-direction: row; justify-content: center; gap: 24px; width: 100%; margin-bottom: 10px;">
-            <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
-              <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-              <span class="action-label">undo change</span>
-            </div>
-            <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
-              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-              <span class="action-label">restore template</span>
-            </div>
-            <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
-              <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-              <span class="action-label">full screen view</span>
-            </div>
-          </div>
           <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)" style="position: relative; top: auto; left: auto; transform: none; margin-bottom: 0;">
             Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
           </div>
@@ -1617,6 +1603,20 @@
               <div class="admin-guide h"></div>
               <div class="admin-guide selected-v" id="selectedGuideV"></div>
               <div class="admin-guide selected-h" id="selectedGuideH"></div>
+            </div>
+          </div>
+          <div class="poster-side-actions-bar" style="position: relative; top: auto; left: auto; display: flex; flex-direction: row; justify-content: center; gap: 24px; width: 100%; margin-top: 16px;">
+            <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
+              <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
+              <span class="action-label">undo change</span>
+            </div>
+            <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
+              <button type="button" class="action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
+              <span class="action-label">restore template</span>
+            </div>
+            <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
+              <button type="button" class="action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
+              <span class="action-label">full screen view</span>
             </div>
           </div>
         </div>

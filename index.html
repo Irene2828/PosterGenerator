@@ -116,9 +116,9 @@
     text-align:left;
     margin-bottom:12px;
   }
-  .step-tag{display:block;text-align:left;background:transparent;color:#152B50;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
+  .step-tag{display:block;text-align:left;background:transparent;color:#1E3A8A;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
   .step-index{display:inline-block;background:#E01A2B;color:#fff;border-radius:8px;padding:3px 8px;margin-right:6px;letter-spacing:.08em;}
-  .step-chip{background:#152B50;color:#FFFFFF;border-radius:4px;padding:2px 6px;margin-right:8px;font-size:10.5px;letter-spacing:1px;}
+  .step-chip{background:#1E3A8A;color:#FFFFFF;border-radius:4px;padding:2px 6px;margin-right:8px;font-size:10.5px;letter-spacing:1px;}
   .preview-label{display:inline-block;background:transparent;color:#64748B;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:0;}
   .step-description, .poster-edit-help{font-size:13.65px;color:#4B5563;margin:0 auto 12px;line-height:1.45;text-align:center;}
   .step-description{max-width:none;}
@@ -296,7 +296,7 @@
   }
   .panel{background:#FFFFFF;border-radius:16px;padding:24px 20px;border:none;box-shadow:none;}
   .copy-fields-hidden{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
-  .field label{display:block;font-size:15.75px;font-weight:600;margin-bottom:7px;color:#152B50;}
+  .field label{display:block;font-size:15.75px;font-weight:600;margin-bottom:7px;color:#1E3A8A;}
   .field.optional-field label{color:var(--blue, #0D8BFF);}
   .field .optional{font-weight:500;color:#0D8BFF;}
   .field input[type=text], .field textarea, .field select{
@@ -1561,12 +1561,12 @@
 
             <!-- QR CODE OPTIONS (MOVED TO COLUMN 1) -->
             <div class="field" id="qr-options-section" style="margin-top: 36px; margin-bottom: 12px;">
-              <label style="color: #152B50; font-weight: bold;">Include QR Code on poster?</label>
+              <label style="color: #1E3A8A; font-weight: bold;">Include QR Code on poster?</label>
               <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
-                <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 13.5px;">
+                <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #1E3A8A; font-size: 13.5px;">
                   <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
                 </label>
-                <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #152B50; font-size: 13.5px;">
+                <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #1E3A8A; font-size: 13.5px;">
                   <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
                 </label>
               </div>
@@ -1574,7 +1574,7 @@
 
             <div id="qr-link-section" style="margin-top: 10px; margin-bottom: 14px; display: none;">
               <div class="field" style="margin-bottom: 0;">
-                <label style="color: #152B50;">Type the link for the QR code here</label>
+                <label style="color: #1E3A8A;">Type the link for the QR code here</label>
                 <div class="qr-input-wrap" id="qrInputWrap">
                   <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
                   <span class="qr-check-badge" title="Valid link">
@@ -1635,7 +1635,7 @@
         <div class="panel" style="width: 100%; border: 1px solid var(--border);">
           <!-- DOWNLOAD OPTIONS -->
           <div class="field" style="margin-bottom: 14px;">
-            <label style="color: #152B50;">Download Format</label>
+            <label style="color: #1E3A8A;">Download Format</label>
             <select id="f-format">
               <option value="png">PNG</option>
               <option value="pdf">PDF</option>

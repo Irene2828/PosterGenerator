@@ -1976,21 +1976,21 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.4995,y:0.0566, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
+      { id:'city',     type:'text',   x:0.4995,y:0.0566, align:'center', font:'700 200px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
       { id:'guest',    type:'edit_row', x:0.4995,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.4977,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
       { id:'location2', type:'text',   x:0.4993,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3, letterSpacing:1 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005, pad:0 },
       { id:'divider',  type:'rule',   x1:0.1298,x2:0.6589, y:0.9533, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
-      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9679, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'footIntro', type:'edit_row', x:0.1286,y:0.9679, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'url',       type:'edit_row', x:0.1286,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
+      { id:'footer',   type:'qr_caption', x:0.1313,y:0.9679, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true, letterSpacing:1 },
+      { id:'footIntro', type:'edit_row', x:0.1286,y:0.9679, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true, letterSpacing:1 },
+      { id:'url',       type:'edit_row', x:0.1286,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true, letterSpacing:1 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' },
@@ -2010,21 +2010,21 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#E63E30',
     layers: [
-      { id:'city',     type:'text',   x:0.5000,y:0.0505, align:'center', font:'700 198px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
+      { id:'city',     type:'text',   x:0.5000,y:0.0505, align:'center', font:'700 200px "RigidSquareWeb", sans-serif', color:'accent', maxW:0.9 },
       { id:'date',     type:'text',   x:0.5000,y:0.7343, align:'center', font:'700 193px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.7109 },
       { id:'guest',    type:'edit_row', x:0.5000,y:0.7599, align:'center', field:'f-guest', maxW:0.8800, lineHeight:72, font:'italic 400 82px "RigidSquareWeb", sans-serif' },
       { id:'location', type:'text',   x:0.5000,y:0.8239, align:'center', font:'700 120px "RigidSquareWeb", sans-serif', color:'ink', letterSpacing:2 },
       { id:'location2', type:'text',   x:0.5000,y:0.8430, align:'center', font:'500 77px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.5808 },
-      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3 },
-      { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
-      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true },
+      { id:'schedule', type:'schedule_list', x:0.5000,y:0.8560, align:'center', font:'700 58px "RigidSquareWeb", sans-serif', color:'ink', lineHeight:72, bullet:true, includeBullets:true, maxItems:3, letterSpacing:1 },
+      { id:'t1',       type:'edit_row', x:0.5000,y:0.8700, align:'center', field:'f-t1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
+      { id:'t2',       type:'edit_row', x:0.5000,y:0.8860, align:'center', field:'f-t2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
+      { id:'bullet1',  type:'edit_row', x:0.5000,y:0.9020, align:'center', field:'f-b1', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
+      { id:'bullet2',  type:'edit_row', x:0.5000,y:0.9180, align:'center', field:'f-b2', maxW:0.8800, lineHeight:72, font:'400 58px "RigidSquareWeb", sans-serif', bullet:true, letterSpacing:1 },
       { id:'qr',       type:'qr',     x:0.0152,y:0.9170, size:0.1005, pad:25 },
       { id:'divider',  type:'rule',   x1:0.1300,x2:0.6589, y:0.9492, color:'ink', alpha:0.95, lineWidth:4, noQrX1:0.0340, noQrX2:0.5443 },
-      { id:'footer',   type:'qr_caption', x:0.1300,y:0.9675, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'footIntro', type:'edit_row', x:0.1300,y:0.9675, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true },
-      { id:'url',       type:'edit_row', x:0.1300,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true }
+      { id:'footer',   type:'qr_caption', x:0.1300,y:0.9675, align:'left', referenceStyle:true, font:'400 58px "RigidSquareWeb", sans-serif', color:'ink', alpha:0.95, maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true, letterSpacing:1 },
+      { id:'footIntro', type:'edit_row', x:0.1300,y:0.9675, align:'left', field:'f-footintro', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true, letterSpacing:1 },
+      { id:'url',       type:'edit_row', x:0.1300,y:0.9820, align:'left', field:'f-url', font:'400 58px "RigidSquareWeb", sans-serif', maxW:0.5417, lineHeight:72, noQrX:0.0340, fixedFont:true, letterSpacing:1 }
     ],
     socialLayers: [
       { id:'city', type:'text', x:0.5, y:0.08, align:'center', font:'700 40px "RigidSquareWeb", sans-serif', color:'accent' }
@@ -2043,27 +2043,27 @@ const TEMPLATES = {
     qrBg: '#FFFFFF',
     edgeColor: '#1A2332',
     layers: [
-      { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 46px sans-serif', color:'ink', maxW:0.9 },
+      { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 48px sans-serif', color:'ink', maxW:0.9 },
       { id:'staticSub', type:'static', x:0.6300,y:0.2380, align:'left',   font:'700 44px sans-serif', color:'ink', text:'For Cancer Research', maxW:0.3550, shadow:greyTextShadow },
       { id:'date',      type:'wrap',   x:0.6300,y:0.3320, align:'left',   font:'600 56px sans-serif', color:'ink', maxW:0.3200, lineHeight:56, shadow:greyTextShadow },
       { id:'location',  type:'wrap',   x:0.6300,y:0.4580, align:'left',   font:'600 28px sans-serif', color:'ink', maxW:0.3200, lineHeight:32, shadow:greyTextShadow },
-      { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow },
-      { id:'t1',        type:'edit_row', x:0.6300,y:0.5850, align:'left', field:'f-t1', maxW:0.3200, lineHeight:32, bullet:true },
-      { id:'t2',        type:'edit_row', x:0.6300,y:0.6200, align:'left', field:'f-t2', maxW:0.3200, lineHeight:32, bullet:true },
-      { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6700, align:'left', field:'f-b1', maxW:0.3200, lineHeight:32, bullet:true },
-      { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7600, align:'left', field:'f-b2', maxW:0.3200, lineHeight:32, bullet:true },
+      { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow, letterSpacing:1 },
+      { id:'t1',        type:'edit_row', x:0.6300,y:0.5850, align:'left', field:'f-t1', maxW:0.3200, lineHeight:32, bullet:true, letterSpacing:1 },
+      { id:'t2',        type:'edit_row', x:0.6300,y:0.6200, align:'left', field:'f-t2', maxW:0.3200, lineHeight:32, bullet:true, letterSpacing:1 },
+      { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6700, align:'left', field:'f-b1', maxW:0.3200, lineHeight:32, bullet:true, letterSpacing:1 },
+      { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7600, align:'left', field:'f-b2', maxW:0.3200, lineHeight:32, bullet:true, letterSpacing:1 },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true }
+      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true, letterSpacing:1 }
     ],
     socialLayers: [
-      { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 46px sans-serif', color:'ink', maxW:0.9 },
+      { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 48px sans-serif', color:'ink', maxW:0.9 },
       { id:'staticSub', type:'static', x:0.6300,y:0.2380, align:'left',   font:'700 44px sans-serif', color:'ink', text:'For Cancer Research', maxW:0.3550, shadow:greyTextShadow },
       { id:'date',      type:'wrap',   x:0.6300,y:0.3320, align:'left',   font:'600 56px sans-serif', color:'ink', maxW:0.3200, lineHeight:56, shadow:greyTextShadow },
       { id:'location',  type:'wrap',   x:0.6300,y:0.4580, align:'left',   font:'600 28px sans-serif', color:'ink', maxW:0.3200, lineHeight:32, shadow:greyTextShadow },
-      { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow },
-      { id:'bullets',   type:'list',   x:0.6300,y:0.6850, align:'left',   font:'500 24px sans-serif', color:'ink', maxW:0.3200, lineHeight:32, maxItems:2, shadow:greyTextShadow },
+      { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow, letterSpacing:1 },
+      { id:'bullets',   type:'list',   x:0.6300,y:0.6850, align:'left',   font:'500 24px sans-serif', color:'ink', maxW:0.3200, lineHeight:32, maxItems:2, shadow:greyTextShadow, letterSpacing:1 },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true }
+      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true, letterSpacing:1 }
     ]
   },
   londonFlyer: {

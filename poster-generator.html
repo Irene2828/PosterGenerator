@@ -542,27 +542,31 @@
     font-size: 13.125px;
     height: 34px;
     border-radius: 6px;
-    border: 1px solid #BFDBFE;
+    border: 1.5px dashed #0D8BFF;
     background: #EFF6FF;
-    color: #1E293B;
+    color: #9CA3AF;
     font-family: var(--font-display);
     font-weight: 500;
     transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, color 0.15s;
   }
+  .compact-form-group .field input[type=text].is-custom-typed {
+    color: #000000;
+  }
   .compact-form-group .field input[type=text]::placeholder {
     color: #9CA3AF;
     font-style: italic;
-    font-size: 12.075px;
+    font-size: 11.5px;
   }
   .compact-form-group .field input[type=text]:focus {
     background: #FFFFFF;
+    border-style: solid;
     border-color: #0D8BFF;
     box-shadow: 0 0 0 2px rgba(13, 139, 255, 0.12);
     outline: none;
   }
   .compact-form-group .field.optional-field input[type=text] {
     background: #EFF6FF;
-    border-color: #BFDBFE;
+    border: 1.5px dashed #0D8BFF;
   }
   .compact-form-group .field.optional-field input[type=text]:focus {
     background: #FFFFFF;
@@ -1842,6 +1846,32 @@ function saveCopyDraft(tplKey = currentTpl){
   const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
   if (showQrRadio) draft['show-qr-radio'] = showQrRadio.value;
   localStorage.setItem(draftStorageKey(tplKey), JSON.stringify(draft));
+  updateInputCustomState();
+}
+
+function updateInputCustomState() {
+  const defaults = getTemplateDefaults(currentTpl);
+  COPY_FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const defaultVal = defaults[id] || '';
+      const currentVal = el.value || '';
+      if (currentVal.trim() !== '' && currentVal.trim() !== defaultVal.trim()) {
+        el.classList.add('is-custom-typed');
+      } else {
+        el.classList.remove('is-custom-typed');
+      }
+    }
+  });
+  const fUrlCopy = document.getElementById('f-url-copy');
+  if (fUrlCopy) {
+    const defaultUrl = defaults['f-url'] || '';
+    if (fUrlCopy.value.trim() !== '' && fUrlCopy.value.trim() !== defaultUrl.trim()) {
+      fUrlCopy.classList.add('is-custom-typed');
+    } else {
+      fUrlCopy.classList.remove('is-custom-typed');
+    }
+  }
 }
 
 function loadCopyDraft(tplKey){

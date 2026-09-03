@@ -639,29 +639,33 @@
     background: #E5E7EB;
     margin: 16px 0;
   }
-  /* Floating Bubble over visual */
+  /* Floating Bubble on bottom right */
   .full-editor-bubble {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.88);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
     color: #1E293B;
     padding: 10px 20px;
     border-radius: 100px;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 500;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     cursor: pointer;
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease;
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     display: flex;
     align-items: center;
     gap: 6px;
   }
   .full-editor-bubble:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.06), 0 2px 5px rgba(0, 0, 0, 0.025), inset 0 1px 0 rgba(255, 255, 255, 1);
-    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.96);
   }
   .full-editor-bubble .highlight-link {
     color: #0D8BFF;
@@ -1593,23 +1597,8 @@
 
       <!-- COLUMN 2 (CENTER): PREVIEW YOUR TEMPLATE -->
 	  <div class="preview-col">
-        <div class="column-intro" style="height: 64px; margin-bottom: 24px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; visibility: hidden;">
-        </div>
-        <div style="position: relative; width: 100%; margin-top: 0;">
-          <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)" style="position: absolute; top: -32px; left: 50%; transform: translateX(-50%); z-index: 50; margin-bottom: 0;">
-            Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
-          </div>
-          <div class="canvas-shell" style="margin: 0 auto;">
-            <div class="poster-stage" id="posterStage">
-              <canvas id="posterCanvas" width="792" height="1224"></canvas>
-              <div class="edit-overlay" id="editOverlay"></div>
-              <div class="admin-guide v"></div>
-              <div class="admin-guide h"></div>
-              <div class="admin-guide selected-v" id="selectedGuideV"></div>
-              <div class="admin-guide selected-h" id="selectedGuideH"></div>
-            </div>
-          </div>
-          <div class="poster-side-actions-bar" style="position: relative; top: auto; left: auto; display: flex; flex-direction: row; justify-content: center; gap: 24px; width: 100%; margin-top: 8px;">
+        <div class="column-intro" style="height: auto; margin-bottom: 12px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;">
+          <div class="poster-side-actions-bar" style="position: relative; top: auto; left: auto; display: flex; flex-direction: row; justify-content: center; gap: 24px; width: 100%; margin-top: 0;">
             <div class="action-item" style="display: flex; flex-direction: column; align-items: center;">
               <button type="button" class="action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
               <span class="action-label">undo change</span>
@@ -1623,6 +1612,21 @@
               <span class="action-label">full screen view</span>
             </div>
           </div>
+        </div>
+        <div style="position: relative; width: 100%; margin-top: 0;">
+          <div class="canvas-shell" style="margin: 0 auto;">
+            <div class="poster-stage" id="posterStage">
+              <canvas id="posterCanvas" width="792" height="1224"></canvas>
+              <div class="edit-overlay" id="editOverlay"></div>
+              <div class="admin-guide v"></div>
+              <div class="admin-guide h"></div>
+              <div class="admin-guide selected-v" id="selectedGuideV"></div>
+              <div class="admin-guide selected-h" id="selectedGuideH"></div>
+            </div>
+          </div>
+        </div>
+        <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)">
+          Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
         </div>
 	  </div>
 

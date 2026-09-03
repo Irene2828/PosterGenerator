@@ -621,32 +621,12 @@
     box-shadow: 0 0 0 2px rgba(13, 139, 255, 0.12);
     outline: none;
   }
-  .compact-form-group .field.optional-field {
-    position: relative;
+  .compact-form-group .field.optional-field input[type=text] {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
   }
-  .compact-form-group .field.optional-field::after {
-    content: "Leaving optional fields blank removes them from your poster preview.";
-    position: absolute;
-    bottom: calc(100% + 4px);
-    left: 0;
-    background: #152B50;
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 5px 9px;
-    border-radius: 6px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-  .compact-form-group .field.optional-field:hover::after,
-  .compact-form-group .field.optional-field:focus-within::after {
-    opacity: 1;
-    transform: translateY(0);
+  .compact-form-group .field.optional-field input[type=text]:focus {
+    background: #FFFFFF;
   }
   .form-section-divider {
     height: 1px;

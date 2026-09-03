@@ -572,32 +572,40 @@
     background: #E5E7EB;
     margin: 16px 0;
   }
-  /* Floating Floating Toolbar Pill on Bottom Right */
+  /* Floating Floating Toolbar Pill on Bottom Right (2-Row Layout) */
   .full-editor-bubble {
     position: fixed;
     bottom: 24px;
     right: 24px;
     z-index: 9999;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.9);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
     color: #1E293B;
-    padding: 8px 16px;
-    border-radius: 100px;
-    font-size: 12px;
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 11.5px;
     font-weight: 500;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.85);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 8px;
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease;
   }
   .full-editor-bubble:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
-    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.14), 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.97);
+  }
+  .full-editor-bubble .pill-row-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
   }
   .full-editor-bubble .pill-action-item {
     display: flex;
@@ -628,24 +636,26 @@
     color: #0D8BFF;
   }
   .full-editor-bubble .pill-action-label {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 400;
     color: #6B7280;
     text-align: center;
     line-height: 1.1;
     font-family: var(--font-ui);
   }
-  .full-editor-bubble .pill-divider {
-    width: 1px;
-    height: 24px;
+  .full-editor-bubble .pill-row-divider {
+    width: 100%;
+    height: 1px;
     background: #E5E7EB;
-    margin: 0 2px;
+    margin: 0;
   }
   .full-editor-bubble .full-editor-trigger {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     cursor: pointer;
+    font-size: 11.5px;
   }
   .full-editor-bubble .highlight-link {
     color: #0D8BFF;
@@ -1410,19 +1420,21 @@
           </div>
         </div>
         <div id="fullEditorBubble" class="full-editor-bubble">
-          <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()">
-            <button type="button" class="pill-action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-            <span class="pill-action-label">undo change</span>
+          <div class="pill-row-top">
+            <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()">
+              <button type="button" class="pill-action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
+              <span class="pill-action-label">undo change</span>
+            </div>
+            <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()">
+              <button type="button" class="pill-action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
+              <span class="pill-action-label">restore template</span>
+            </div>
+            <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
+              <button type="button" class="pill-action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
+              <span class="pill-action-label">full screen view</span>
+            </div>
           </div>
-          <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()">
-            <button type="button" class="pill-action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-            <span class="pill-action-label">restore template</span>
-          </div>
-          <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
-            <button type="button" class="pill-action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-            <span class="pill-action-label">full screen view</span>
-          </div>
-          <div class="pill-divider"></div>
+          <div class="pill-row-divider"></div>
           <div class="full-editor-trigger" onclick="toggleAdminMode(true)">
             Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
           </div>

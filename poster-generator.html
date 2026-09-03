@@ -604,24 +604,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 14px;
     width: 100%;
   }
   .full-editor-bubble .pill-action-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     cursor: pointer;
-    gap: 2px;
+    gap: 5px;
   }
   .full-editor-bubble .pill-action-btn {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border: 1px solid #D1D5DB;
     background: #FFFFFF;
     color: #6B7280;
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -629,6 +629,7 @@
     transition: all 0.2s ease;
     padding: 0;
     line-height: 1;
+    flex-shrink: 0;
   }
   .full-editor-bubble .pill-action-btn:hover {
     background: #F0F4FF;
@@ -636,11 +637,11 @@
     color: #0D8BFF;
   }
   .full-editor-bubble .pill-action-label {
-    font-size: 10.5px;
-    font-weight: 400;
+    font-size: 11px;
+    font-weight: 500;
     color: #6B7280;
-    text-align: center;
-    line-height: 1.1;
+    text-align: left;
+    line-height: 1;
     font-family: var(--font-ui);
   }
   .full-editor-bubble .pill-row-divider {
@@ -1406,7 +1407,7 @@
       </div>
 
       <!-- COLUMN 2 (CENTER): PREVIEW YOUR TEMPLATE -->
-	  <div class="preview-col">
+	  <div class="preview-col" style="padding-top: 88px;">
         <div style="position: relative; width: 100%; margin-top: 0;">
           <div class="canvas-shell" style="margin: 0 auto;">
             <div class="poster-stage" id="posterStage">
@@ -1423,15 +1424,15 @@
           <div class="pill-row-top">
             <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()">
               <button type="button" class="pill-action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-              <span class="pill-action-label">undo change</span>
+              <span class="pill-action-label">undo</span>
             </div>
             <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()">
               <button type="button" class="pill-action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-              <span class="pill-action-label">restore template</span>
+              <span class="pill-action-label">restore</span>
             </div>
             <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
               <button type="button" class="pill-action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-              <span class="pill-action-label">full screen view</span>
+              <span class="pill-action-label">fullscreen</span>
             </div>
           </div>
           <div class="pill-row-divider"></div>
@@ -1442,7 +1443,7 @@
 	  </div>
 
       <!-- COLUMN 3 CONTAINER (STEP 3 DOWNLOAD) -->
-	  <div class="options-col" id="optionsCol">
+	  <div class="options-col" id="optionsCol" style="padding-top: 88px;">
         <div class="column-intro" style="height: auto; margin-bottom: 24px; display: flex; flex-direction: column; justify-content: flex-start;">
           <div class="step-tag" style="margin:0 0 6px;"><span class="step-chip">STEP 3.</span> DOWNLOAD THE RESULT</div>
           <div style="font-size:14.3325px; font-weight:400; color:#6B7280; line-height:1.2;">Done editing? Download your poster.</div>

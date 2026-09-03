@@ -1289,21 +1289,26 @@
               <input type="text" id="f-guest" placeholder="With special guest, Darrell Fox..." maxlength="80">
             </div>
 
-            <div class="field optional-field">
-              <label>Highlights <span style="color:#9CA3AF; font-weight:400; font-size:13.65px; text-transform:none;">(optional)</span></label>
+            <div class="field">
+              <label>Highlights</label>
               <div class="row2" style="gap: 8px;">
                 <input type="text" id="f-b1" placeholder="Highlight detail 1" maxlength="80">
                 <input type="text" id="f-b2" placeholder="Highlight detail 2" maxlength="80">
               </div>
               <div class="row2" style="gap: 8px; margin-top: 6px;">
-                <input type="text" id="f-b3" placeholder="Highlight detail 3" maxlength="80">
-                <input type="text" id="f-b4" placeholder="Highlight detail 4" maxlength="80">
+                <input type="text" id="f-b3" placeholder="Highlight detail 3 (optional)" maxlength="80">
+                <input type="text" id="f-b4" placeholder="Highlight detail 4 (optional)" maxlength="80">
               </div>
             </div>
 
             <div class="field" id="reg-note-field">
-              <label id="reg-note-label">Event URL and Registration note</label>
+              <label>Registration note</label>
               <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office...">
+            </div>
+
+            <div class="field" id="event-url-field">
+              <label>Event URL</label>
+              <input type="text" id="f-url-copy" placeholder="terryfox.org" oninput="const val=this.value; const fUrl=document.getElementById('f-url'); if(fUrl){fUrl.value=val; if(typeof updateSelectedTextSummary==='function')updateSelectedTextSummary();} const fQrUrl=document.getElementById('f-qr-url'); if(fQrUrl &amp;&amp; !fQrUrl.value){fQrUrl.value=val;} saveCopyDraft(); render();">
             </div>
 
             <!-- QR CODE OPTIONS (MOVED TO COLUMN 1) -->
@@ -1798,9 +1803,29 @@ function loadCopyDraft(tplKey){
     if (el) el.value = values[id] || '';
   });
   
-  const regNoteLabel = document.getElementById('reg-note-label');
-  if (regNoteLabel) {
-    regNoteLabel.textContent = (tplKey === 'socialTerryRun') ? 'Event URL / Link' : 'Event URL and Registration note';
+  const regNoteField = document.getElementById('reg-note-field');
+  const eventUrlField = document.getElementById('event-url-field');
+  const fUrlCopy = document.getElementById('f-url-copy');
+  const fUrl = document.getElementById('f-url');
+  
+  if (fUrlCopy && fUrl) {
+    fUrlCopy.value = values['f-url'] || fUrl.value || '';
+  }
+  
+  if (tplKey === 'socialTerryRun') {
+    if (regNoteField) regNoteField.style.display = 'none';
+    if (eventUrlField) {
+      eventUrlField.style.display = 'block';
+      const label = eventUrlField.querySelector('label');
+      if (label) label.textContent = 'Event URL / Link';
+    }
+  } else {
+    if (regNoteField) regNoteField.style.display = 'block';
+    if (eventUrlField) {
+      eventUrlField.style.display = 'block';
+      const label = eventUrlField.querySelector('label');
+      if (label) label.textContent = 'Event URL';
+    }
   }
   
   const savedShowQr = templateHasQrChoice(tplKey) ? 'yes' : '';

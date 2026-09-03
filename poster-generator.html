@@ -164,21 +164,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    border: none;
-    background: transparent;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #D1D5DB;
+    background: #FFFFFF;
+    border-radius: 50%;
     cursor: pointer;
-    color: #6B7280;
-    font-size: 14px;
-    transition: color 0.15s, transform 0.25s;
+    color: #152B50;
+    font-size: 16px;
+    transition: all 0.2s ease;
     flex-shrink: 0;
     padding: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
   .step1-collapse-btn:hover {
-    background: transparent;
-    border: none;
+    background: #F0F4FF;
+    border-color: #152B50;
     color: #0D8BFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
   }
   .step1-top-bar.collapsed .step1-collapse-btn {
     transform: rotate(180deg);

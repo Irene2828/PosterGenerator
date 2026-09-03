@@ -621,15 +621,32 @@
     box-shadow: 0 0 0 2px rgba(13, 139, 255, 0.12);
     outline: none;
   }
-  .compact-form-group .field.optional-field input[type=text] {
-    background: #EFF6FF;
-    border-color: #BFDBFE;
+  .compact-form-group .field.optional-field {
+    position: relative;
   }
-  .compact-form-group .field.optional-field input[type=text]:focus {
-    background: #FFFFFF;
+  .compact-form-group .field.optional-field::after {
+    content: "Leaving optional fields blank removes them from your poster preview.";
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    background: #152B50;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
-  .compact-form-group .field input[type=text]:focus {
-    color: #1E293B;
+  .compact-form-group .field.optional-field:hover::after,
+  .compact-form-group .field.optional-field:focus-within::after {
+    opacity: 1;
+    transform: translateY(0);
   }
   .form-section-divider {
     height: 1px;
@@ -1505,7 +1522,6 @@
           <div class="step-tag" style="margin:0 0 12px;"><span class="step-chip">STEP 2.</span> ENTER POSTER DETAILS</div>
           <div style="font-size:13.65px; font-weight:400; color:#152B50; line-height:1.2;">Type your event details below to update the poster.</div>
           <div style="font-size:11.5px; font-weight:500; color:#E01A2B; margin-top:4px;">* Other templates update automatically.</div>
-          <div style="font-size:11px; font-weight:400; color:#6B7280; margin-top:2px;">* Leaving optional fields blank removes them from your poster preview.</div>
         </div>
         <div class="panel" style="padding: 0; background: transparent;">
           <div class="compact-form-group">

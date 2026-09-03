@@ -1347,13 +1347,12 @@
       </div>
 
       <!-- COLUMN 2 (CENTER): PREVIEW YOUR TEMPLATE -->
-	  <div class="preview-col">
-        <div class="column-intro" style="height: auto; margin-bottom: 32px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;">
-          <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)" style="position: relative; top: auto; left: auto; transform: none; margin-top: 38px; margin-bottom: 0;">
+        <div class="column-intro" style="height: 52px; margin-bottom: 32px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative;">
+          <div id="fullEditorBubble" class="full-editor-bubble" onclick="toggleAdminMode(true)" style="position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); z-index: 10;">
             Need advanced layout or text edits? – use <span class="highlight-link">Full Editor</span>.
           </div>
         </div>
-        <div style="position: relative; width: 100%; margin-top: 14px;">
+        <div style="position: relative; width: 100%;">
           <div class="canvas-shell" style="margin: 0 auto;">
             <div class="poster-stage" id="posterStage">
               <canvas id="posterCanvas" width="792" height="1224"></canvas>

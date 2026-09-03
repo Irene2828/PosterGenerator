@@ -1675,42 +1675,44 @@
           <div style="font-size:13.65px; font-weight:400; color:#6B7280; line-height:1.2;">Done editing? Download your poster.</div>
         </div>
         <div class="panel" style="width: 100%; border: 1px solid var(--border); margin-top: 24px;">
-          <!-- QR CODE OPTIONS -->
-          <div class="field" id="qr-options-section" style="margin-bottom: 16px;">
-            <label style="color: #1E3A8A; font-weight: bold;">Include QR Code on poster?</label>
-            <div class="radio-group" style="display: flex; gap: 16px; margin-top: 6px;">
-              <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #1E3A8A; font-size: 13.5px;">
-                <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
-              </label>
-              <label style="font-weight: normal; display: flex; align-items: center; cursor: pointer; color: #1E3A8A; font-size: 13.5px;">
-                <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
-              </label>
-            </div>
-          </div>
-
-          <div id="qr-link-section" style="margin-top: 10px; margin-bottom: 20px; display: none;">
-            <div class="field" style="margin-bottom: 0;">
-              <label style="color: #1E3A8A;">Type the link for the QR code here</label>
-              <div class="qr-input-wrap" id="qrInputWrap">
-                <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
-                <span class="qr-check-badge" title="Valid link">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </span>
-              </div>
-              <div style="margin-top: 10px; font-family: var(--font-ui); font-size: 11px; color: #6B7280;">
-                * Scan the QR code on the poster to test it before downloading
+          <div class="compact-form-group">
+            <!-- QR CODE OPTIONS -->
+            <div class="field" id="qr-options-section" style="margin-bottom: 12px;">
+              <label>Include QR Code on poster?</label>
+              <div class="radio-group" style="display: flex; gap: 16px; margin-top: 4px;">
+                <label style="font-weight: 500; display: flex; align-items: center; cursor: pointer; color: #1E3A8A; font-size: 12px; margin-bottom: 0;">
+                  <input type="radio" name="show-qr-radio" value="yes" onchange="onQrToggle(true)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> Yes
+                </label>
+                <label style="font-weight: 500; display: flex; align-items: center; cursor: pointer; color: #1E3A8A; font-size: 12px; margin-bottom: 0;">
+                  <input type="radio" name="show-qr-radio" value="no" onchange="onQrToggle(false)" style="width: auto; margin: 0 6px 0 0; cursor: pointer;"> No
+                </label>
               </div>
             </div>
-          </div>
 
-          <!-- DOWNLOAD OPTIONS -->
-          <div class="field" style="margin-bottom: 14px;">
-            <label style="color: #1E3A8A;">Download Format</label>
-            <select id="f-format">
-              <option value="png">PNG</option>
-              <option value="pdf">PDF</option>
-              <option value="jpeg">JPEG</option>
-            </select>
+            <div id="qr-link-section" style="margin-top: 10px; margin-bottom: 14px; display: none;">
+              <div class="field" style="margin-bottom: 0;">
+                <label>Type the link for the QR code here</label>
+                <div class="qr-input-wrap" id="qrInputWrap">
+                  <input type="text" id="f-qr-url" placeholder="terryfox.org" oninput="const urlVal = this.value; const fUrl = document.getElementById('f-url'); if (fUrl) { fUrl.value = urlVal; if (typeof updateSelectedTextSummary === 'function') updateSelectedTextSummary(); } saveCopyDraft(); render();">
+                  <span class="qr-check-badge" title="Valid link">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </span>
+                </div>
+                <div style="margin-top: 6px; font-family: var(--font-ui); font-size: 11px; color: #6B7280;">
+                  * Scan the QR code on the poster to test it before downloading
+                </div>
+              </div>
+            </div>
+
+            <!-- DOWNLOAD OPTIONS -->
+            <div class="field" style="margin-bottom: 14px;">
+              <label>Download Format</label>
+              <select id="f-format" style="padding: 7px 10px; font-size: 13.125px; height: 34px; border-radius: 6px; border: 1px solid #BFDBFE; background-color: #EFF6FF; color: #1E293B; font-weight: 500;">
+                <option value="png">PNG</option>
+                <option value="pdf">PDF</option>
+                <option value="jpeg">JPEG</option>
+              </select>
+            </div>
           </div>
 
           <button class="btn btn-primary" id="downloadBtn" style="margin-top: 14px;">Download poster</button>

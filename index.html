@@ -638,32 +638,21 @@
   }
   /* Floating Bubble over visual */
   .full-editor-bubble {
-    position: absolute;
-    top: -24px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 100;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.78);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    backdrop-filter: blur(20px) saturate(180%);
     color: #1E293B;
-    padding: 10px 20px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 500;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    font-size: 13.65px;
+    font-weight: 400;
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease;
-    border: 1px solid rgba(255, 255, 255, 0.7);
     display: flex;
     align-items: center;
     gap: 6px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
   }
   .full-editor-bubble:hover {
-    transform: translateX(-50%) translateY(-2px) scale(1.02);
-    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.06), 0 2px 5px rgba(0, 0, 0, 0.025), inset 0 1px 0 rgba(255, 255, 255, 1);
-    background: rgba(255, 255, 255, 0.92);
+    color: #0D8BFF;
   }
   .full-editor-bubble .highlight-link {
     color: #0D8BFF;

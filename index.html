@@ -1550,7 +1550,7 @@
             </div>
 
             <div class="field" id="reg-note-field">
-              <label id="reg-note-label">Registration Note</label>
+              <label id="reg-note-label">Event URL and Registration note</label>
               <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office...">
             </div>
 
@@ -2089,7 +2089,7 @@ function loadCopyDraft(tplKey){
   
   const regNoteLabel = document.getElementById('reg-note-label');
   if (regNoteLabel) {
-    regNoteLabel.textContent = (tplKey === 'socialTerryRun') ? 'Event URL / Link' : 'Registration Note';
+    regNoteLabel.textContent = (tplKey === 'socialTerryRun') ? 'Event URL / Link' : 'Event URL and Registration note';
   }
   
   const savedShowQr = templateHasQrChoice(tplKey) ? 'yes' : '';

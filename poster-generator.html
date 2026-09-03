@@ -1301,8 +1301,8 @@
               </div>
             </div>
 
-            <div class="field optional-field">
-              <label>Registration Note <span style="color:#9CA3AF; font-weight:400; font-size:13.65px; text-transform:none;">(optional)</span></label>
+            <div class="field" id="reg-note-field">
+              <label id="reg-note-label">Registration Note</label>
               <input type="text" id="f-footintro" placeholder="To register please stop by your property's People &amp; Culture office...">
             </div>
 
@@ -1797,6 +1797,11 @@ function loadCopyDraft(tplKey){
     const el = document.getElementById(id);
     if (el) el.value = values[id] || '';
   });
+  
+  const regNoteLabel = document.getElementById('reg-note-label');
+  if (regNoteLabel) {
+    regNoteLabel.textContent = (tplKey === 'socialTerryRun') ? 'Event URL / Link' : 'Registration Note';
+  }
   
   const savedShowQr = templateHasQrChoice(tplKey) ? 'yes' : '';
   const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');

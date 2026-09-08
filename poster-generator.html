@@ -183,6 +183,7 @@
   }
   .step1-collapse-btn {
     white-space: nowrap;
+    width: max-content;
     background: rgba(255, 255, 255, 0.85);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
@@ -525,6 +526,7 @@
     letter-spacing: 0.8px;
     text-transform: uppercase;
     white-space: nowrap;
+    width: max-content;
     font-family: var(--font-ui);
   }
   .optional-section-divider::before,
@@ -627,6 +629,7 @@
     right: 24px;
     z-index: 9999;
     white-space: nowrap;
+    width: max-content;
     background: rgba(255, 255, 255, 0.78);
     -webkit-backdrop-filter: blur(25px) saturate(190%);
     backdrop-filter: blur(25px) saturate(190%);
@@ -701,6 +704,7 @@
     border: 1px solid #CBD5E1;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
     white-space: nowrap;
+    width: max-content;
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -864,6 +868,7 @@
     border: 1px solid #CBD5E1;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
     white-space: nowrap;
+    width: max-content;
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -1585,7 +1590,7 @@
             </div>
             <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
               <button type="button" class="pill-action-btn" id="largePreviewBtn" aria-label="Zoom in to large preview">⤢</button>
-              <span class="pill-action-tooltip">Full size view</span>
+              <span class="pill-action-tooltip">Full Screen View</span>
             </div>
           </div>
           <div class="pill-row-divider"></div>
@@ -1671,7 +1676,7 @@
             </div>
             <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
               <button type="button" class="pill-action-btn" id="sidebarZoomBtn" aria-label="Zoom in to large preview">⤢</button>
-              <span class="pill-action-tooltip">Full size view</span>
+              <span class="pill-action-tooltip">Full Screen View</span>
             </div>
           </div>
           <div class="sidebar-head-actions">
@@ -6128,7 +6133,8 @@ function renderDraftsDropdown() {
     item.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div style="display:flex; flex-direction:column; gap:2px;">
-          <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px;">${draft.eventName || 'Unnamed Draft'}</div>
+          <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    width: max-content; max-width: 190px;">${draft.eventName || 'Unnamed Draft'}</div>
           <div style="font-size: 11px; color: #6B7280;">${dateStr} • ${timeStr}</div>
         </div>
         <button class="delete-draft-btn" style="background:none; border:none; padding:4px; margin:0; cursor:pointer; color:#9CA3AF; opacity:0; transition:opacity 0.2s; display:flex; align-items:center; flex-shrink:0;" title="Delete Draft">

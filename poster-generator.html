@@ -5717,9 +5717,11 @@ function openLargePreview(){
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     if (overlay.requestFullscreen) {
-      overlay.requestFullscreen().catch(err => console.warn(err));
+      overlay.requestFullscreen().catch(err => console.warn('Error:', err.message));
     } else if (overlay.webkitRequestFullscreen) {
       overlay.webkitRequestFullscreen();
+    } else if (overlay.msRequestFullscreen) {
+      overlay.msRequestFullscreen();
     }
   });
 }
@@ -5729,10 +5731,14 @@ function closeLargePreview(){
   if (!overlay) return;
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
-  if (document.fullscreenElement && document.exitFullscreen) {
-    document.exitFullscreen().catch(err => console.warn(err));
-  } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
   }
 }
 
@@ -5741,19 +5747,11 @@ document.getElementById('largePreviewClose')?.addEventListener('click', closeLar
 document.getElementById('largePreview')?.addEventListener('click', (event) => {
   if (event.target.id === 'largePreview') closeLargePreview();
 });
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) closeLargePreview(); });
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeLargePreview();
     closeLayerContextMenu();
-  }
-});
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-    const overlay = document.getElementById('largePreview');
-    if (overlay && overlay.classList.contains('open')) {
-      overlay.classList.remove('open');
-      overlay.setAttribute('aria-hidden', 'true');
-    }
   }
 });
 document.getElementById('copyLayerPropsBtn')?.addEventListener('click', copyContextLayerProperties);

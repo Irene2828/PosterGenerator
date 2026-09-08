@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Poster Generator</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <style>
@@ -692,33 +696,33 @@
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
   }
   .full-editor-bubble:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 1);
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(255, 255, 255, 0.9);
+    transform: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(255, 255, 255, 0.95);
   }
   .full-editor-bubble .pill-row-top {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 16px;
     width: 100%;
   }
   .full-editor-bubble .pill-action-item {
+    position: relative;
     display: flex;
-    flex-direction: row;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
-    gap: 5px;
   }
   .full-editor-bubble .pill-action-btn {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border: 1px solid #D1D5DB;
-    background: rgba(255, 255, 255, 0.85);
-    color: #6B7280;
+    background: rgba(255, 255, 255, 0.9);
+    color: #475569;
     border-radius: 50%;
-    font-size: 11px;
+    font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -729,18 +733,57 @@
     flex-shrink: 0;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   }
+  .full-editor-bubble .pill-action-item:hover .pill-action-btn,
   .full-editor-bubble .pill-action-btn:hover {
     background: #FFFFFF;
     border-color: #0D8BFF;
     color: #0D8BFF;
   }
-  .full-editor-bubble .pill-action-label {
+  .full-editor-bubble .pill-action-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #FFFFFF;
+    color: #0F172A;
     font-size: 11px;
-    font-weight: 500;
-    color: #475569;
-    text-align: left;
-    line-height: 1;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #CBD5E1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
     font-family: var(--font-ui);
+    z-index: 100;
+  }
+  .full-editor-bubble .pill-action-tooltip::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: #CBD5E1 transparent transparent transparent;
+  }
+  .full-editor-bubble .pill-action-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0 5px;
+    border-style: solid;
+    border-color: #FFFFFF transparent transparent transparent;
+  }
+  .full-editor-bubble .pill-action-item:hover .pill-action-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
   }
   .full-editor-bubble .pill-row-divider {
     width: 100%;
@@ -816,6 +859,97 @@
     justify-content: space-between;
     gap: 10px;
     flex: 0 0 auto;
+  }
+  .sidebar-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sidebar-header .pill-action-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .sidebar-header .pill-action-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #D1D5DB;
+    background: #FFFFFF;
+    color: #475569;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .sidebar-header .pill-action-item:hover .pill-action-btn,
+  .sidebar-header .pill-action-btn:hover {
+    background: #FFFFFF;
+    border-color: #0D8BFF;
+    color: #0D8BFF;
+  }
+  .sidebar-header .pill-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: #E2E8F0;
+    color: #94A3B8;
+  }
+  .sidebar-header .pill-action-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: #FFFFFF;
+    color: #0F172A;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #CBD5E1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    font-family: var(--font-ui);
+    z-index: 99999;
+  }
+  .sidebar-header .pill-action-tooltip::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    top: auto;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 0 6px 6px 6px;
+    border-style: solid;
+    border-color: transparent transparent #CBD5E1 transparent;
+  }
+  .sidebar-header .pill-action-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    top: auto;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 0 5px 5px 5px;
+    border-style: solid;
+    border-color: transparent transparent #FFFFFF transparent;
+  }
+  .sidebar-header .pill-action-item:hover .pill-action-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
   }
   .sidebar-scroll-area {
     flex: 1 1 auto;
@@ -1633,10 +1767,8 @@
 
             <div class="field optional-field">
               <label>Event details <span style="color:#9CA3AF; font-weight:400; font-size:13px; text-transform:none;">(optional)</span></label>
-              <div class="row2" style="gap: 8px;">
-                <input type="text" id="f-b1" placeholder="e.g. 5 km Run / Walk" maxlength="80">
-                <input type="text" id="f-b2" placeholder="e.g. Refreshments provided" maxlength="80">
-              </div>
+              <input type="text" id="f-b1" placeholder="Run / walk / scooter / wheelchair / stroller / dog friendly" maxlength="80">
+              <input type="text" id="f-b2" placeholder="1, 2, or 3 laps of course (3 laps = 5 km)" maxlength="80" style="margin-top: 6px;">
             </div>
 
             <div class="field" id="reg-note-field">
@@ -1675,16 +1807,16 @@
         <div id="fullEditorBubble" class="full-editor-bubble">
           <div class="pill-row-top">
             <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()">
-              <button type="button" class="pill-action-btn" id="userUndoBtn" title="Undo last edit">↺</button>
-              <span class="pill-action-label">undo</span>
+              <button type="button" class="pill-action-btn" id="userUndoBtn" aria-label="Undo last edit">↺</button>
+              <span class="pill-action-tooltip">Undo change</span>
             </div>
             <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()">
-              <button type="button" class="pill-action-btn" id="userRestoreBtn" title="Restore original template text and layout">↻</button>
-              <span class="pill-action-label">restore</span>
+              <button type="button" class="pill-action-btn" id="userRestoreBtn" aria-label="Restore original template text and layout">↻</button>
+              <span class="pill-action-tooltip">Restore template</span>
             </div>
             <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
-              <button type="button" class="pill-action-btn" id="largePreviewBtn" title="Zoom in to large preview">⤢</button>
-              <span class="pill-action-label">fullscreen</span>
+              <button type="button" class="pill-action-btn" id="largePreviewBtn" aria-label="Zoom in to large preview">⤢</button>
+              <span class="pill-action-tooltip">Full size view</span>
             </div>
           </div>
           <div class="pill-row-divider"></div>
@@ -1757,6 +1889,20 @@
 
       <div id="figmaSidebar" class="figma-sidebar">
         <div class="sidebar-header">
+          <div class="sidebar-top-actions">
+            <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()">
+              <button type="button" class="pill-action-btn" id="sidebarUndoBtn" aria-label="Undo last edit">↺</button>
+              <span class="pill-action-tooltip">Undo change</span>
+            </div>
+            <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()">
+              <button type="button" class="pill-action-btn" id="sidebarRestoreBtn" aria-label="Restore original template text and layout">↻</button>
+              <span class="pill-action-tooltip">Restore template</span>
+            </div>
+            <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
+              <button type="button" class="pill-action-btn" id="sidebarZoomBtn" aria-label="Zoom in to large preview">⤢</button>
+              <span class="pill-action-tooltip">Full size view</span>
+            </div>
+          </div>
           <div class="sidebar-head-actions">
             <button class="sidebar-close-btn" onclick="toggleAdminMode(false)" title="Hide inspector">
               <span>Close Editor</span>
@@ -2121,7 +2267,7 @@ function getCopy(tplKey){
   };
 }
 
-const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-b1','f-b2','f-b3','f-b4','f-url','f-email','f-footintro','f-qr-url'];
+const COPY_FIELD_IDS = ['f-city','f-date','f-guest','f-location','f-location2','f-t1','f-t2','f-b1','f-b2','f-url','f-email','f-footintro','f-qr-url'];
 
 function draftStorageKey(tplKey){
   return 'posterCopyDraft:global';
@@ -3472,7 +3618,10 @@ function getLayerOverrideSnapshot(tplKey = currentTpl){
 function pushUndoSnapshot(){
   if (isRestoringUndo) return;
   const copy = {};
-  COPY_FIELD_IDS.forEach(id => { copy[id] = document.getElementById(id).value; });
+  COPY_FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) copy[id] = el.value;
+  });
   pushUndoSnapshotFrom(copy, getLayerOverrideSnapshot(currentTpl));
 }
 
@@ -3490,6 +3639,8 @@ function pushUndoSnapshotFrom(copy, overrides){
 function updateUserUndoButton(){
   const btn = document.getElementById('userUndoBtn');
   if (btn) btn.disabled = adminUndoStack.length === 0;
+  const sidebarUndo = document.getElementById('sidebarUndoBtn');
+  if (sidebarUndo) sidebarUndo.disabled = adminUndoStack.length === 0;
   const topUndo = document.getElementById('topUndoBtn');
   if (topUndo) topUndo.disabled = adminUndoStack.length === 0;
   const moveUndo = document.getElementById('moveUndoBtn');

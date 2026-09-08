@@ -5716,6 +5716,11 @@ function openLargePreview(){
     img.src = canvas.toDataURL('image/png');
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
+    if (overlay.requestFullscreen) {
+      overlay.requestFullscreen().catch(err => console.warn(err));
+    } else if (overlay.webkitRequestFullscreen) {
+      overlay.webkitRequestFullscreen();
+    }
   });
 }
 
@@ -5724,6 +5729,11 @@ function closeLargePreview(){
   if (!overlay) return;
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
+  if (document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(err => console.warn(err));
+  } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
 }
 
 document.getElementById('largePreviewBtn')?.addEventListener('click', openLargePreview);
@@ -5735,6 +5745,15 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeLargePreview();
     closeLayerContextMenu();
+  }
+});
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const overlay = document.getElementById('largePreview');
+    if (overlay && overlay.classList.contains('open')) {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
   }
 });
 document.getElementById('copyLayerPropsBtn')?.addEventListener('click', copyContextLayerProperties);

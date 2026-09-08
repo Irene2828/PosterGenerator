@@ -416,10 +416,24 @@
   .preview-actions{width:100%;max-width:500px;margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:12px;}
   .preview-icon{width:30px;height:30px;border:0;background:transparent;color:var(--muted);border-radius:50%;font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.72;}
   .preview-icon:hover,.preview-icon:focus{opacity:1;color:var(--ink);outline:none;background:#F7F8FA;}
-  .large-preview{position:fixed;inset:0;z-index:20000;background:rgba(255,255,255,.94);display:none;align-items:center;justify-content:center;padding:22px;}
-  .large-preview.open{display:flex;}
-  .large-preview img{max-width:96vw;max-height:90vh;object-fit:contain;box-shadow:0 8px 24px rgba(0,0,0,.10);background:#fff;}
-  .large-preview-close{position:absolute;right:22px;top:18px;width:38px;height:38px;border:1px solid var(--border);border-radius:50%;background:#fff;color:#111827;font-size:24px;line-height:1;cursor:pointer;}
+  .large-preview-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .large-preview-overlay.open { display: flex; }
+  .large-preview-content { display: flex; justify-content: center; align-items: center; }
+  .large-preview-content img { max-width: 100%; max-height: 90vh; object-fit: contain; }
+  .close-preview-btn {
+    position: absolute; top: 20px; right: 24px;
+    background: none; border: none; color: #fff;
+    font-size: 40px; cursor: pointer; line-height: 1;
+  }
   .subtle-undo{
     border:0;
     background:transparent;
@@ -6200,6 +6214,13 @@ if (document.getElementById('saveCloudBtn')) {
 }
 
   </script>
+
+  <div id="largePreview" class="large-preview-overlay" aria-hidden="true" onclick="if(event.target===this) closeLargePreview()">
+  <button type="button" class="close-preview-btn" onclick="closeLargePreview()">×</button>
+  <div class="large-preview-content">
+    <img id="largePreviewImg" src="" alt="Large Preview" />
+  </div>
+</div>
 
   <!-- Login Modal -->
   <div id="loginModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999999; align-items:center; justify-content:center;">

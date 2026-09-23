@@ -3347,7 +3347,10 @@ function renderToCanvas(canvasEl, tplKey, wPx, hPx, cb){
   if (strategy === 'cover-social') {
     const layersToDraw = t.socialLayers || t.layers || [];
     renderNativeToCanvas(canvasEl, t, wPx, hPx, layersToDraw, () => {
-      if (canvasEl._renderId !== currentRenderId) return;
+      if (canvasEl._renderId !== currentRenderId) {
+        if (cb) cb();
+        return;
+      }
       if (cb) cb();
     });
   } else {
@@ -3355,7 +3358,10 @@ function renderToCanvas(canvasEl, tplKey, wPx, hPx, cb){
     const designH = t.h || 1588;
     const master = document.createElement('canvas');
     renderNativeToCanvas(master, t, designW, designH, t.layers || [], () => {
-      if (canvasEl._renderId !== currentRenderId) return;
+      if (canvasEl._renderId !== currentRenderId) {
+        if (cb) cb();
+        return;
+      }
       ctx.clearRect(0, 0, wPx, hPx);
       ctx.fillStyle = getTemplateFallbackBg(t);
       ctx.fillRect(0, 0, wPx, hPx);
@@ -6656,37 +6662,62 @@ function applyUrlParams() {
   if (typeof TEMPLATES !== 'undefined' && typeof drawThumb === 'function') {
     Object.keys(TEMPLATES).forEach(key => drawThumb(key));
   }
+
+  // Check autodownload flag
+  const autoDownloadVal = getParam('autodownload', 'autoDownload');
+  console.log('[autodownload] Detected autodownload in URL query params:', autoDownloadVal);
+  if (autoDownloadVal === '1' || autoDownloadVal?.toLowerCase() === 'true') {
+    scheduleAutoDownload();
+  }
 }
 
 let autoDownloadExecuted = false;
-function triggerAutoDownloadIfNeeded() {
+function scheduleAutoDownload() {
   if (autoDownloadExecuted) return;
-  const params = new URLSearchParams(window.location.search);
-  const clean = s => s.toLowerCase().replace(/[-_]/g, '');
-  let autoVal = null;
-  for (const [k, v] of params.entries()) {
-    if (clean(k) === 'autodownload') { autoVal = v; break; }
-  }
-  console.log('[autodownload] Checked autodownload flag:', autoVal);
-  if (autoVal !== '1' && autoVal?.toLowerCase() !== 'true') return;
-  autoDownloadExecuted = true;
-
-  console.log('[autodownload] Fonts ready and initial render complete. Initiating auto-download in 600ms...');
+  console.log('[autodownload] scheduleAutoDownload called. Showing fallback notice...');
   showAutoDownloadFallbackHint();
 
-  setTimeout(() => {
+  const trigger = () => {
+    if (autoDownloadExecuted) return;
+    autoDownloadExecuted = true;
+    console.log('[autodownload] Executing auto-download now via #downloadBtn.click()...');
     try {
       const downloadBtn = document.getElementById('downloadBtn');
       if (downloadBtn) {
         console.log('[autodownload] Programmatically clicking #downloadBtn:', downloadBtn);
         downloadBtn.click();
       } else {
-        console.error('[autodownload] #downloadBtn element not found in DOM!');
+        console.error('[autodownload] Could not find #downloadBtn in DOM!');
       }
     } catch (err) {
       console.error('[autodownload] Exception during auto-download click:', err);
     }
-  }, 600);
+  };
+
+  // 1. Guaranteed safety timer: fires at 2.5s maximum
+  const safetyTimer = setTimeout(() => {
+    console.log('[autodownload] Safety timer (2.5s) elapsed, triggering download.');
+    trigger();
+  }, 2500);
+
+  // 2. Ideal path: as soon as fonts are ready + 700ms
+  const whenFontsReady = (document.fonts && document.fonts.ready)
+    ? document.fonts.ready
+    : Promise.resolve();
+
+  whenFontsReady.then(() => {
+    console.log('[autodownload] document.fonts.ready resolved!');
+    setTimeout(() => {
+      clearTimeout(safetyTimer);
+      trigger();
+    }, 700);
+  }).catch(err => {
+    console.warn('[autodownload] document.fonts.ready error:', err);
+    setTimeout(() => {
+      clearTimeout(safetyTimer);
+      trigger();
+    }, 700);
+  });
 }
 
 function showAutoDownloadFallbackHint() {
@@ -6719,23 +6750,8 @@ async function initApp() {
   Object.values(TEMPLATES).forEach(normalizeTemplateFonts);
   refreshAdminPanel();
   applyUrlParams();
-
-  const whenFontsReady = (document.fonts && document.fonts.ready)
-    ? document.fonts.ready
-    : Promise.resolve();
-
-  whenFontsReady.then(() => {
-    render(() => {
-      triggerAutoDownloadIfNeeded();
-    });
-    Object.keys(TEMPLATES).forEach(key => drawThumb(key));
-  }).catch(err => {
-    console.warn("Font loading error:", err);
-    render(() => {
-      triggerAutoDownloadIfNeeded();
-    });
-    Object.keys(TEMPLATES).forEach(key => drawThumb(key));
-  });
+  render();
+  Object.keys(TEMPLATES).forEach(key => drawThumb(key));
 }
 
 initApp();

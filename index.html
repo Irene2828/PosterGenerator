@@ -1740,7 +1740,7 @@
           <div class="subtitle">Type your event details in fields below OR directly on the poster to customize it.</div>
           <div class="auto-update-note">* Other templates update automatically.</div>
         </div>
-        <div class="panel" style="padding: 0; background: transparent;">
+        <div class="panel" style="padding: 0; background: transparent; margin-top: 12px;">
           <div class="compact-form-group">
             <div class="field">
               <label>City Name</label>
@@ -6446,16 +6446,230 @@ async function loadGlobalOverrides() {
   }
 }
 
+function applyUrlParams() {
+  if (!window.location.search || window.location.search.length <= 1) return;
+  const params = new URLSearchParams(window.location.search);
+
+  // Helper to find a param case-insensitively and handle snake_case / kebab-case
+  const clean = s => s.toLowerCase().replace(/[-_]/g, '');
+  const getParam = (...keys) => {
+    for (const k of keys) {
+      if (params.has(k)) return params.get(k);
+    }
+    const cleanKeys = keys.map(clean);
+    for (const [pKey, pVal] of params.entries()) {
+      if (cleanKeys.includes(clean(pKey))) return pVal;
+    }
+    return null;
+  };
+
+  const recognizedKeys = [
+    'city', 'date', 'location', 'address', 'guest',
+    'regopen', 'runstart', 'details', 'details2', 'regnote',
+    'url', 'qr', 'format', 'qrinclude', 'autodownload'
+  ];
+
+  let hasAnyRecognizedParam = false;
+  for (const [k] of params.entries()) {
+    if (recognizedKeys.includes(clean(k))) {
+      hasAnyRecognizedParam = true;
+      break;
+    }
+  }
+
+  if (!hasAnyRecognizedParam) return;
+
+  // Push undo snapshot of current state before applying query params
+  if (typeof pushUndoSnapshot === 'function') {
+    pushUndoSnapshot();
+  }
+
+  // 1. Text fields mapping:
+  const fieldMapping = [
+    { keys: ['city'], id: 'f-city' },
+    { keys: ['date'], id: 'f-date' },
+    { keys: ['location'], id: 'f-location' },
+    { keys: ['address'], id: 'f-location2' },
+    { keys: ['guest'], id: 'f-guest' },
+    { keys: ['regOpen', 'regopen'], id: 'f-t1' },
+    { keys: ['runStart', 'runstart'], id: 'f-t2' },
+    { keys: ['regNote', 'regnote'], id: 'f-footintro' }
+  ];
+
+  fieldMapping.forEach(({ keys, id }) => {
+    const val = getParam(...keys);
+    if (val !== null) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = val;
+        el.dataset.undoPushed = 'true';
+        el.classList.add('is-edited');
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  });
+
+  // Details handling (details, details2, newline or pipe splitting)
+  const detailsVal = getParam('details');
+  const details2Val = getParam('details2');
+  if (detailsVal !== null) {
+    let line1 = detailsVal;
+    let line2 = null;
+    if (detailsVal.includes('\n')) {
+      const parts = detailsVal.split('\n');
+      line1 = parts[0];
+      line2 = parts.slice(1).join(' ');
+    } else if (detailsVal.includes('|')) {
+      const parts = detailsVal.split('|');
+      line1 = parts[0];
+      line2 = parts.slice(1).join(' ');
+    }
+    const b1 = document.getElementById('f-b1');
+    if (b1) {
+      b1.value = line1;
+      b1.dataset.undoPushed = 'true';
+      b1.classList.add('is-edited');
+      b1.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (line2 !== null && details2Val === null) {
+      const b2 = document.getElementById('f-b2');
+      if (b2) {
+        b2.value = line2;
+        b2.dataset.undoPushed = 'true';
+        b2.classList.add('is-edited');
+        b2.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  }
+  if (details2Val !== null) {
+    const b2 = document.getElementById('f-b2');
+    if (b2) {
+      b2.value = details2Val;
+      b2.dataset.undoPushed = 'true';
+      b2.classList.add('is-edited');
+      b2.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  // 2. Event URL
+  const urlVal = getParam('url');
+  if (urlVal !== null) {
+    const urlCopy = document.getElementById('f-url-copy');
+    const urlHidden = document.getElementById('f-url');
+    if (urlCopy) {
+      urlCopy.value = urlVal;
+      urlCopy.classList.add('is-edited');
+    }
+    if (urlHidden) {
+      urlHidden.value = urlVal;
+    }
+    if (urlCopy) {
+      urlCopy.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  // 3. QR toggle (qrInclude)
+  const qrIncludeVal = getParam('qrInclude', 'qrinclude', 'includeQr', 'includeqr');
+  const qrVal = getParam('qr', 'qrUrl', 'qrurl');
+  const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
+  const radioNo = document.querySelector('input[name="show-qr-radio"][value="no"]');
+
+  if (qrIncludeVal !== null) {
+    const lower = qrIncludeVal.trim().toLowerCase();
+    const isYes = ['1', 'true', 'yes', 'y', 'on'].includes(lower);
+    const isNo = ['0', 'false', 'no', 'n', 'off'].includes(lower);
+    if (isYes) {
+      if (radioYes) radioYes.checked = true;
+      if (radioNo) radioNo.checked = false;
+      if (typeof onQrToggle === 'function') onQrToggle(true);
+    } else if (isNo) {
+      if (radioYes) radioYes.checked = false;
+      if (radioNo) radioNo.checked = true;
+      if (typeof onQrToggle === 'function') onQrToggle(false);
+    }
+  } else if (qrVal !== null) {
+    if (radioYes) radioYes.checked = true;
+    if (radioNo) radioNo.checked = false;
+    if (typeof onQrToggle === 'function') onQrToggle(true);
+  }
+
+  // 4. QR link (qr)
+  if (qrVal !== null) {
+    const qrInput = document.getElementById('f-qr-url');
+    if (qrInput) {
+      qrInput.value = qrVal;
+      qrInput.classList.add('is-edited');
+      if (typeof qrCache !== 'undefined') qrCache = { text: null, canvas: null };
+      qrInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
+  // If url was specified, ensure f-url and f-url-copy stay intact
+  if (urlVal !== null) {
+    const urlHidden = document.getElementById('f-url');
+    const urlCopy = document.getElementById('f-url-copy');
+    if (urlHidden) urlHidden.value = urlVal;
+    if (urlCopy) urlCopy.value = urlVal;
+  }
+
+  // 5. Download format (format)
+  const formatVal = getParam('format');
+  if (formatVal !== null) {
+    const formatSelect = document.getElementById('f-format');
+    if (formatSelect) {
+      let norm = formatVal.trim().toLowerCase();
+      if (norm === 'jpg') norm = 'jpeg';
+      if (['png', 'pdf', 'jpeg'].includes(norm)) {
+        formatSelect.value = norm;
+        formatSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+  }
+
+  // Save copy draft and update all visual elements
+  if (typeof saveCopyDraft === 'function') saveCopyDraft();
+  if (typeof updateInputCustomState === 'function') updateInputCustomState();
+  if (typeof render === 'function') render();
+  if (typeof TEMPLATES !== 'undefined' && typeof drawThumb === 'function') {
+    Object.keys(TEMPLATES).forEach(key => drawThumb(key));
+  }
+
+  // 6. Autodownload (&autodownload=1)
+  const autoDownloadVal = getParam('autodownload', 'autoDownload');
+  if (autoDownloadVal === '1' || autoDownloadVal?.toLowerCase() === 'true') {
+    let triggered = false;
+    const triggerDownload = () => {
+      if (triggered) return;
+      triggered = true;
+      const downloadBtn = document.getElementById('downloadBtn');
+      if (downloadBtn) {
+        downloadBtn.click();
+      }
+    };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        setTimeout(triggerDownload, 400);
+      }).catch(() => {
+        setTimeout(triggerDownload, 400);
+      });
+    } else {
+      setTimeout(triggerDownload, 400);
+    }
+  }
+}
+
 async function initApp() {
   initBgImages();
   await loadGlobalOverrides();
   Object.values(TEMPLATES).forEach(normalizeTemplateFonts);
   refreshAdminPanel();
+  applyUrlParams();
   render();
   Object.keys(TEMPLATES).forEach(key => drawThumb(key));
 }
 
 initApp();
+window.addEventListener('popstate', applyUrlParams);
 
 /* Canvas doesn't auto-redraw when a @font-face finishes loading, so once
    your real Rigid Square files are in place, re-render as soon as they're

@@ -6229,7 +6229,15 @@ function downloadDataUrl(dataUrl, filename){
   const link = document.createElement('a');
   link.download = filename;
   link.href = dataUrl;
+  link.style.display = 'none';
+  document.body.appendChild(link);
   link.click();
+  setTimeout(() => {
+    try { if (link.parentNode) link.parentNode.removeChild(link); } catch (e) {}
+    if (typeof dataUrl === 'string' && dataUrl.startsWith('blob:')) {
+      try { URL.revokeObjectURL(dataUrl); } catch (e) {}
+    }
+  }, 1500);
 }
 
 function downloadBlob(blob, filename){
@@ -6237,8 +6245,13 @@ function downloadBlob(blob, filename){
   const link = document.createElement('a');
   link.download = filename;
   link.href = url;
+  link.style.display = 'none';
+  document.body.appendChild(link);
   link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1200);
+  setTimeout(() => {
+    try { if (link.parentNode) link.parentNode.removeChild(link); } catch (e) {}
+    try { URL.revokeObjectURL(url); } catch (e) {}
+  }, 1500);
 }
 
 function dataUrlToBytes(dataUrl){
@@ -6335,7 +6348,15 @@ function canvasToPdfDataUrl(canvasEl){
 }
 
 document.getElementById('downloadBtn').addEventListener('click', async ()=>{
-  const showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  let showQrRadio = document.querySelector('input[name="show-qr-radio"]:checked');
+  if (templateHasQrChoice() && !showQrRadio) {
+    const radioYes = document.querySelector('input[name="show-qr-radio"][value="yes"]');
+    if (radioYes) {
+      radioYes.checked = true;
+      if (typeof onQrToggle === 'function') onQrToggle(true);
+      showQrRadio = radioYes;
+    }
+  }
   if (templateHasQrChoice() && !showQrRadio) {
     await customAlert("Please select whether to include the QR Code on the poster first.");
     const qrField = document.querySelector('input[name="show-qr-radio"]').closest('.field');
@@ -6350,7 +6371,9 @@ document.getElementById('downloadBtn').addEventListener('click', async ()=>{
   const size = getExportSize(t);
   const format = document.getElementById('f-format').value;
   const out = document.createElement('canvas');
+  console.log('[download] Starting render for download, format:', format);
   renderToCanvas(out, currentTpl, size.w, size.h, () => {
+    console.log('[download] Render complete, packaging output file...');
     const copyData = getCopy(currentTpl);
     const yearMatch = (copyData.date || '').match(/\b(20\d{2})\b/);
     const year = yearMatch ? yearMatch[1] : '2026';
@@ -6633,28 +6656,60 @@ function applyUrlParams() {
   if (typeof TEMPLATES !== 'undefined' && typeof drawThumb === 'function') {
     Object.keys(TEMPLATES).forEach(key => drawThumb(key));
   }
+}
 
-  // 6. Autodownload (&autodownload=1)
-  const autoDownloadVal = getParam('autodownload', 'autoDownload');
-  if (autoDownloadVal === '1' || autoDownloadVal?.toLowerCase() === 'true') {
-    let triggered = false;
-    const triggerDownload = () => {
-      if (triggered) return;
-      triggered = true;
+let autoDownloadExecuted = false;
+function triggerAutoDownloadIfNeeded() {
+  if (autoDownloadExecuted) return;
+  const params = new URLSearchParams(window.location.search);
+  const clean = s => s.toLowerCase().replace(/[-_]/g, '');
+  let autoVal = null;
+  for (const [k, v] of params.entries()) {
+    if (clean(k) === 'autodownload') { autoVal = v; break; }
+  }
+  console.log('[autodownload] Checked autodownload flag:', autoVal);
+  if (autoVal !== '1' && autoVal?.toLowerCase() !== 'true') return;
+  autoDownloadExecuted = true;
+
+  console.log('[autodownload] Fonts ready and initial render complete. Initiating auto-download in 600ms...');
+  showAutoDownloadFallbackHint();
+
+  setTimeout(() => {
+    try {
       const downloadBtn = document.getElementById('downloadBtn');
       if (downloadBtn) {
+        console.log('[autodownload] Programmatically clicking #downloadBtn:', downloadBtn);
         downloadBtn.click();
+      } else {
+        console.error('[autodownload] #downloadBtn element not found in DOM!');
       }
-    };
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => {
-        setTimeout(triggerDownload, 400);
-      }).catch(() => {
-        setTimeout(triggerDownload, 400);
-      });
-    } else {
-      setTimeout(triggerDownload, 400);
+    } catch (err) {
+      console.error('[autodownload] Exception during auto-download click:', err);
     }
+  }, 600);
+}
+
+function showAutoDownloadFallbackHint() {
+  let hint = document.getElementById('autoDownloadFallbackHint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'autoDownloadFallbackHint';
+    hint.style.cssText = 'margin-top: 10px; padding: 10px 14px; background: #EFF6FF; border: 1px solid #93C5FD; border-radius: 8px; font-size: 13px; color: #1E3A8A; line-height: 1.4; display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
+    hint.innerHTML = `
+      <span>⏳ Preparing poster download... If it does not start automatically, please click <strong>Download poster</strong>.</span>
+      <button type="button" style="background:none; border:none; color:#6B7280; font-size:18px; cursor:pointer; line-height:1; padding:2px;" onclick="this.parentElement.remove();">&times;</button>
+    `;
+    const btn = document.getElementById('downloadBtn');
+    if (btn && btn.parentNode) {
+      btn.parentNode.insertBefore(hint, btn.nextSibling);
+    }
+  }
+  const btn = document.getElementById('downloadBtn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const h = document.getElementById('autoDownloadFallbackHint');
+      if (h) h.remove();
+    }, { once: true });
   }
 }
 
@@ -6664,8 +6719,23 @@ async function initApp() {
   Object.values(TEMPLATES).forEach(normalizeTemplateFonts);
   refreshAdminPanel();
   applyUrlParams();
-  render();
-  Object.keys(TEMPLATES).forEach(key => drawThumb(key));
+
+  const whenFontsReady = (document.fonts && document.fonts.ready)
+    ? document.fonts.ready
+    : Promise.resolve();
+
+  whenFontsReady.then(() => {
+    render(() => {
+      triggerAutoDownloadIfNeeded();
+    });
+    Object.keys(TEMPLATES).forEach(key => drawThumb(key));
+  }).catch(err => {
+    console.warn("Font loading error:", err);
+    render(() => {
+      triggerAutoDownloadIfNeeded();
+    });
+    Object.keys(TEMPLATES).forEach(key => drawThumb(key));
+  });
 }
 
 initApp();

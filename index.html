@@ -89,6 +89,7 @@
     --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --bg:#FFFFFF; --panel:#F5F5F5; --border:#E4E4E4; --border-strong:#D0D0D0;
     --ink:#0D0D0D; --muted:#8C8C8C; --blue:#0D8BFF; --blue-wash:#EAF5FF;
+    --accent-warning:#B91C1C;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);font-family:var(--font-display);color:var(--ink);overflow-x:hidden;}
@@ -120,6 +121,8 @@
     text-align:left;
     margin-bottom:12px;
   }
+  .column-intro .subtitle{font-size:13.65px;font-weight:400;color:var(--muted);line-height:1.35;max-width:100%;}
+  .column-intro .auto-update-note{font-size:11.5px;font-weight:500;color:var(--accent-warning);margin-top:4px;line-height:1.35;}
   .step-tag{display:block;text-align:left;background:transparent;color:#1E3A8A;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 10px;letter-spacing:1.5px;line-height:1.35;}
   .step-index{display:inline-block;background:#E01A2B;color:#fff;border-radius:8px;padding:3px 8px;margin-right:6px;letter-spacing:.08em;}
   .step-chip{background:#1E3A8A;color:#FFFFFF;border-radius:4px;padding:2px 6px;margin-right:8px;font-size:10.5px;letter-spacing:1px;}
@@ -1714,7 +1717,7 @@
       <div class="step1-intro">
         <div>
           <div class="step-tag" style="margin:0 0 9.5px;"><span class="step-chip">STEP 1.</span> CHOOSE A TEMPLATE</div>
-          <div style="font-size:13.65px; font-weight:400; color:#6B7280;">Pick one template to start customizing your poster.</div>
+          <div class="subtitle">Pick one template to start customizing your poster.</div>
         </div>
         <button type="button" class="step1-collapse-btn" onclick="toggleStep1Row()" title="Collapse / expand template picker" aria-label="Toggle template row" style="font-size: 18px; font-weight: 600; line-height: 1;">
           <span class="icon-minus">–</span>
@@ -1734,8 +1737,8 @@
       <div class="form-col" id="formCol">
         <div class="column-intro" style="min-height: 64px; margin-bottom: 24px; display: flex; flex-direction: column; justify-content: flex-start;">
           <div class="step-tag" style="margin:0 0 9.5px;"><span class="step-chip">STEP 2.</span> ENTER POSTER DETAILS</div>
-          <div style="font-size:13.65px; font-weight:400; color:#6B7280; line-height:1.2; white-space:nowrap;">Type your event details in fields below OR directly on the poster to customize it.</div>
-          <div style="font-size:11.5px; font-weight:500; color:#E01A2B; margin-top:4px;">* Other templates update automatically.</div>
+          <div class="subtitle">Type your event details in fields below OR directly on the poster to customize it.</div>
+          <div class="auto-update-note">* Other templates update automatically.</div>
         </div>
         <div class="panel" style="padding: 0; background: transparent;">
           <div class="compact-form-group">
@@ -1795,8 +1798,9 @@
         <!-- Invisible spacer identical to Col 1 and Col 3 column-intro to guarantee exact same vertical offset -->
         <div class="column-intro" style="min-height: 64px; margin-bottom: 24px; visibility: hidden; pointer-events: none;"></div>
         <div style="position: relative; width: 100%;">
-          <div style="position: absolute; top: -28px; left: 0; right: 0; text-align: center; pointer-events: none; z-index: 10;">
-            <span style="font-family: var(--font-display); font-size: 10.5px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: #94A3B8;">P R E V I E W</span>
+          <div style="position: absolute; top: -32px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 10px; z-index: 10;">
+            <span style="font-family: var(--font-display); font-size: 10.5px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: #94A3B8; pointer-events: none;">P R E V I E W</span>
+            <button type="button" id="largePreviewBtn" aria-label="Full Screen View" title="Full Screen View" style="width: 26.4px; height: 26.4px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E2E8F0; color: #64748B; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; padding: 0;" onmouseover="this.style.color='#1E3A8A'; this.style.borderColor='#CBD5E1';" onmouseout="this.style.color='#64748B'; this.style.borderColor='#E2E8F0';">⤢</button>
           </div>
           <div class="canvas-shell" style="margin: 0 auto;">
             <div class="poster-stage" id="posterStage">
@@ -1810,18 +1814,14 @@
           </div>
         </div>
         <div id="fullEditorBubble" class="full-editor-bubble">
-          <div class="pill-row-top">
-            <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()">
-              <button type="button" class="pill-action-btn" id="userUndoBtn" aria-label="Undo last edit">↺</button>
-              <span class="pill-action-tooltip">Undo change</span>
+          <div class="pill-row-top" style="gap: 20px; padding: 4px 8px;">
+            <div class="pill-action-item" onclick="document.getElementById('userUndoBtn').click()" style="gap: 6px;">
+              <button type="button" class="pill-action-btn" id="userUndoBtn" aria-label="Undo last edit" style="width: 26.4px; height: 26.4px; font-size: 13.2px; line-height: 1;">↺</button>
+              <span style="font-size: 12px; font-weight: 500; color: #475569;">Undo</span>
             </div>
-            <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()">
-              <button type="button" class="pill-action-btn" id="userRestoreBtn" aria-label="Restore original template text and layout">↻</button>
-              <span class="pill-action-tooltip">Restore template</span>
-            </div>
-            <div class="pill-action-item" onclick="document.getElementById('largePreviewBtn').click()">
-              <button type="button" class="pill-action-btn" id="largePreviewBtn" aria-label="Full Screen View">⤢</button>
-              <span class="pill-action-tooltip">Full Screen View</span>
+            <div class="pill-action-item" onclick="document.getElementById('userRestoreBtn').click()" style="gap: 6px;">
+              <button type="button" class="pill-action-btn" id="userRestoreBtn" aria-label="Restore original template text and layout" style="width: 26.4px; height: 26.4px; font-size: 13.2px; line-height: 1;">↻</button>
+              <span style="font-size: 12px; font-weight: 500; color: #475569;">Restore</span>
             </div>
           </div>
           <div class="pill-row-divider"></div>
@@ -1835,7 +1835,7 @@
 	  <div class="options-col" id="optionsCol">
         <div class="column-intro" style="min-height: 64px; margin-bottom: 24px; display: flex; flex-direction: column; justify-content: flex-start;">
           <div class="step-tag" style="margin:0 0 9.5px;"><span class="step-chip">STEP 3.</span> DOWNLOAD THE RESULT</div>
-          <div style="font-size:13.65px; font-weight:400; color:#6B7280; line-height:1.2;">Done editing? Download your poster.</div>
+          <div class="subtitle">Done editing? Download your poster.</div>
         </div>
         <div class="panel" style="width: 100%; border: 1px solid var(--border); margin-top: 0;">
           <div class="compact-form-group">
@@ -2511,6 +2511,7 @@ const TEMPLATE_COPY = {
     b2: '1, 2, or 3 laps of the course',
     url: 'mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     email: 'TwinCitiesTerryFoxRun@outlook.com',
+    qrUrl: 'https://mskcc.convio.net/goto/Terry-Fox-Chandler-2026',
     footIntro: ''
   },
   londonFlyer: {
@@ -2680,7 +2681,7 @@ const TEMPLATES = {
     ink: '#FFFFFF',
     accent: '#FFFFFF',
     qrBg: '#FFFFFF',
-    edgeColor: '#1A2332',
+    edgeColor: '#FFFFFF',
     layers: [
       { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 48px sans-serif', color:'ink', maxW:0.9 },
       { id:'staticSub', type:'static', x:0.6300,y:0.2380, align:'left',   font:'700 44px sans-serif', color:'ink', text:'For Cancer Research', maxW:0.3550, shadow:greyTextShadow },
@@ -2692,7 +2693,8 @@ const TEMPLATES = {
       { id:'bullet1',   type:'edit_row', x:0.6300,y:0.6700, align:'left', field:'f-b1', maxW:0.3200, lineHeight:32, bullet:true, letterSpacing:1 },
       { id:'bullet2',   type:'edit_row', x:0.6300,y:0.7600, align:'left', field:'f-b2', maxW:0.3200, lineHeight:32, bullet:true, letterSpacing:1 },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true, letterSpacing:1 }
+      { id:'qr',        type:'qr',     x:0.0185,y:0.9044, size:0.1005, pad:10, noBgRect:true },
+      { id:'url',       type:'edit_row', x:0.5000,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true, letterSpacing:1 }
     ],
     socialLayers: [
       { id:'city',      type:'text',   x:0.5000,y:0.0422, align:'center', font:'700 46px sans-serif', color:'ink', maxW:0.9 },
@@ -2702,7 +2704,7 @@ const TEMPLATES = {
       { id:'schedule',  type:'schedule_list', x:0.6300,y:0.5850, align:'left', font:'500 24px sans-serif', color:'ink', lineHeight:32, bullet:true, maxItems:2, shadow:greyTextShadow },
       { id:'bullets',   type:'list',   x:0.6300,y:0.6850, align:'left',   font:'500 24px sans-serif', color:'ink', maxW:0.3200, lineHeight:32, maxItems:2, shadow:greyTextShadow },
       { id:'guest',     type:'text',   x:0.5000,y:0.9350, align:'center', font:'italic 400 32px "RigidSquareWeb", sans-serif', color:'ink', maxW:0.6741 },
-      { id:'url',       type:'edit_row', x:0.4879,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true }
+      { id:'url',       type:'edit_row', x:0.5000,y:0.9820, align:'center', field:'f-url', prefix:'', font:'400 22px sans-serif', boldFont:'700 22px sans-serif', maxW:0.4685, lineHeight:18, underline:true, letterSpacing:1 }
     ]
   },
   londonFlyer: {
@@ -3187,20 +3189,25 @@ function drawLayerSinglePass(ctx, t, layer, copy, w, h, qrCanvas){
     const x = layer.x * w, y = layer.y * h;
     const pad = (layer.pad ?? 18) * s;
     const showQr = shouldShowQr();
-    const origT = (typeof ORIGINAL_TEMPLATES !== 'undefined') ? ORIGINAL_TEMPLATES[t._key || currentTpl] : null;
-    if (origT) {
-      const origLayer = (origT.layers || []).find(l => l.id === layer.id && l.type === 'qr');
-      if (origLayer && (Math.abs(origLayer.x - layer.x) > 0.0001 || Math.abs(origLayer.y - layer.y) > 0.0001)) {
-        const origSize = origLayer.size * w;
-        const origX = origLayer.x * w;
-        const origY = origLayer.y * h;
-        const origPad = (origLayer.pad ?? 18) * s;
-        ctx.fillStyle = t.edgeColor || '#E63E30';
-        ctx.fillRect(origX - origPad - 2, origY - origPad - 2, origSize + origPad * 2 + 4, origSize + origPad * 2 + 4);
+    if (!layer.noBgRect) {
+      const origT = (typeof ORIGINAL_TEMPLATES !== 'undefined') ? ORIGINAL_TEMPLATES[t._key || currentTpl] : null;
+      if (origT) {
+        const origLayer = (origT.layers || []).find(l => l.id === layer.id && l.type === 'qr');
+        if (origLayer && (Math.abs(origLayer.x - layer.x) > 0.0001 || Math.abs(origLayer.y - layer.y) > 0.0001)) {
+          const origSize = origLayer.size * w;
+          const origX = origLayer.x * w;
+          const origY = origLayer.y * h;
+          const origPad = (origLayer.pad ?? 18) * s;
+          ctx.fillStyle = t.edgeColor || '#E63E30';
+          ctx.fillRect(origX - origPad - 2, origY - origPad - 2, origSize + origPad * 2 + 4, origSize + origPad * 2 + 4);
+        }
       }
+      ctx.fillStyle = showQr ? t.qrBg : (t.edgeColor || t.qrBg || '#FFFFFF');
+      ctx.fillRect(x-pad, y-pad, size+pad*2, size+pad*2);
+    } else if (showQr) {
+      ctx.fillStyle = t.qrBg || '#FFFFFF';
+      ctx.fillRect(x-pad, y-pad, size+pad*2, size+pad*2);
     }
-    ctx.fillStyle = showQr ? t.qrBg : (t.edgeColor || t.qrBg || '#FFFFFF');
-    ctx.fillRect(x-pad, y-pad, size+pad*2, size+pad*2);
     if (showQr && qrCanvas) ctx.drawImage(qrCanvas, x, y, size, size);
   }
 

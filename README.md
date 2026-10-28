@@ -10,6 +10,8 @@ Five approved designs, ready to go. Pick one, edit the text for your event, and 
 
 For the few volunteers with some design skill, there's a Figma-lite editor: text, spacing, and position, all with plain-language labels in a tappable sidebar. The font can't be changed — brand rules stay locked. Most people never need it.
 
+Sign in, save a draft, come back any time — interrupted work doesn't get lost.
+
 Before downloading, the human reviews the poster and changes what needs changing. Nothing goes out unreviewed.
 
 ## The result

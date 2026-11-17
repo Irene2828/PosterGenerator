@@ -4478,6 +4478,7 @@ function deleteSelectedLayer(){
     selectAdminLayer(null);
   } else if (selectedAdminLayer.type === 'edit_row'){
     commitLayerEdit(selectedAdminLayer, '', false);
+    selectAdminLayer(null);
   } else {
     selectedAdminLayer.hidden = true;
     saveLayerOverrides();
@@ -4705,7 +4706,7 @@ function updateEditOverlay(){
 
     editOverlay.appendChild(hot);
 
-    if (selectedAdminLayer === layer && isAdminMode) {
+    if (selectedAdminLayer === layer && isAdminMode && (['qr','rule'].includes(layer.type) || (getLayerEditValue(layer) || '').trim() !== '')) {
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.className = 'hotspot-close-btn';

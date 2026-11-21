@@ -197,10 +197,11 @@ function actionBlock(n) {
         <select data-a="script">${SCRIPTS.map(s => `<option value="${s.key}">${s.label}</option>`).join('')}</select>
       </div>
       <div class="field hidden" data-wrap="anchor"><label>Placement</label>
-        <select data-a="anchor">${ANCHORS.map(a => `<option value="${a.key}">${a.label}</option>`).join('')}</select>
+        <select data-a="anchor"></select>
       </div>
     </div>`;
   div.querySelector('[data-a="type"]').addEventListener('change', () => syncAction(div));
+  div.querySelector('[data-a="field"]').addEventListener('change', () => refreshAnchors());
   const rm = div.querySelector('[data-remove-action]');
   if (rm) rm.addEventListener('click', () => { div.remove(); renumber(); });
   syncAction(div);
@@ -210,6 +211,7 @@ const MAX_ACTIONS = 6;
 function renumber() {
   const blocks = actionsEl.querySelectorAll('.action-block');
   actionCount = blocks.length;
+  refreshAnchors();
   blocks.forEach((b, i) => {
     b.querySelector('.action-head b').textContent = 'ACTION ' + (i + 1);
     const rm = b.querySelector('[data-remove-action]');
@@ -219,6 +221,32 @@ function renumber() {
   btn.textContent = '+ Add action ' + (actionCount + 1);
   btn.classList.toggle('hidden', actionCount >= MAX_ACTIONS);
 }
+function currentRemoved() {
+  const out = new Set();
+  actionsEl.querySelectorAll('.action-block').forEach(b => {
+    const t = b.querySelector('[data-a="type"]').value;
+    if (t === 'remove' || t === 'replace') out.add(b.querySelector('[data-a="field"]').value);
+  });
+  return out;
+}
+function refreshAnchors() {
+  const removed = currentRemoved();
+  actionsEl.querySelectorAll('.action-block').forEach(b => {
+    if (b.querySelector('[data-a="type"]').value !== 'add') return;
+    const sel = b.querySelector('[data-a="anchor"]');
+    const prev = sel.value;
+    const opts = [];
+    if (removed.has('cities')) opts.push(['centre', 'Centre of the back']);
+    opts.push(['under-headline', 'Under the main headline']);
+    if (!removed.has('logos')) opts.push(['above-logos', 'Above the logos']);
+    for (const f of removed) {
+      const label = FIELDS.find(x => x.key === f).label.toLowerCase();
+      opts.push(['slot:' + f, 'Where the ' + label + ' was']);
+    }
+    sel.innerHTML = opts.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+    if (opts.some(([v]) => v === prev)) sel.value = prev;
+  });
+}
 function syncAction(div) {
   const type = div.querySelector('[data-a="type"]').value;
   const show = (name, on) => div.querySelector(`[data-wrap="${name}"]`).classList.toggle('hidden', !on);
@@ -226,6 +254,7 @@ function syncAction(div) {
   show('text', type !== 'remove');
   show('script', type !== 'remove');
   show('anchor', type === 'add');
+  refreshAnchors();
 }
 function addAction() {
   if (actionCount >= MAX_ACTIONS) return;

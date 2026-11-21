@@ -124,6 +124,10 @@
   <div id="resultBlock" class="hidden">
     <div class="step-tag"><span class="step-chip">STEP 4.</span> CHECK &amp; APPROVE</div>
     <div id="proofWrap"><canvas id="proof" width="825" height="975"></canvas></div>
+    <div class="panel hidden" id="adjustPanel" style="margin-top:14px;">
+      <div class="facts" style="margin-bottom:8px;"><span class="k">Adjust the new text — the proof updates as you change it:</span></div>
+      <div id="adjustRows"></div>
+    </div>
     <div class="panel" style="margin-top:14px;">
       <div class="facts" id="facts"></div>
       <div class="row-btns">
@@ -199,22 +203,6 @@ function actionBlock(n) {
       <div class="field hidden" data-wrap="anchor"><label>Placement</label>
         <select data-a="anchor"></select>
       </div>
-      <div class="field hidden" data-wrap="size"><label>Size</label>
-        <select data-a="size">
-          <option value="70">Smaller (70%)</option>
-          <option value="85">A bit smaller (85%)</option>
-          <option value="100" selected>Auto — fits the place</option>
-          <option value="115">A bit bigger (115%)</option>
-          <option value="130">Bigger (130%)</option>
-        </select>
-      </div>
-      <div class="field hidden" data-wrap="nudge"><label>Position</label>
-        <select data-a="nudge">
-          <option value="higher">Higher</option>
-          <option value="centred" selected>Centred</option>
-          <option value="lower">Lower</option>
-        </select>
-      </div>
     </div>`;
   div.querySelector('[data-a="type"]').addEventListener('change', () => syncAction(div));
   div.querySelector('[data-a="field"]').addEventListener('change', () => refreshAnchors());
@@ -270,8 +258,6 @@ function syncAction(div) {
   show('text', type !== 'remove');
   show('script', type !== 'remove');
   show('anchor', type === 'add');
-  show('size', type !== 'remove');
-  show('nudge', type !== 'remove');
   refreshAnchors();
 }
 function addAction() {
@@ -291,8 +277,6 @@ function collectBrief() {
     if (type !== 'remove') {
       a.text = div.querySelector('[data-a="text"]').value.trim();
       a.script = div.querySelector('[data-a="script"]').value;
-      a.sizePct = Number(div.querySelector('[data-a="size"]').value);
-      a.nudge = div.querySelector('[data-a="nudge"]').value;
     }
     if (type === 'add') a.anchor = div.querySelector('[data-a="anchor"]').value;
     actions.push(a);
@@ -309,26 +293,35 @@ function setStep(i, state) {
 function resetSteps() { for (let i = 0; i < 6; i++) setStep(i, ''); }
 
 let resultPdfB64 = null;
+let lastBrief = null;
+let running = false;
 
-document.getElementById('runBtn').addEventListener('click', async () => {
-  const brief = collectBrief();
+async function executeRun(brief, fast) {
+  if (running) return;
+  running = true;
+  lastBrief = brief;
   const errBox = document.getElementById('errorBox');
   errBox.style.display = 'none';
-  document.getElementById('resultBlock').classList.add('hidden');
-  document.getElementById('verdict').className = 'verdict';
-  document.getElementById('progressBlock').classList.remove('hidden');
-  resetSteps();
   const runBtn = document.getElementById('runBtn');
-  runBtn.disabled = true; runBtn.textContent = 'Running…';
-
-  let step = 0;
-  setStep(0, 'running');
-  const timer = setInterval(() => {
-    setStep(step, 'done');
-    step = Math.min(step + 1, 4);
-    setStep(step, 'running');
-  }, 900);
-
+  if (!fast) {
+    document.getElementById('resultBlock').classList.add('hidden');
+    document.getElementById('verdict').className = 'verdict';
+    document.getElementById('progressBlock').classList.remove('hidden');
+    resetSteps();
+    runBtn.disabled = true; runBtn.textContent = 'Running…';
+  } else {
+    document.getElementById('adjustPanel').style.opacity = '0.5';
+  }
+  let timer = null;
+  if (!fast) {
+    let step = 0;
+    setStep(0, 'running');
+    timer = setInterval(() => {
+      setStep(step, 'done');
+      step = Math.min(step + 1, 4);
+      setStep(step, 'running');
+    }, 900);
+  }
   try {
     const res = await fetch('/api/tshirts-run', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -336,18 +329,22 @@ document.getElementById('runBtn').addEventListener('click', async () => {
     });
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || 'Run failed');
-    clearInterval(timer);
+    if (timer) clearInterval(timer);
     for (let i = 0; i < 6; i++) setStep(i, 'done');
     resultPdfB64 = data.pdfBase64;
-    showResult(data);
+    await showResult(data, brief, fast);
   } catch (e) {
-    clearInterval(timer);
+    if (timer) clearInterval(timer);
     errBox.textContent = 'The run failed: ' + e.message + '. Check the brief and try again.';
     errBox.style.display = 'block';
   } finally {
+    running = false;
     runBtn.disabled = false; runBtn.textContent = 'Run';
+    document.getElementById('adjustPanel').style.opacity = '';
   }
-});
+}
+
+document.getElementById('runBtn').addEventListener('click', () => executeRun(collectBrief(), false));
 
 let resultPdfDoc = null;
 // Print area on the shirt photo, in photo pixels (photo is 1650×1950;
@@ -365,13 +362,43 @@ async function renderArtworkCanvas(pdfBytes, scale) {
   return c;
 }
 
-async function showResult(data) {
+const SIZE_STEPS = [[70, 'Smaller (70%)'], [85, 'A bit smaller (85%)'], [100, 'Auto — fits the place'], [115, 'A bit bigger (115%)'], [130, 'Bigger (130%)']];
+function buildAdjustRows(brief) {
+  const panel = document.getElementById('adjustPanel');
+  const rowsEl = document.getElementById('adjustRows');
+  const textIdx = [];
+  brief.actions.forEach((a, i) => { if (a.type === 'add' || a.type === 'replace') textIdx.push(i); });
+  if (!textIdx.length) { panel.classList.add('hidden'); rowsEl.innerHTML = ''; return; }
+  panel.classList.remove('hidden');
+  rowsEl.innerHTML = textIdx.map(i => {
+    const a = brief.actions[i];
+    const sizeOpts = SIZE_STEPS.map(([v, t]) => `<option value="${v}" ${Number(a.sizePct || 100) === v ? 'selected' : ''}>${t}</option>`).join('');
+    const nudge = a.nudge || 'centred';
+    const nudgeOpts = [['higher', 'Higher'], ['centred', 'Centred'], ['lower', 'Lower']].map(([v, t]) => `<option value="${v}" ${nudge === v ? 'selected' : ''}>${t}</option>`).join('');
+    return `<div class="grid" style="margin-bottom:10px;">
+      <div class="field"><label>Text</label><input type="text" value="${a.text.replace(/"/g, '&quot;')}" disabled></div>
+      <div class="field"><label>Size</label><select data-adj="${i}" data-adj-kind="size">${sizeOpts}</select></div>
+      <div class="field"><label>Position</label><select data-adj="${i}" data-adj-kind="nudge">${nudgeOpts}</select></div>
+    </div>`;
+  }).join('');
+  rowsEl.querySelectorAll('[data-adj]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const i = Number(sel.dataset.adj);
+      if (sel.dataset.adjKind === 'size') lastBrief.actions[i].sizePct = Number(sel.value);
+      else lastBrief.actions[i].nudge = sel.value;
+      executeRun(lastBrief, true);
+    });
+  });
+}
+
+async function showResult(data, brief, keepScroll) {
   const facts = [];
   if (data.removed.length) facts.push(`<div><span class="k">Removed:</span> ${data.removed.join(', ')}</div>`);
   for (const a of data.added) facts.push(`<div><span class="k">Added:</span> “${a.text}” — set in ${a.font}, as vector outlines</div>`);
   facts.push(`<div><span class="k">Original artwork:</span> ${data.untouched.join(', ')} — copied unchanged ✓</div>`);
   facts.push(`<div><span class="k">Files:</span> print-ready PDF (vector, transparent) + high-res PNG</div>`);
   document.getElementById('facts').innerHTML = facts.join('');
+  buildAdjustRows(brief);
   document.getElementById('resultBlock').classList.remove('hidden');
 
   const bytes = Uint8Array.from(atob(data.pdfBase64), c => c.charCodeAt(0));
@@ -390,7 +417,7 @@ async function showResult(data) {
     ctx.drawImage(art, 0, 0);
   };
   img.src = './tshirt-mockup-back.jpg';
-  document.getElementById('resultBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!keepScroll) document.getElementById('resultBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 document.getElementById('downloadBtn').addEventListener('click', () => {

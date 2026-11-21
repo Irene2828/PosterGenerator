@@ -241,6 +241,7 @@ function refreshAnchors() {
     const sel = b.querySelector('[data-a="anchor"]');
     const prev = sel.value;
     const opts = [];
+    opts.push(['above-headline', 'Above the main headline']);
     if (removed.has('cities')) opts.push(['centre', 'Centre of the back']);
     opts.push(['under-headline', 'Under the main headline']);
     if (!removed.has('logos')) opts.push(['above-logos', 'Above the logos']);
@@ -410,7 +411,11 @@ async function showResult(data, brief, keepScroll) {
   img.onload = () => {
     canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
     ctx.drawImage(img, 0, 0);
-    ctx.drawImage(art, PRINT_ON_PHOTO.x, PRINT_ON_PHOTO.y, PRINT_ON_PHOTO.w, PRINT_ON_PHOTO.h);
+    // Anchor the artwork by its BOTTOM edge: a run that adds text above the
+    // headline returns a taller page, and the extra height extends upward.
+    const drawH = art.height * (PRINT_ON_PHOTO.w / art.width);
+    const drawY = PRINT_ON_PHOTO.y + PRINT_ON_PHOTO.h - drawH;
+    ctx.drawImage(art, PRINT_ON_PHOTO.x, drawY, PRINT_ON_PHOTO.w, drawH);
   };
   img.onerror = () => {
     canvas.width = art.width; canvas.height = art.height;

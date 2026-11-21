@@ -138,13 +138,13 @@
         <button type="button" class="btn btn-primary" id="approveBtn">Approve</button>
         <div></div>
       </div>
-      <div class="row-btns">
-        <button type="button" class="btn btn-ghost" id="updateReqBtn">Request a tool update</button>
-        <div></div>
-      </div>
-      <div class="facts" style="margin-top:6px;"><span class="k">Need something this tool can't do yet — a new design, a new field, a different change? This opens an email to the tool's builder.</span></div>
+
       <div class="verdict" id="verdict"></div>
     </div>
+  </div>
+  <div style="margin-top:34px;text-align:center;font-family:var(--font-ui);font-size:13.5px;color:var(--muted);">
+    Need something this tool can't do yet?
+    <a href="#" id="updateReqBtn" style="color:var(--blue);text-decoration:underline;">Request a tool update</a>
   </div>
 </div>
 
@@ -444,7 +444,8 @@ document.getElementById('approveBtn').addEventListener('click', () => {
   const v = document.getElementById('verdict');
   v.className = 'verdict ok'; v.textContent = 'Approved — the print PDF above is the file to send to the printer.';
 });
-document.getElementById('updateReqBtn').addEventListener('click', () => {
+document.getElementById('updateReqBtn').addEventListener('click', (ev) => {
+  ev.preventDefault();
   const F = { headline: 'Main headline (“Give for Cancer Research”)', cities: 'City / date list', logos: 'Logo strip' };
   let briefLines = 'No run yet in this session.';
   if (lastBrief) {
@@ -457,8 +458,6 @@ document.getElementById('updateReqBtn').addEventListener('click', () => {
   const subject = encodeURIComponent('T-shirt artwork tool — update request');
   const body = encodeURIComponent('Hi Iryna,\n\nWhat we need that the tool can\'t do yet:\n\n\n— — —\n' + briefLines + '\n');
   window.location.href = `mailto:iryna.herts@gmail.com?subject=${subject}&body=${body}`;
-  const v = document.getElementById('verdict');
-  v.className = 'verdict ok'; v.textContent = 'Opening your email app — the request is addressed to the tool builder, with this run attached.';
 });
 </script>
 </body>

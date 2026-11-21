@@ -199,6 +199,22 @@ function actionBlock(n) {
       <div class="field hidden" data-wrap="anchor"><label>Placement</label>
         <select data-a="anchor"></select>
       </div>
+      <div class="field hidden" data-wrap="size"><label>Size</label>
+        <select data-a="size">
+          <option value="70">Smaller (70%)</option>
+          <option value="85">A bit smaller (85%)</option>
+          <option value="100" selected>Auto — fits the place</option>
+          <option value="115">A bit bigger (115%)</option>
+          <option value="130">Bigger (130%)</option>
+        </select>
+      </div>
+      <div class="field hidden" data-wrap="nudge"><label>Position</label>
+        <select data-a="nudge">
+          <option value="higher">Higher</option>
+          <option value="centred" selected>Centred</option>
+          <option value="lower">Lower</option>
+        </select>
+      </div>
     </div>`;
   div.querySelector('[data-a="type"]').addEventListener('change', () => syncAction(div));
   div.querySelector('[data-a="field"]').addEventListener('change', () => refreshAnchors());
@@ -254,6 +270,8 @@ function syncAction(div) {
   show('text', type !== 'remove');
   show('script', type !== 'remove');
   show('anchor', type === 'add');
+  show('size', type !== 'remove');
+  show('nudge', type !== 'remove');
   refreshAnchors();
 }
 function addAction() {
@@ -273,6 +291,8 @@ function collectBrief() {
     if (type !== 'remove') {
       a.text = div.querySelector('[data-a="text"]').value.trim();
       a.script = div.querySelector('[data-a="script"]').value;
+      a.sizePct = Number(div.querySelector('[data-a="size"]').value);
+      a.nudge = div.querySelector('[data-a="nudge"]').value;
     }
     if (type === 'add') a.anchor = div.querySelector('[data-a="anchor"]').value;
     actions.push(a);

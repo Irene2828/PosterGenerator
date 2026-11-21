@@ -13,6 +13,11 @@ const fontkit = require('fontkit');
 
 const PAGE_W = 875, PAGE_H = 1550, CX = PAGE_W / 2;
 const MAX_TEXT_W = 820, MAX_SIZE = 165, MIN_SIZE = 18;
+// Extra band added at the TOP of the page only when a run places text above
+// the main headline (the original artwork fills its page to the top edge).
+// Original elements keep their exact relative geometry; the page just grows.
+const TOP_BAND = 150;
+let CUR_PAGE_H = PAGE_H;
 
 // Element boxes on the back (top-left origin, points).
 const FIELDS = {
@@ -84,7 +89,7 @@ function layoutTextInBox(text, font, box, opts = {}) {
   if (opts.nudge === 'lower') dy = free * 0.7;
   const inkCentreFromTop = box.y + box.h / 2 + dy;
   const baselineFromTop = inkCentreFromTop + ((inkMaxY + inkMinY) / 2) * scale;
-  const baseline = PAGE_H - baselineFromTop;
+  const baseline = CUR_PAGE_H - baselineFromTop;
   return { run, size, x: CX - width / 2, baseline };
 }
 
@@ -135,6 +140,7 @@ function resolveSlot(action, removedFields) {
     return { key: a, box: BANDS['above-logos'] };
   }
   if (a === 'under-headline') return { key: a, box: BANDS['under-headline'] };
+  if (a === 'above-headline') return { key: a, topBand: true, box: { x: 40, y: 0, w: 795, h: TOP_BAND } };
   throw new Error('Unknown placement: ' + a);
 }
 
@@ -168,16 +174,21 @@ module.exports = async (req, res) => {
     for (const t of texts) {
       const slot = resolveSlot(t.action, removedFields);
       t.slotKey = slot.key;
-      if (!bySlot.has(slot.key)) bySlot.set(slot.key, { box: slot.box, items: [] });
+      if (!bySlot.has(slot.key)) bySlot.set(slot.key, { box: slot.box, topBand: !!slot.topBand, items: [] });
       bySlot.get(slot.key).items.push(t);
     }
-    for (const { box, items } of bySlot.values()) {
+    // If any text goes above the headline, the page grows by TOP_BAND at the
+    // top and every original-coordinate box shifts down by the same amount.
+    const dy = [...bySlot.values()].some(s => s.topBand) ? TOP_BAND : 0;
+    CUR_PAGE_H = PAGE_H + dy;
+    for (const { box, topBand, items } of bySlot.values()) {
+      const shift = topBand ? 0 : dy;
       const rowH = box.h / items.length;
-      items.forEach((t, i) => { t.box = { x: box.x, y: box.y + rowH * i, w: box.w, h: rowH }; });
+      items.forEach((t, i) => { t.box = { x: box.x, y: box.y + shift + rowH * i, w: box.w, h: rowH }; });
     }
 
     const out = await PDFDocument.create();
-    const page = out.addPage([PAGE_W, PAGE_H]);
+    const page = out.addPage([PAGE_W, PAGE_H + dy]);
 
     for (const key of Object.keys(FIELDS)) {
       if (removedFields.has(key)) continue;

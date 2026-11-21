@@ -139,9 +139,10 @@
         <div></div>
       </div>
       <div class="row-btns">
-        <button type="button" class="btn btn-ghost" id="sendBackBtn">Send back</button>
+        <button type="button" class="btn btn-ghost" id="updateReqBtn">Request a tool update</button>
         <div></div>
       </div>
+      <div class="facts" style="margin-top:6px;"><span class="k">Need something this tool can't do yet — a new design, a new field, a different change? This opens an email to the tool's builder.</span></div>
       <div class="verdict" id="verdict"></div>
     </div>
   </div>
@@ -443,10 +444,21 @@ document.getElementById('approveBtn').addEventListener('click', () => {
   const v = document.getElementById('verdict');
   v.className = 'verdict ok'; v.textContent = 'Approved — the print PDF above is the file to send to the printer.';
 });
-document.getElementById('sendBackBtn').addEventListener('click', () => {
+document.getElementById('updateReqBtn').addEventListener('click', () => {
+  const F = { headline: 'Main headline (“Give for Cancer Research”)', cities: 'City / date list', logos: 'Logo strip' };
+  let briefLines = 'No run yet in this session.';
+  if (lastBrief) {
+    briefLines = 'Design: 2026 Grey — Back\nActions tried:\n' + lastBrief.actions.map((a, i) => {
+      if (a.type === 'remove') return `${i + 1}. Remove — ${F[a.field] || a.field}`;
+      if (a.type === 'replace') return `${i + 1}. Replace — ${F[a.field] || a.field} with “${a.text}”`;
+      return `${i + 1}. Add text — “${a.text}”`;
+    }).join('\n');
+  }
+  const subject = encodeURIComponent('T-shirt artwork tool — update request');
+  const body = encodeURIComponent('Hi Iryna,\n\nWhat we need that the tool can\'t do yet:\n\n\n— — —\n' + briefLines + '\n');
+  window.location.href = `mailto:iryna.herts@gmail.com?subject=${subject}&body=${body}`;
   const v = document.getElementById('verdict');
-  v.className = 'verdict back'; v.textContent = 'Sent back — adjust the actions above and run again.';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  v.className = 'verdict ok'; v.textContent = 'Opening your email app — the request is addressed to the tool builder, with this run attached.';
 });
 </script>
 </body>

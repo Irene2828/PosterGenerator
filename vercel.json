@@ -1,11 +1,14 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "mkdir -p public && cp -r *.html *.js fonts overrides.json public/ 2>/dev/null || true; find . -maxdepth 1 -type f \\( -name \"*.png\" -o -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.pdf\" \\) -exec cp {} public/ \\;",
+  "buildCommand": "mkdir -p public && cp -r *.html *.js fonts overrides.json public/ 2>/dev/null || true; find . -maxdepth 1 -type f \( -name \"*.png\" -o -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.pdf\" \) -exec cp {} public/ \;",
   "outputDirectory": "public",
   "functions": {
     "api/*.js": {
       "includeFiles": "overrides.json"
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/tshirts", "destination": "/tshirts.html" }
+  ]
 }

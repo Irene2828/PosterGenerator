@@ -205,7 +205,7 @@ function actionBlock(n) {
 function syncAction(div) {
   const type = div.querySelector('[data-a="type"]').value;
   const show = (name, on) => div.querySelector(`[data-wrap="${name}"]`).classList.toggle('hidden', !on);
-  show('field', true);
+  show('field', type !== 'add');
   show('text', type !== 'remove');
   show('script', type !== 'remove');
   show('anchor', type === 'add');

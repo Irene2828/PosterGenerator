@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T-Shirt Artwork — Terry Fox Run</title>
+<style>
+  @font-face{
+    font-family:'RigidSquareWeb'; font-weight:400; font-style:normal;
+    src: url('./fonts/fonnts.com-rigidsquare-regular.otf') format('opentype'); font-display:swap;
+  }
+  @font-face{
+    font-family:'RigidSquareWeb'; font-weight:600; font-style:normal;
+    src: url('./fonts/fonnts.com-rigidsquare-semibold.otf') format('opentype'); font-display:swap;
+  }
+  @font-face{
+    font-family:'RigidSquareWeb'; font-weight:700; font-style:normal;
+    src: url('./fonts/fonnts.com-rigidsquare-bold.otf') format('opentype'); font-display:swap;
+  }
+  :root{
+    --font-display:'RigidSquareWeb',sans-serif;
+    --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --bg:#FFFFFF; --panel:#F5F5F5; --border:#E4E4E4; --border-strong:#D0D0D0;
+    --ink:#0D0D0D; --muted:#8C8C8C; --blue:#0D8BFF; --blue-wash:#EAF5FF;
+    --red:#E01A2B; --navy:#1E3A8A; --ok:#12805C;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);font-family:var(--font-display);color:var(--ink);}
+  body{padding-top:56px;}
+  .toolbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(180deg,#243F6D 0%,#152B50 28%,#0B132B 100%);box-shadow:0 2px 10px rgba(0,0,0,0.15);}
+  .toolbar-inner{display:flex;align-items:center;padding:13px 40px;max-width:1440px;margin:0 auto;min-height:56px;}
+  .toolbar h1{font-size:15px;font-weight:600;margin:0;color:#F8F9FA;letter-spacing:.35px;}
+  .toolbar .sub{margin-left:12px;position:relative;padding-left:14px;color:#C7D2E4;font-size:13px;}
+  .toolbar .sub:before{content:"/";position:absolute;left:0;opacity:.5;}
+  .toolbar a.back{margin-left:auto;color:#F8F9FA;font-size:13px;text-decoration:none;font-family:var(--font-ui);opacity:.85;}
+  .toolbar a.back:hover{opacity:1;text-decoration:underline;}
+  .wrap{width:100%;max-width:880px;margin:0 auto;padding:28px 40px 60px;}
+  .step-tag{font-size:13px;font-weight:700;letter-spacing:.6px;color:var(--ink);margin:26px 0 12px;}
+  .step-tag:first-child{margin-top:0;}
+  .step-chip{color:var(--red);}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:640px){.grid{grid-template-columns:1fr;} .wrap{padding:20px 18px 48px;} .toolbar-inner{padding:13px 18px;}}
+  .field label{display:block;font-size:15.75px;font-weight:600;margin-bottom:7px;color:var(--navy);}
+  select,input[type="text"]{width:100%;background:var(--bg);border:1.5px solid var(--border-strong);border-radius:10px;font-family:var(--font-display);font-size:15px;padding:11px 13px;outline:none;}
+  select:focus,input[type="text"]:focus{border-color:var(--blue);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+  .chip{font-family:var(--font-ui);font-size:12.5px;background:var(--blue-wash);color:#0B4E86;border:1px solid #CBE7FF;border-radius:999px;padding:5px 11px;}
+  .action-block{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff;}
+  .action-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .action-head b{font-size:14px;letter-spacing:.4px;}
+  .link-btn{background:none;border:none;color:var(--blue);font-family:var(--font-ui);font-size:13.5px;cursor:pointer;padding:0;}
+  .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
+  .btn-primary{background:var(--red);color:#fff;transition:background-color .2s, opacity .2s;}
+  .btn-primary:disabled{opacity:.55;cursor:default;}
+  .btn-ghost{background:#fff;border:1.5px solid var(--border-strong);color:var(--ink);}
+  .steps{list-style:none;margin:0;padding:0;}
+  .steps li{display:flex;align-items:center;gap:11px;padding:8px 2px;font-size:15px;color:var(--muted);}
+  .steps li .dot{width:20px;height:20px;flex:0 0 20px;border-radius:50%;border:2px solid var(--border-strong);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#fff;}
+  .steps li.running{color:var(--ink);}
+  .steps li.running .dot{border-color:var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;}
+  .steps li.done{color:var(--ink);}
+  .steps li.done .dot{background:var(--ok);border-color:var(--ok);}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){.steps li.running .dot{animation-duration:2.4s;}}
+  .hidden{display:none !important;}
+  .facts{font-family:var(--font-ui);font-size:14px;line-height:1.55;}
+  .facts div{padding:3px 0;}
+  .facts .k{color:var(--muted);}
+  #proofWrap{background:#9A9A9A;border-radius:12px;padding:18px;text-align:center;}
+  #proof{max-width:340px;width:100%;height:auto;}
+  .row-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .verdict{font-family:var(--font-ui);font-size:14.5px;margin-top:12px;padding:11px 13px;border-radius:10px;display:none;}
+  .verdict.ok{display:block;background:#E7F6F0;color:#0B5C40;}
+  .verdict.back{display:block;background:#FFF4E5;color:#7A4A00;}
+  .error{display:none;font-family:var(--font-ui);font-size:14px;color:#B91C1C;background:#FDECEC;border-radius:10px;padding:11px 13px;margin-top:12px;}
+  .note{font-family:var(--font-ui);font-size:13px;color:var(--muted);margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <h1>T-Shirt Artwork</h1>
+    <div class="sub">t-shirt artwork tool</div>
+    <a class="back" href="./index.html">← Poster Generator</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="step-tag"><span class="step-chip">STEP 1.</span> DESIGN</div>
+  <div class="panel">
+    <div class="field">
+      <label for="design">Source design</label>
+      <select id="design">
+        <option value="2026-grey-back">2026 Grey — Back</option>
+      </select>
+    </div>
+    <div class="chips" id="fieldChips"></div>
+    <div class="note">Commands use field names, never positions — a new design is mapped once, then works the same way.</div>
+  </div>
+
+  <div class="step-tag"><span class="step-chip">STEP 2.</span> ACTIONS</div>
+  <div id="actions"></div>
+  <button type="button" class="link-btn" id="addAction">+ Add a second action</button>
+
+  <div style="height:16px"></div>
+  <button type="button" class="btn btn-primary" id="runBtn">Run</button>
+  <div class="error" id="errorBox"></div>
+
+  <div id="progressBlock" class="hidden">
+    <div class="step-tag"><span class="step-chip">STEP 3.</span> AGENT</div>
+    <div class="panel">
+      <ul class="steps" id="steps">
+        <li data-s="0"><span class="dot"></span>Read the brief</li>
+        <li data-s="1"><span class="dot"></span>Fetch the original artwork</li>
+        <li data-s="2"><span class="dot"></span>Check the fields</li>
+        <li data-s="3"><span class="dot"></span>Apply the actions</li>
+        <li data-s="4"><span class="dot"></span>Verify — original elements unchanged</li>
+        <li data-s="5"><span class="dot"></span>Prepare print files</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="resultBlock" class="hidden">
+    <div class="step-tag"><span class="step-chip">STEP 4.</span> CHECK &amp; APPROVE</div>
+    <div id="proofWrap"><canvas id="proof" width="875" height="1550"></canvas></div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="facts" id="facts"></div>
+      <div class="row-btns">
+        <button type="button" class="btn btn-ghost" id="downloadBtn">Download print PDF</button>
+        <button type="button" class="btn btn-primary" id="approveBtn">Approve</button>
+      </div>
+      <div class="row-btns">
+        <button type="button" class="btn btn-ghost" id="sendBackBtn">Send back</button>
+        <div></div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const FIELDS = [
+  { key: 'headline', label: 'Main headline' },
+  { key: 'cities', label: 'City / date list' },
+  { key: 'logos', label: 'Logo strip' },
+];
+const ANCHORS = [
+  { key: 'centre', label: 'Centre of the back' },
+  { key: 'under-headline', label: 'Under the main headline' },
+  { key: 'above-logos', label: 'Above the logos' },
+];
+const SCRIPTS = [
+  { key: 'latin', label: 'English / French (Latin)' },
+  { key: 'devanagari', label: 'Marathi / Hindi (Devanagari)' },
+];
+
+document.getElementById('fieldChips').innerHTML =
+  FIELDS.map(f => `<span class="chip">${f.label}</span>`).join('');
+
+const actionsEl = document.getElementById('actions');
+let actionCount = 0;
+
+function fieldOptions(sel) {
+  return FIELDS.map(f => `<option value="${f.key}" ${f.key===sel?'selected':''}>${f.label}</option>`).join('');
+}
+function actionBlock(n) {
+  const div = document.createElement('div');
+  div.className = 'action-block';
+  div.dataset.action = n;
+  div.innerHTML = `
+    <div class="action-head"><b>ACTION ${n}</b>
+      ${n > 1 ? '<button type="button" class="link-btn" data-remove-action>Remove</button>' : ''}
+    </div>
+    <div class="grid">
+      <div class="field"><label>Do</label>
+        <select data-a="type">
+          <option value="remove">Remove an element</option>
+          <option value="add">Add text</option>
+          <option value="replace">Replace an element with text</option>
+        </select>
+      </div>
+      <div class="field" data-wrap="field"><label>Element</label>
+        <select data-a="field">${fieldOptions(n === 1 ? 'cities' : 'headline')}</select>
+      </div>
+      <div class="field hidden" data-wrap="text"><label>New text</label>
+        <input type="text" data-a="text" placeholder="e.g. पूर्ण करूया">
+      </div>
+      <div class="field hidden" data-wrap="script"><label>Language</label>
+        <select data-a="script">${SCRIPTS.map(s => `<option value="${s.key}">${s.label}</option>`).join('')}</select>
+      </div>
+      <div class="field hidden" data-wrap="anchor"><label>Placement</label>
+        <select data-a="anchor">${ANCHORS.map(a => `<option value="${a.key}">${a.label}</option>`).join('')}</select>
+      </div>
+    </div>`;
+  div.querySelector('[data-a="type"]').addEventListener('change', () => syncAction(div));
+  const rm = div.querySelector('[data-remove-action]');
+  if (rm) rm.addEventListener('click', () => { div.remove(); actionCount = 1; document.getElementById('addAction').classList.remove('hidden'); });
+  syncAction(div);
+  return div;
+}
+function syncAction(div) {
+  const type = div.querySelector('[data-a="type"]').value;
+  const show = (name, on) => div.querySelector(`[data-wrap="${name}"]`).classList.toggle('hidden', !on);
+  show('field', true);
+  show('text', type !== 'remove');
+  show('script', type !== 'remove');
+  show('anchor', type === 'add');
+}
+function addAction() {
+  if (actionCount >= 2) return;
+  actionCount++;
+  actionsEl.appendChild(actionBlock(actionCount));
+  if (actionCount >= 2) document.getElementById('addAction').classList.add('hidden');
+}
+document.getElementById('addAction').addEventListener('click', addAction);
+addAction();
+// Default: the Mumbai job — remove the city list, add the Marathi line.
+(function preset() {
+  const second = () => {
+    addAction();
+    const blocks = actionsEl.querySelectorAll('.action-block');
+    const b2 = blocks[1];
+    b2.querySelector('[data-a="type"]').value = 'add';
+    b2.querySelector('[data-a="text"]').value = 'पूर्ण करूया';
+    b2.querySelector('[data-a="script"]').value = 'devanagari';
+    b2.querySelector('[data-a="anchor"]').value = 'centre';
+    syncAction(b2);
+  };
+  second();
+})();
+
+function collectBrief() {
+  const actions = [];
+  actionsEl.querySelectorAll('.action-block').forEach(div => {
+    const type = div.querySelector('[data-a="type"]').value;
+    const a = { type, field: div.querySelector('[data-a="field"]').value };
+    if (type !== 'remove') {
+      a.text = div.querySelector('[data-a="text"]').value.trim();
+      a.script = div.querySelector('[data-a="script"]').value;
+    }
+    if (type === 'add') a.anchor = div.querySelector('[data-a="anchor"]').value;
+    actions.push(a);
+  });
+  return { design: document.getElementById('design').value, actions };
+}
+
+const stepsEl = document.getElementById('steps');
+function setStep(i, state) {
+  const li = stepsEl.querySelector(`[data-s="${i}"]`);
+  li.className = state;
+  li.querySelector('.dot').innerHTML = state === 'done' ? '✓' : '';
+}
+function resetSteps() { for (let i = 0; i < 6; i++) setStep(i, ''); }
+
+let resultPdfB64 = null;
+
+document.getElementById('runBtn').addEventListener('click', async () => {
+  const brief = collectBrief();
+  const errBox = document.getElementById('errorBox');
+  errBox.style.display = 'none';
+  document.getElementById('resultBlock').classList.add('hidden');
+  document.getElementById('verdict').className = 'verdict';
+  document.getElementById('progressBlock').classList.remove('hidden');
+  resetSteps();
+  const runBtn = document.getElementById('runBtn');
+  runBtn.disabled = true; runBtn.textContent = 'Running…';
+
+  let step = 0;
+  setStep(0, 'running');
+  const timer = setInterval(() => {
+    setStep(step, 'done');
+    step = Math.min(step + 1, 4);
+    setStep(step, 'running');
+  }, 900);
+
+  try {
+    const res = await fetch('/api/tshirts-run', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(brief),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Run failed');
+    clearInterval(timer);
+    for (let i = 0; i < 6; i++) setStep(i, 'done');
+    resultPdfB64 = data.pdfBase64;
+    showResult(data);
+  } catch (e) {
+    clearInterval(timer);
+    errBox.textContent = 'The run failed: ' + e.message + '. Check the brief and try again.';
+    errBox.style.display = 'block';
+  } finally {
+    runBtn.disabled = false; runBtn.textContent = 'Run';
+  }
+});
+
+async function showResult(data) {
+  const facts = [];
+  if (data.removed.length) facts.push(`<div><span class="k">Removed:</span> ${data.removed.join(', ')}</div>`);
+  for (const a of data.added) facts.push(`<div><span class="k">Added:</span> “${a.text}” — set in ${a.font}, as vector outlines</div>`);
+  facts.push(`<div><span class="k">Original artwork:</span> ${data.untouched.join(', ')} — copied unchanged ✓</div>`);
+  facts.push(`<div><span class="k">File:</span> print-ready PDF, transparent background</div>`);
+  document.getElementById('facts').innerHTML = facts.join('');
+  document.getElementById('resultBlock').classList.remove('hidden');
+
+  const bytes = Uint8Array.from(atob(data.pdfBase64), c => c.charCodeAt(0));
+  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+  const page = await pdf.getPage(1);
+  const canvas = document.getElementById('proof');
+  const viewport = page.getViewport({ scale: 1 });
+  const scale = 340 / viewport.width;
+  const vp = page.getViewport({ scale });
+  canvas.width = vp.width; canvas.height = vp.height;
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+  document.getElementById('resultBlock').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  if (!resultPdfB64) return;
+  const bytes = Uint8Array.from(atob(resultPdfB64), c => c.charCodeAt(0));
+  const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = 'tshirt-back-artwork.pdf'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+});
+document.getElementById('approveBtn').addEventListener('click', () => {
+  const v = document.getElementById('verdict');
+  v.className = 'verdict ok'; v.textContent = 'Approved — the print PDF above is the file to send to the printer.';
+});
+document.getElementById('sendBackBtn').addEventListener('click', () => {
+  const v = document.getElementById('verdict');
+  v.className = 'verdict back'; v.textContent = 'Sent back — adjust the actions above and run again.';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>

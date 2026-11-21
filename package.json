@@ -9,7 +9,7 @@
     "dev": "node local-server.js"
   },
   "dependencies": {
-    "fontkit": "^3.0.0",
+    "fontkit": "^2.0.4",
     "pdf-lib": "^1.17.1",
     "regenerator-runtime": "^0.14.1"
   }

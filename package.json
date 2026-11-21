@@ -7,5 +7,10 @@
   "scripts": {
     "build": "mkdir -p public && cp -r *.html fonts overrides.json public/ 2>/dev/null || true; cp -r *.png *.jpg *.jpeg *.pdf public/ 2>/dev/null || true",
     "dev": "node local-server.js"
+  },
+  "dependencies": {
+    "fontkit": "^3.0.0",
+    "pdf-lib": "^1.17.1",
+    "regenerator-runtime": "^0.14.1"
   }
 }

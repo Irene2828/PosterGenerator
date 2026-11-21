@@ -60,7 +60,7 @@ function anchorBaseline(anchor, removedField, size) {
 async function runBrief(base, brief) {
   const design = DESIGNS[brief.design || '2026-grey-back'];
   if (!design) throw new Error('Unknown design');
-  const actions = Array.isArray(brief.actions) ? brief.actions.slice(0, 2) : [];
+  const actions = Array.isArray(brief.actions) ? brief.actions.slice(0, 6) : [];
   if (!actions.length) throw new Error('No actions in brief');
 
   const removed = new Set();

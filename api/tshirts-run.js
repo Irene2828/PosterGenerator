@@ -51,7 +51,7 @@ async function ensureFontFile(origin, key) {
 // Fit a line of text inside a box, using the real ink bounds of the glyphs:
 // the size is capped so the ink fits the box height, and the ink (not the
 // em box) is centred in the slot — so text can never spill into a neighbour.
-function layoutTextInBox(text, font, box) {
+function layoutTextInBox(text, font, box, opts = {}) {
   const run = font.layout(text);
   let inkMinY = Infinity, inkMaxY = -Infinity;
   for (const g of run.glyphs) {
@@ -62,21 +62,34 @@ function layoutTextInBox(text, font, box) {
   if (!isFinite(inkMinY)) { inkMinY = 0; inkMaxY = font.unitsPerEm * 0.72; }
   const inkHUnits = Math.max(1, inkMaxY - inkMinY);
   const adv = s => run.positions.reduce((a, p) => a + p.xAdvance, 0) * s / font.unitsPerEm;
+  const widthCap = Math.min(MAX_TEXT_W, box.w - 24);
+  const heightCap = s => (inkHUnits * s / font.unitsPerEm) <= box.h * 0.92;
   let size = MAX_SIZE;
-  while (size > MIN_SIZE && adv(size) > Math.min(MAX_TEXT_W, box.w - 24)) size -= 2;
-  const sizeByHeight = (box.h * 0.86) * font.unitsPerEm / inkHUnits;
-  if (size > sizeByHeight) size = Math.max(MIN_SIZE, Math.floor(sizeByHeight));
+  while (size > MIN_SIZE && (adv(size) > widthCap || !heightCap(size))) size -= 2;
+  // User size choice scales the fitted size, then the caps are re-applied:
+  // bigger only grows where the slot actually has room.
+  const pct = Math.min(150, Math.max(50, Number(opts.sizePct) || 100));
+  if (pct !== 100) {
+    size = Math.floor(size * pct / 100);
+    while (size > MIN_SIZE && (adv(size) > widthCap || !heightCap(size))) size -= 2;
+  }
   const width = adv(size);
   const scale = size / font.unitsPerEm;
-  // Centre the ink vertically in the box (convert to a PDF baseline, y up).
-  const inkCentreFromTop = box.y + box.h / 2;
+  const inkH = inkHUnits * scale;
+  // Vertical position: centred by default; Higher/Lower shift the ink within
+  // the free space of the slot, clamped so the ink never leaves the slot.
+  const free = Math.max(0, (box.h - inkH) / 2);
+  let dy = 0;
+  if (opts.nudge === 'higher') dy = -free * 0.7;
+  if (opts.nudge === 'lower') dy = free * 0.7;
+  const inkCentreFromTop = box.y + box.h / 2 + dy;
   const baselineFromTop = inkCentreFromTop + ((inkMaxY + inkMinY) / 2) * scale;
   const baseline = PAGE_H - baselineFromTop;
   return { run, size, x: CX - width / 2, baseline };
 }
 
-function drawTextOps(text, font, box) {
-  const { run, size, x, baseline } = layoutTextInBox(text, font, box);
+function drawTextOps(text, font, box, opts) {
+  const { run, size, x, baseline } = layoutTextInBox(text, font, box, opts);
   const scale = size / font.unitsPerEm;
   const ops = [pushGraphicsState(), setFillingRgbColor(PDFNumber.of(1), PDFNumber.of(1), PDFNumber.of(1))];
   let penX = x;
@@ -145,7 +158,7 @@ module.exports = async (req, res) => {
         const text = String(a.text || '').trim();
         if (!text) throw new Error('An action is missing its text.');
         if (!FONTS[a.script]) throw new Error('Unknown language/script: ' + a.script);
-        texts.push({ action: a, text, script: a.script });
+        texts.push({ action: a, text, script: a.script, sizePct: a.sizePct, nudge: a.nudge });
       }
       if (!['remove', 'add', 'replace'].includes(a.type)) throw new Error('Unknown action: ' + a.type);
     }
@@ -177,7 +190,7 @@ module.exports = async (req, res) => {
     for (const t of texts) {
       await ensureFontFile(origin, t.script);
       const font = getFont(t.script);
-      const { ops, size } = drawTextOps(t.text, font, t.box);
+      const { ops, size } = drawTextOps(t.text, font, t.box, { sizePct: t.sizePct, nudge: t.nudge });
       page.pushOperators(...ops);
       added.push({ text: t.text, font: FONTS[t.script].name, size });
     }

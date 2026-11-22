@@ -135,9 +135,8 @@
       <div class="row-btns">
         <button type="button" class="btn btn-ghost" id="downloadBtn">Download print PDF</button>
         <button type="button" class="btn btn-ghost" id="downloadPngBtn">Download PNG</button>
-        <button type="button" class="btn btn-ghost" id="downloadProofBtn">Download proof image</button>
+        <button type="button" class="btn btn-ghost" id="downloadProofBtn">Download Mockup</button>
       </div>
-      <div style="margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.45;">The print PDF is white artwork on a transparent background — opened on its own, it looks blank. That is how the printer needs it. The proof image shows exactly how it looks on the shirt.</div>
     </div>
   </div>
   <div style="margin-top:34px;text-align:center;font-family:var(--font-ui);font-size:13.5px;color:var(--muted);">
@@ -396,7 +395,7 @@ async function showResult(data, brief, keepScroll) {
   if (data.removed.length) facts.push(`<div><span class="k">Removed:</span> ${data.removed.join(', ')}</div>`);
   for (const a of data.added) facts.push(`<div><span class="k">Added:</span> “${a.text}” — set in ${a.font}, as vector outlines</div>`);
   facts.push(`<div><span class="k">Original artwork:</span> ${data.untouched.join(', ')} — copied unchanged ✓</div>`);
-  facts.push(`<div><span class="k">Files:</span> print-ready PDF (vector, transparent) + proof image + high-res PNG</div>`);
+  facts.push(`<div><span class="k">Files:</span> print-ready PDF (vector, transparent) + mockup + high-res PNG</div>`);
   document.getElementById('facts').innerHTML = facts.join('');
   buildAdjustRows(brief);
   document.getElementById('resultBlock').classList.remove('hidden');
@@ -449,7 +448,7 @@ document.getElementById('downloadProofBtn').addEventListener('click', () => {
     if (!blob) return;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'tshirt-back-proof.png'; a.click();
+    a.href = url; a.download = 'tshirt-back-mockup.png'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
   }, 'image/png');
 });

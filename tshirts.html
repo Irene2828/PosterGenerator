@@ -53,7 +53,8 @@
   .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;}
   .btn-primary{background:var(--red);color:#fff;transition:background-color .2s, opacity .2s;}
   .btn-primary:disabled{opacity:.55;cursor:default;}
-  .btn-ghost{background:#fff;border:1.5px solid var(--border-strong);color:var(--ink);}
+  .btn-ghost{background:#fff;border:1.5px solid var(--border-strong);color:var(--ink);transition:background-color .2s, color .2s, border-color .2s;}
+  .btn-ghost:hover{background:var(--red);border-color:var(--red);color:#fff;}
   .steps{list-style:none;margin:0;padding:0;}
   .steps li{display:flex;align-items:center;gap:11px;padding:8px 2px;font-size:15px;color:var(--muted);}
   .steps li .dot{width:20px;height:20px;flex:0 0 20px;border-radius:50%;border:2px solid var(--border-strong);display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#fff;}
@@ -137,12 +138,6 @@
         <button type="button" class="btn btn-ghost" id="downloadProofBtn">Download proof image</button>
       </div>
       <div style="margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.45;">The print PDF is white artwork on a transparent background — opened on its own, it looks blank. That is how the printer needs it. The proof image shows exactly how it looks on the shirt.</div>
-      <div class="row-btns">
-        <button type="button" class="btn btn-primary" id="approveBtn">Approve</button>
-        <div></div>
-      </div>
-
-      <div class="verdict" id="verdict"></div>
     </div>
   </div>
   <div style="margin-top:34px;text-align:center;font-family:var(--font-ui);font-size:13.5px;color:var(--muted);">
@@ -457,10 +452,6 @@ document.getElementById('downloadProofBtn').addEventListener('click', () => {
     a.href = url; a.download = 'tshirt-back-proof.png'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
   }, 'image/png');
-});
-document.getElementById('approveBtn').addEventListener('click', () => {
-  const v = document.getElementById('verdict');
-  v.className = 'verdict ok'; v.textContent = 'Approved — the print PDF above is the file to send to the printer.';
 });
 document.getElementById('updateReqBtn').addEventListener('click', (ev) => {
   ev.preventDefault();

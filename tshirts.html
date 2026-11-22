@@ -71,6 +71,8 @@
   #proofWrap{background:#F5F5F5;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
   #proof{max-width:420px;width:100%;height:auto;border-radius:6px;}
   .row-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .row-btns.centered{grid-template-columns:1fr;justify-items:center;margin-top:28px;}
+  .row-btns.centered .btn{width:calc(50% - 6px);}
   .verdict{font-family:var(--font-ui);font-size:14.5px;margin-top:12px;padding:11px 13px;border-radius:10px;display:none;}
   .verdict.ok{display:block;background:#E7F6F0;color:#0B5C40;}
   .verdict.back{display:block;background:#FFF4E5;color:#7A4A00;}
@@ -136,7 +138,7 @@
         <button type="button" class="btn btn-ghost" id="downloadPngBtn">Download PNG</button>
       </div>
       <div style="margin-top:10px;font-size:13px;color:var(--muted);line-height:1.45;">One important distinction: Both files are visually equivalent, but neither specifies the physical print size or exact placement on the shirt. The print shop needs those instructions to reproduce your intended result accurately.</div>
-      <div class="row-btns">
+      <div class="row-btns centered">
         <button type="button" class="btn btn-ghost" id="downloadProofBtn">Download Mockup</button>
       </div>
     </div>

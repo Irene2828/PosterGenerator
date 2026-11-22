@@ -304,7 +304,6 @@ async function executeRun(brief, fast) {
   const runBtn = document.getElementById('runBtn');
   if (!fast) {
     document.getElementById('resultBlock').classList.add('hidden');
-    document.getElementById('verdict').className = 'verdict';
     document.getElementById('progressBlock').classList.remove('hidden');
     resetSteps();
     runBtn.disabled = true; runBtn.textContent = 'Running…';

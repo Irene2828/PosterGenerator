@@ -377,10 +377,13 @@ function buildAdjustRows(brief) {
     const sizeOpts = SIZE_STEPS.map(([v, t]) => `<option value="${v}" ${Number(a.sizePct || 100) === v ? 'selected' : ''}>${t}</option>`).join('');
     const nudge = a.nudge || 'centred';
     const nudgeOpts = [['higher', 'Higher'], ['centred', 'Centred'], ['lower', 'Lower']].map(([v, t]) => `<option value="${v}" ${nudge === v ? 'selected' : ''}>${t}</option>`).join('');
-    return `<div class="grid" style="margin-bottom:10px;">
-      <div class="field"><label>Text</label><input type="text" value="${a.text.replace(/"/g, '&quot;')}" disabled></div>
-      <div class="field"><label>Size</label><select data-adj="${i}" data-adj-kind="size">${sizeOpts}</select></div>
-      <div class="field"><label>Position</label><select data-adj="${i}" data-adj-kind="nudge">${nudgeOpts}</select></div>
+    const caption = a.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `<div style="margin-bottom:12px;">
+      <div style="font-family:var(--font-ui);font-weight:600;font-size:16px;color:var(--ink);margin-bottom:8px;">${caption}</div>
+      <div class="grid">
+        <div class="field"><label>Size</label><select data-adj="${i}" data-adj-kind="size">${sizeOpts}</select></div>
+        <div class="field"><label>Position</label><select data-adj="${i}" data-adj-kind="nudge">${nudgeOpts}</select></div>
+      </div>
     </div>`;
   }).join('');
   rowsEl.querySelectorAll('[data-adj]').forEach(sel => {

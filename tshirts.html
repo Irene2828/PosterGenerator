@@ -136,11 +136,12 @@
       <div class="facts" id="facts"></div>
       <div class="row-btns">
         <button type="button" class="btn btn-ghost" id="downloadBtn">Download print PDF</button>
-        <button type="button" class="btn btn-ghost" id="downloadPngBtn">Download PNG</button>
+        <button type="button" class="btn btn-ghost" id="downloadPngBtn">Download print PNG · 300 DPI</button>
       </div>
-      <div style="margin-top:10px;font-size:13px;color:var(--muted);line-height:1.45;text-align:center;">One important distinction: Both files are visually equivalent, but neither specifies the physical print size or exact placement on the shirt. The print shop needs those instructions to reproduce your intended result accurately.</div>
-      <div class="row-btns centered">
+      <div style="margin-top:10px;font-size:13px;color:var(--muted);line-height:1.45;text-align:center;">For the print shop: the print PDF and the print PNG (transparent, 300 DPI). The black-background preview is for viewing only — the print PNG looks empty in apps that show transparency as white. Neither file sets the physical print size or placement on the shirt — the print shop still needs those instructions.</div>
+      <div class="row-btns" style="margin-top:14px;">
         <button type="button" class="btn btn-ghost" id="downloadProofBtn">Download Mockup</button>
+        <button type="button" class="btn btn-ghost" id="downloadPreviewBtn">Download preview · black background</button>
       </div>
     </div>
   </div>
@@ -365,6 +366,57 @@ async function renderArtworkCanvas(pdfBytes, scale) {
   return c;
 }
 
+// Print standard: 300 DPI. pdf.js renders at 72 DPI, so scale = 300/72.
+const PNG_DPI = 300;
+const PNG_SCALE = PNG_DPI / 72;
+
+// Embed DPI into a PNG (pHYs chunk, pixels per metre). canvas.toBlob()
+// writes no DPI metadata, so Preview and print shops read 72 DPI.
+function pngWithDpi(arrayBuffer, dpi) {
+  const bytes = new Uint8Array(arrayBuffer);
+  if (bytes.length < 33 || bytes[0] !== 0x89 || bytes[1] !== 0x50) return arrayBuffer;
+  const ppm = Math.round(dpi / 0.0254); // 300 DPI -> 11811 px/m
+  const data = new Uint8Array(9);
+  const dv = new DataView(data.buffer);
+  dv.setUint32(0, ppm); dv.setUint32(4, ppm); data[8] = 1; // unit: metre
+  const table = pngWithDpi._crcTable || (pngWithDpi._crcTable = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })());
+  const crcOf = (buf) => {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < buf.length; i++) c = table[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  };
+  const type = new Uint8Array([0x70, 0x48, 0x59, 0x73]); // 'pHYs'
+  const chunk = new Uint8Array(4 + 4 + 9 + 4);
+  const cdv = new DataView(chunk.buffer);
+  cdv.setUint32(0, 9);
+  chunk.set(type, 4);
+  chunk.set(data, 8);
+  const crcInput = new Uint8Array(4 + 9);
+  crcInput.set(type, 0); crcInput.set(data, 4);
+  cdv.setUint32(17, crcOf(crcInput));
+  // Insert after the IHDR chunk: 8 (signature) + 25 (IHDR) = 33 bytes.
+  const out = new Uint8Array(bytes.length + chunk.length);
+  out.set(bytes.subarray(0, 33), 0);
+  out.set(chunk, 33);
+  out.set(bytes.subarray(33), 33 + chunk.length);
+  return out.buffer;
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
 const SIZE_STEPS = [[70, 'Smaller (70%)'], [85, 'A bit smaller (85%)'], [100, 'Auto — fits the place'], [115, 'A bit bigger (115%)'], [130, 'Bigger (130%)']];
 function buildAdjustRows(brief) {
   const panel = document.getElementById('adjustPanel');
@@ -402,7 +454,7 @@ async function showResult(data, brief, keepScroll) {
   if (data.removed.length) facts.push(`<div><span class="k">Removed:</span> ${data.removed.join(', ')}</div>`);
   for (const a of data.added) facts.push(`<div><span class="k">Added:</span> “${a.text}” — set in ${a.font}, as vector outlines</div>`);
   facts.push(`<div><span class="k">Original artwork:</span> ${data.untouched.join(', ')} — copied unchanged ✓</div>`);
-  facts.push(`<div><span class="k">Files:</span> print-ready PDF (vector, transparent) + mockup + high-res PNG</div>`);
+  facts.push(`<div><span class="k">Files:</span> print-ready PDF (vector, transparent) + print PNG (300 DPI, transparent) + black-background preview for viewing + mockup</div>`);
   document.getElementById('facts').innerHTML = facts.join('');
   buildAdjustRows(brief);
   document.getElementById('resultBlock').classList.remove('hidden');
@@ -441,12 +493,26 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
 document.getElementById('downloadPngBtn').addEventListener('click', async () => {
   if (!resultPdfB64) return;
   const bytes = Uint8Array.from(atob(resultPdfB64), c => c.charCodeAt(0));
-  const art = await renderArtworkCanvas(bytes, 4);
-  art.toBlob(blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'tshirt-back-artwork.png'; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  const art = await renderArtworkCanvas(bytes, PNG_SCALE);
+  art.toBlob(async (blob) => {
+    if (!blob) return;
+    const buf = pngWithDpi(await blob.arrayBuffer(), PNG_DPI);
+    downloadBlob(new Blob([buf], { type: 'image/png' }), 'tshirt-back-artwork-print-300dpi.png');
+  }, 'image/png');
+});
+document.getElementById('downloadPreviewBtn').addEventListener('click', async () => {
+  if (!resultPdfB64) return;
+  const bytes = Uint8Array.from(atob(resultPdfB64), c => c.charCodeAt(0));
+  const art = await renderArtworkCanvas(bytes, PNG_SCALE);
+  const c = document.createElement('canvas');
+  c.width = art.width; c.height = art.height;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(art, 0, 0);
+  c.toBlob(async (blob) => {
+    if (!blob) return;
+    const buf = pngWithDpi(await blob.arrayBuffer(), PNG_DPI);
+    downloadBlob(new Blob([buf], { type: 'image/png' }), 'tshirt-back-artwork-preview-black-bg.png');
   }, 'image/png');
 });
 document.getElementById('downloadProofBtn').addEventListener('click', () => {
